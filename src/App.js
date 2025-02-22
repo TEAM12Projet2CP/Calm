@@ -47,7 +47,8 @@ function App() {
         </img>
         
         <Routes>
-          <Route exact path="/" element={<Hero/>}/>
+
+        <Route exact path="/" element={<Hero/>}/>
           <Route exact path="/ide" element={<Ide currentUser={currentUser}/>}/>
           <Route exact path="/archi" element={<Arch/>}/>
           <Route exact path="/examples" element={<ExamplesPage/>}/>

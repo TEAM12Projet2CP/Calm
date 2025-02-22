@@ -202,12 +202,15 @@ while (hexString.length < size) {
 
     Label_To_Num : (labelname,linenumber)=>{
         var labelobj = false ;
-        Assembler.Labellist.forEach(element => { 
-            if(element.name === labelname){
-                labelobj = element
-            }
+        console.log(Assembler.Labellist)
+        console.log(labelname)
+        labelobj = Assembler.Labellist.find(element => { 
+            console.log(element.name)
+            console.log(labelname)
+            console.log(element.name === labelname)
+            return element.name === labelname;
         });
-        //console.log(labelobj)
+        console.log(labelobj)
         if (labelobj == false)
         {
             //error
@@ -215,6 +218,7 @@ while (hexString.length < size) {
             return {type: 'ERROR', value: null};
         }else{
             //return the address
+            console.log(labelobj)
             return {type: 'NUMBER', value: labelobj.address} 
     }},
     
@@ -894,6 +898,7 @@ export class Assembler{
 
 
 
+  console.log("\nLabel list: \n",Assembler.Labellist)
 
 //var input = ["MOV 0,0"]
 
@@ -906,8 +911,6 @@ let output = new Assembler(input) ;
 
 
 
-
-console.log("\nLabel list: \n",Assembler.Labellist)
 
 //console.log("\nSemantic list: \n", output?.toAssemble?.Semanticlist ?? "Semanticlist is undefined");
 console.log("\nSemantic list: \n", (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined");
