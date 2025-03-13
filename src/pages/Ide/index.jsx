@@ -91,6 +91,7 @@ const Ide = ({currentUser})=>{
     }
 
     memory.setcode(codeArray)
+    console.log("long waited memory code is here:\n\n"+memory.code)
     queue.instructionset([]);
 
     let numtmp=0;

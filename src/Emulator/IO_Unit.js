@@ -9,7 +9,6 @@ class IOUnit {
     this.buffer = buffer;
     }
     write() {
-    console.log(this.buffer);
     }
 }
 export default IOUnit;

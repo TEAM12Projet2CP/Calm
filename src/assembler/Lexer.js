@@ -1,3 +1,6 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-unused-vars */
 import { Assembler } from './Assembler.js';
 import { Errorcalm } from './Errorcalm.js';
 import { SemanticAnalysis } from './SemanticAnalysis.js';
@@ -113,7 +116,7 @@ export class Lexer {
             
                 return [
                   { type: 'LABEL' },
-                  { type: 'TEXT', value: labelText },
+                  { type: 'TEXTT', value: labelText },
                   { type: 'NUMBER', value: line.toString() }
                 ];
               } 
@@ -132,7 +135,6 @@ export class Lexer {
         }];
       }
     });
-
     // Flatten the array of arrays into a single array
     let lexlist = this.LexicalList.flat();
     lexlist.forEach((element, index, lexlist) => {

@@ -538,13 +538,11 @@ class Sequenceur{
         let Inshex=queue.shift();
         let Ins=hex2bin(Inshex);
         this.RI.setvalue(Ins);
-        console.log(`this is RI here${this.RI.getvalue()}`)
-        //the animation for this instruction goes here
+       //the animation for this instruction goes here
         /////those 2 animations must be at the same time___________________
         if(is_animated){
             let key=hex2bin(Inshex).substring(0,4);
-            console.log(key);
-            if(key>="0010"){//instructions with 1 general byte
+         if(key>="0010"){//instructions with 1 general byte
                 animations.push({
                     value:"",
                     nom:"QueueToIr",
@@ -2069,7 +2067,7 @@ class Sequenceur{
                             })
                         }
                         instrObject.value1=value1;
-                        ///animation from the register to RUAL1
+                      ///animation from the register to RUAL1
                         instrObject.value2=value2;
                     }else if(Ind=='10'){
                         this.getinstrbyte(animations,false,Contextarray);
@@ -2375,7 +2373,7 @@ class Sequenceur{
                         }
                         instrObject.value1=value1;
                         instrObject.value2=value2;
-                        ///animation from the register to RUAL1
+                       ///animation from the register to RUAL1
                     }else if(Ind=='11'){
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresse1=this.RI.getvalue();
@@ -2439,14 +2437,13 @@ class Sequenceur{
                 
             }
         }
-        return instrObject;}
+       return instrObject;}
     }
     execute(instrObject,is_animated,animations){
         let res;
         for (let i = 0; i < instrObject.stepsNum ; i++) {
             res = instrObject.steps[i](animations);
         }
-        console.log(instrObject);
         let animationSteps= instrObject.buildanim();
         if(is_animated===1 & animationSteps.length>0){
             for (let i = 0; i < animationSteps.length; i++) {

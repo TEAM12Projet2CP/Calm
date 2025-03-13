@@ -220,6 +220,7 @@ class Queue {
         let mdrval=instruction+instructionpart2;
         //////
         this.instructionBytes.push(instruction);
+        console.log("something here <3 : \n"+this.instructionBytes)
         IP.setvalue(TwosComplement(parseInt(IP.getvalue(),2)+1,16));
         //animation:
         if(is_animated){

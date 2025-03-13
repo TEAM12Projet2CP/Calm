@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import { Register } from "./Register.js"
 class MC {
     constructor(){

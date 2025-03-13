@@ -13,19 +13,16 @@ const SaveCodeButton = ({code, currentUser, editMode}) => {
             return;
         }
         
-        console.log("Saving your code..."); 
-        // console.log(code) isEditMode
+       // console.log(code) isEditMode
         const URL = process.env.REACT_APP_API_URL+`/user/${currentUser.id}/code` + 
             (editMode.isEditMode === true ? "/edit" : "/add")
         
         if(editMode.isEditMode === true){
             axios.put(URL, {id: editMode.programId,code})
             .then(res => {
-                console.log(res);
                 alert(`Program "${editMode.programName}" updated successfully`);
             })
             .catch(err => {
-                console.log(err);
                 alert("Program update failed!");
             })
         }else{
@@ -38,11 +35,9 @@ const SaveCodeButton = ({code, currentUser, editMode}) => {
 
             axios.post(URL, {code, name: programName})
             .then(res => {
-                console.log(res)
                 alert("Your code has been saved successfully!")
             })
             .catch(err => {
-                console.log(err);
                 alert("Program save failed!");
             })
         }

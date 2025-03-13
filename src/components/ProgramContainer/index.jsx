@@ -6,7 +6,6 @@ import './style.css'
 import { useNavigate } from 'react-router-dom'
 
 const ProgramContainer = ({userId, program, removeProgram}) => {
-    console.log("program",program)
     const navigate = useNavigate();
     
     const handleDeleteProgram = (e) => {
@@ -16,11 +15,9 @@ const ProgramContainer = ({userId, program, removeProgram}) => {
         
         axios.delete(URL)
         .then(response => {
-            console.log(response);
-            removeProgram(program);
+           removeProgram(program);
         })
         .catch(err => {
-            console.log(err);
             alert("Failed to delete program!")
         })
     }
