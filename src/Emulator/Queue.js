@@ -44,7 +44,7 @@ const infitToMdr={
 const fitToMar={
   value:"",
   target:".ball",
-  time:600,
+  time:100,
   anim:(val,h,w)=>{
   gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:0.6});
   // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1,delay:1});
