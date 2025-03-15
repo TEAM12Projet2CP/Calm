@@ -1,3 +1,4 @@
+/* eslint-disable import/no-anonymous-default-export */
 
 class preprocessing{
     static keyWords = ['MACRO', 'ENDM', 'START', 'END']
@@ -189,4 +190,4 @@ class preprocessing{
 }
 
 
-module.exports = { preprocessing }
+export default { preprocessing }

@@ -850,9 +850,13 @@ export class Assembler{
             }
         }   
         static assemblecode(input){
+            SemanticAnalysis.labeltype = true;
+            console.log("input: ",input)
             let output = new Assembler(input) ;
+            console.log("output: ",output)
             var assembledcode = [];
             var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
+            console.log("to assumb status: ",toassmb)
             var ipTrack = 0;
             var i=0;
             var lines=(Assembler.Labellist.length === 0 )?toassmb.length:Assembler.Labellist[i].linedeclared;
@@ -872,6 +876,7 @@ export class Assembler{
                             lines=toassmb.length;
                         }
                     }
+                    console.log("check labellist: ",Assembler.Labellist);
                     ipTrack = ipTrack+(Assembler.assemble(toassmb[index]).length/2)       
                 }
                 SemanticAnalysis.labeltype = false;
