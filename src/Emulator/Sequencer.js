@@ -1,5 +1,5 @@
 import { Register } from "./Register.js";
-import { queue, Registers, addressingModes } from "../pages/Ide";
+import { queue, Registers, addressingModes } from "../pages/Ide/index.jsx";
 import { hash, hashmap } from "./Opcodes.js";
 import { gsap } from "gsap";
 // import Console from "../Console.jsx";____conflict!!!!!!!!!!

@@ -1,11 +1,74 @@
-import { Registers, memory, Alu1, IP ,queue } from "../pages/Ide";
+import { Registers, memory, Alu1, IP ,queue } from "../pages/Ide/index.jsx";
 import { TwosComplement } from "./ALU.js";
 import { gsap } from "gsap";
+import IOUnit from "./IO_Unit.js";
+import { Register } from "./Register.js";
 // import { Register } from "./Register.js";
 ////////////////////////////////////////////////
 function Dec2bin(dec){
     return ("00000000" + (parseInt(dec, 10)).toString(2)).substr(-8);
 }
+function binaryToDecimalNumber(binaryStr) {
+    return parseInt(binaryStr, 2);
+}
+// Ensure receiveWriteValue is globally accessible
+// Ensure receiveWriteValue is globally accessible
+function showWritePopup() {
+    return new Promise((resolve) => {
+        let popup = window.open("", "Write to Register", "width=400,height=300");
+
+        popup.document.write(`
+            <h2>Write to Register</h2>
+            <label>Enter Value:</label>
+            <input type="text" id="registerValue">
+            <button onclick="submitValue()">Write</button>
+
+            <script>
+                function submitValue() {
+                    let value = document.getElementById('registerValue').value;
+                    if (!isNaN(value) && value.trim() !== "") {
+                        window.opener.resolveWriteValue(value);
+                        window.close();
+                    } else {
+                        alert("Please enter a valid number.");
+                    }
+                }
+            </script>
+        `);
+
+        // Store resolve function globally so it can return the value to the main window
+        window.resolveWriteValue = (value) => {
+            console.log("🟢 Received input from user:", value);
+            resolve(parseInt(value, 10) || 0); // Convert input to number (default 0 if empty)
+        };
+    });
+}
+
+
+
+
+window.receiveWriteValue = function(value) {
+    console.log("✅ Main Window: Received value from pop-up:", value);
+
+    const ioUnit = memory.ioUnit;
+
+    if (!isNaN(value)) {
+        value = parseInt(value, 10);
+        ioUnit.writeToBuffer(0, value);
+        console.log(`✅ Stored ${value} in I/O buffer register 0.`);
+
+        // Resume instruction execution
+        if (typeof window.writeCallback === "function") {
+            console.log("🟢 Resuming instruction after user input...");
+            window.writeCallback();
+            window.writeCallback = null; // Clear the callback after execution
+        }
+    } else {
+        console.log("❌ Invalid input. Please enter a number.");
+    }
+};
+
+
 
 /////////////////animations to test////////////////////
 const IounitToBus={
@@ -18,6 +81,22 @@ const IounitToBus={
     gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
     },
 }
+const BusToIO = {
+    value: "",
+    target: ".ball",
+    time: 3000,
+    anim: (val, h, w) => {
+        gsap.fromTo(".ball", 
+            { height: "2.812%", width: "1.4%", borderRadius: "50%", x: w * 0.221, y: h * 0.46, opacity: "0" }, 
+            { opacity: "1", duration: 1 }
+        );
+        gsap.fromTo(".ball", 
+            { x: w * 0.221, y: h * 0.46 }, 
+            { y: h * 0.39, duration: 1, delay: 1 } // Moves upward, opposite of IOTOBUS
+        );
+        gsap.to(".ball", { opacity: "0", duration: 1, delay: 2 });
+    },
+};
 
 const BusToRual1={
     value:"",
@@ -4359,5 +4438,140 @@ class InstructionPOPA{
         this.buildanim=function(){}
     }
 }
+class InstructionREAD {
+    constructor() {
+        this.value1 = 0;
+        this.value2 = 0;
+        this.addresse1 = 0;
+        this.register1 = 0;
+        this.addresse2 = 0;
+        this.register2 = 0;
+        this.taille = 0;
+        this.stepsNum = 1;
+        this.name = "READ";
 
-export {InstructionADD,InstructionMOV00,InstructionMOV01,InstructionMOV10,InstructionMOV11,InstructionSUB,InstructionMUL,InstructionDIV,InstructionBSE,InstructionBIE,InstructionBI,InstructionBS,InstructionBNE,InstructionBE,InstructionBR,InstructionPOP,InstructionPUSH,InstructionAND,InstructionOR,InstructionNAND,InstructionNOR,InstructionXOR,InstructionNEG,InstructionNOT,InstructionROL,InstructionROR,InstructionSHL,InstructionSHR,InstructionPOPA,InstructionPUSHA}
+        this.steps = [
+            () => {
+                const ioUnit = memory.ioUnit; // Access I/O Unit
+                
+                if (!ioUnit.ioController.busy) {
+                    ioUnit.ioController.busy = true; // Mark I/O as busy
+
+                    let value = this.value1; // Read from CPU register (e.g., R1)
+                    ioUnit.writeToBuffer(0, value); 
+                    let popup = window.open("", "Buffer Contents", "width=400,height=300");
+                    popup.document.write(`<h2>Buffer Contents</h2><p>${ioUnit.readFromBuffer(0)}</p>`);
+                    // alert("Buffer Contents: " + ioUnit.readFromBuffer(0));// Store in I/O buffer register 0
+
+                    console.log(`CPU to IO: Moved data ${value} from CPU register R${this.register1} to I/O buffer.`);
+                    ioUnit.displayValue();
+                    ioUnit.ioController.busy = false;
+                } else {
+                    console.log("I/O Unit busy, READ delayed");
+                    return false; // Delay execution if busy
+                }
+            },
+        ];
+        this.buildanim = function () {
+            return [
+                {
+                    value: "READ",
+                    target: addanim.target,
+                    time: addanim.time,
+                    anim: addanim.anim,
+                },
+                {
+                    value: this.value1,
+                    target: RegistersToBus.target,
+                    time: RegistersToBus.time,
+                    anim: RegistersToBus.anim,
+                },
+                {
+                    value: this.value1,
+                    target: BusToIO.target,
+                    time: BusToIO.time,
+                    anim: BusToIO.anim,
+                },
+                
+                
+            ];
+        };
+    }
+}
+
+class InstructionWRITE {
+    constructor() {
+        this.value1 = 0;
+        this.value2 = 0;
+        this.addresse1 = 0;
+        this.register1 = 0;
+        this.addresse2 = 0;
+        this.register2 = 0;
+        this.taille = 0;
+        this.stepsNum = 1;
+        this.name = "WRITE";
+
+        this.steps = [
+            async () => {
+                const ioUnit = memory.ioUnit;
+
+                if (!ioUnit.ioController.busy) {
+                    ioUnit.ioController.busy = true;
+
+                    console.log("🟢 InstructionWRITE: Waiting for user input...");
+
+                    // Wait for user input asynchronously before proceeding
+                    const value = await showWritePopup();
+
+                    ioUnit.writeToBuffer(0, value);
+                    console.log(`✅ User input received: ${value}. Stored in I/O buffer register 0.`);
+
+                    // Resume execution
+                    this.resume();
+                } else {
+                    console.log("🔴 InstructionWRITE: I/O Unit busy, WRITE delayed");
+                    return false;
+                }
+            }
+        ];
+
+        // Animation sequence
+        this.buildanim = function () {
+            const ioUnit = memory.ioUnit;
+            return [
+                {
+                    value: "WRITE",
+                    target: addanim.target,
+                    time: addanim.time,
+                    anim: addanim.anim,
+                },
+                {
+                    value: ioUnit.readFromBuffer(0),
+                    target: IounitToBus.target,
+                    time: IounitToBus.time,
+                    anim: IounitToBus.anim,
+                },
+                {
+                    value: ioUnit.readFromBuffer(0),
+                    target: BusToRegisters.target,
+                    time: BusToRegisters.time,
+                    anim: BusToRegisters.anim,
+                },
+            ];
+        };
+    }
+
+    resume() {
+        const ioUnit = memory.ioUnit;
+        
+        let value = ioUnit.readFromBuffer(0);
+        let register = parseInt(this.register1, 2);
+        Registers[register].setvalue(TwosComplement(value, 16));
+
+        ioUnit.ioController.busy = false;
+        console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to CPU register R${register}.`);
+    }
+}
+
+
+export {InstructionADD,InstructionMOV00,InstructionMOV01,InstructionMOV10,InstructionMOV11,InstructionSUB,InstructionMUL,InstructionDIV,InstructionBSE,InstructionBIE,InstructionBI,InstructionBS,InstructionBNE,InstructionBE,InstructionBR,InstructionPOP,InstructionPUSH,InstructionAND,InstructionOR,InstructionNAND,InstructionNOR,InstructionXOR,InstructionNEG,InstructionNOT,InstructionROL,InstructionROR,InstructionSHL,InstructionSHR,InstructionPOPA,InstructionPUSHA,InstructionREAD, InstructionWRITE}
