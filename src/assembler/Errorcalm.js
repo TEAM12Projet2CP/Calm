@@ -42,7 +42,7 @@ export class Errorcalm{
             numerr ==1 ? theError="\nThere is 1 error in your code:\n" : theError=`\nThere are ${numerr} errors in your code cannot assemble:\n`;
         Errorcalm.LexicalError.length == 0 ? theError+="  Semantic Errors:\n"+"  "+Errorcalm.SemanticError[0].message+"\n the line : "+Errorcalm.SemanticError[0].linenum : theError+="Lexical Errors \n"+"  "+Errorcalm.LexicalError[0].message+"\n the line :"+Errorcalm.LexicalError[0].line;
         Errorcalm.errorr=1;
-        console.log(this.SemanticError);
+        console.log("ariiba : " + this.SemanticError);
         return theError;}
     }
     static addtoSemanticError(errs){

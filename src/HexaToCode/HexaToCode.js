@@ -94,9 +94,6 @@ function hexToBin(hexString) {
           case "0111":
             newstr = "SHR";
             break;
-          case "1000":
-            newstr = "READ";
-            break;
           case "1001":
             newstr = "WRITE";
             break;
@@ -408,7 +405,7 @@ function hexToBin(hexString) {
         }
       } 
       }
-    // console.log("adr1="+adr1);
+    console.log("adr1="+adr1);
     if(newstr!="error"){
       if(ind[1]==='0' && size=='0'){
         if ((remo1=="110" || remo1=="111") && ind[0]==='1'){     

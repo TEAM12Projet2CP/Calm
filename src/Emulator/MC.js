@@ -37,12 +37,7 @@ class MC {
             this.rim = this.code[parseInt(this.ram, 2)];
         } else {
             this.rim = this.data[parseInt(this.ram, 2)];
-         
         }
-    }
-    readMC(i)
-    {
-        return this.data[i];
     }
 
     write() {

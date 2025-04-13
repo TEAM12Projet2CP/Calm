@@ -17,9 +17,8 @@ export class SemanticAnalysis {
               let firstword = lexicalList[i][0]
               let firstwordtype = firstword.type
               
-              console.log("here"+firstwordtype);
+              
               switch (firstwordtype) {
-               
                     
                   case 'LABEL':
                     const functLABEL = ()=> {
@@ -93,10 +92,9 @@ export class SemanticAnalysis {
                         //|-----------------------------------------------------------------------------------------.
                         const functINST1 = ()=> {
                             var firstparam = lexicalList[i][1]
-                            if (['NEG','NOT', 'SHL', 'SHR', 'READ', 'PUSH', 'POP', 'ROR', 'ROL'].includes( lexicalList[i][0].value )) {
+                            if (['NEG','NOT', 'SHL', 'SHR', 'WRITE', 'PUSH', 'POP', 'ROR', 'ROL'].includes( lexicalList[i][0].value )) {
                                 //read or write from or to register only..
                                 // Labels are not allowed
-                                console.log("louai ghouli");
                                 if (firstparam.type == 'REGISTER'  && lexicalList[i].length == 2) {
                                     this.Semanticlist.push([{  type:lexicalList[i][0].type, value: lexicalList[i][0].value, adrmode:0  },lexicalList[i][1]]);
                                 }
@@ -120,8 +118,20 @@ export class SemanticAnalysis {
                                             this.Semanticlist.push([{type:lexicalList[i][0].type, value: lexicalList[i][0].value, adrmode:0 },lexicalList[i][1]]);
                                             
                                             break;
-                                       
+                                        case 3:
+                                            var list1;
+                                            list1 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list1 ;
+                                            console.log("list1",list1)
+                                            console.log("\nlist1hh",FuncInterface.defadrmod(list1))
+                                            let asize =   ( FuncInterface.defadrmod(list1,i).size == 1 )? 1 : 0;
+                                             //console.log(asize);
+                                            console.log("l3ziz : " +asize)
+                                             this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value,size:asize},FuncInterface.defadrmod(list1,i),]);
+                                            break;
                                         default:
+                                            
+                                            console.log("here baby")
+                                            console.log(lexicalList[i].length)
                                             this.Semanticlist.push(new Errorcalm("Wrong number or type of operands",null,i))
                                             break;
                                     }    }else{
@@ -145,7 +155,7 @@ export class SemanticAnalysis {
 
                                         case 2:
                                             this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value, adrmode:0 },{type:FuncInterface.Label_To_Num(firstparam.value,i).type, value:FuncInterface.Label_To_Num(firstparam.value,i).value}]);
-                                            
+                                            console.log("here baby")
                                             break;
                                     
                                         case 5:
@@ -195,7 +205,7 @@ export class SemanticAnalysis {
                             // check if size of first list == size of second list and assign it to the size of the instruction
                             var list1,list2 =[];
                             list1 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list1 ;
-                            //console.log("list1",list1[0].type)
+                            console.log("list1",list1[0].type)
                             list2 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list2 ;
          
                             if( FuncInterface.defadrmod(list1,i).type=='NUMBER' && lexicalList[i][0].value == 'MOV' && FuncInterface.defadrmod(list1,i).adrmode==0 ) {
@@ -203,9 +213,9 @@ export class SemanticAnalysis {
                                         this.Semanticlist.push(new Errorcalm("Number can't be first operand",null,i))
                                         Errorcalm.SemanticError.push(new Errorcalm("Number can't be first operand",null,i))
                             }else{
-                            //console.log("\nlist1",list1,"\nlist2",list2)
-                            //console.log("\nlist1",FuncInterface.defadrmod(list1),"\nlist2",FuncInterface.defadrmod(list2))
-                            //console.log("list1",FuncInterface.defadrmod(list1,i).size,"list2",FuncInterface.defadrmod(list2,i).size)
+                            console.log("\nlist1",list1,"\nlist2",list2)
+                            console.log("\nlist1",FuncInterface.defadrmod(list1),"\nlist2",FuncInterface.defadrmod(list2))
+                            console.log("list1",FuncInterface.defadrmod(list1,i).size,"list2",FuncInterface.defadrmod(list2,i).size)
                             
                         if ((FuncInterface.defadrmod(list1,i).size !== FuncInterface.defadrmod(list2,i).size && FuncInterface.defadrmod(list2,i).type =='REGISTER' && FuncInterface.defadrmod(list1,i).type =='REGISTER' )  || ( FuncInterface.defadrmod(list1,i).size == 0 && FuncInterface.defadrmod(list2,i).size == 1 && FuncInterface.defadrmod(list1,i).type =='REGISTER' )) {
 
@@ -215,6 +225,7 @@ export class SemanticAnalysis {
                             }else{
                                 let asize =  ( FuncInterface.defadrmod(list2,i).size == 1 ) || ( FuncInterface.defadrmod(list1,i).size == 1 )? 1 : 0;
                                 //console.log(asize);
+                                console.log("l3ziz : " +asize)
                                 this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value,size:asize},FuncInterface.defadrmod(list1,i),FuncInterface.defadrmod(list2,i)]);
                             }
                             }}

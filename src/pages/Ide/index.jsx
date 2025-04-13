@@ -5,7 +5,7 @@ import UAParser from 'ua-parser-js';
 import "./style.css"
 
 ///// import components //////
-import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
+import { NavBar, HelpSection, SaveCodeButton } from "../../components"
 
 
 ////// import machine components //////
@@ -24,10 +24,10 @@ import "../../codemirror/theme/material.css";
 import "../../codemirror/mode/myLang/assembly.js"
 
 /////import assembler modules//////////
-import { Assembler } from "../../assembler/Assembler.js";
-import {helpDescription} from "../../Constants/HelpDescription.js";
-import {HexaToCode} from "../../HexaToCode/HexaToCode.js"
-import { Errorcalm } from "../../assembler/Errorcalm.js";
+import { Assembler } from "../../assembler/Assembler";
+import {helpDescription} from "../../Constants/HelpDescription";
+import {HexaToCode} from "../../HexaToCode/HexaToCode"
+import { Errorcalm } from "../../assembler/Errorcalm";
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -105,24 +105,16 @@ const Ide = ({currentUser})=>{
 
 
     console.log(queue.getinstwithoutshift())
-    // console.log("test"+queue.shift());
-   
+    
     let instrobject={};
     while(instrobject.name!=="stop"){
-      
-
       sequenceur.getinstrbyte(animations,true,Contextarray);
-     
       instrobject={...sequenceur.decode(animations,Contextarray)};
-      
-      console.log("loop"+Contextarray);
       if(instrobject.name!=="stop"){
-       
+        console.log("wch mami : " + instrobject);
         sequenceur.execute(instrobject,1,animations);
-       
       }
     }
-   
 
   }
 
@@ -287,6 +279,7 @@ const Ide = ({currentUser})=>{
                     for (let m = 0; m < handleStoreCode().length; m++) {
                       code=code+HexaToCode(handleStoreCode()[m])+"\n";
                     }
+                    console.log("code : ",code)
                     editor.setValue(code);
                     setChecktest(!checktest);
                     setIsCode(true);
@@ -344,25 +337,20 @@ const Ide = ({currentUser})=>{
 
                   if(iscode){
                     inputouter=Assembler.assemblecode(handleStoreCode())
-                    
                   }else{
                     inputouter=handleStoreCode();
                   }
                   let input=convertStrings(inputouter);
                   input.push("ff");
-                  console.log("this is :"+ input)
                   
                   try {
-                    console.log("hachmi");
+    
                     if (Errorcalm.errorr === 0) {
-                      console.log("drsas")
                       traitement(input);
                       
-                     
-                    }else{
-                      console.log("SIks")
-                      setresult(Errorcalm.printError());
                       
+                    }else{
+                      setresult(Errorcalm.printError());
                       seterr(true);
                     }
 
