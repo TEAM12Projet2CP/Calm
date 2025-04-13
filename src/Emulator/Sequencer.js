@@ -1,7 +1,8 @@
 import { Register } from "./Register.js";
-import { queue, Registers, addressingModes } from "../pages/Ide";
+import { queue, Registers, addressingModes, memory } from "../pages/Ide/index.jsx";
 import { hash, hashmap } from "./Opcodes.js";
 import { gsap } from "gsap";
+import {MC} from "./MC.js"
 // import Console from "../Console.jsx";____conflict!!!!!!!!!!
 const fitToR2={
     value:"",
@@ -665,9 +666,11 @@ class Sequenceur{
     decode(animations,Contextarray){
         let instruction=this.RI.getvalue();
         let key=instruction.substring(0,4);
+        console.log("mami"+key);
         let index=0;
         let instrObject;
         if(key=="1111"){
+            
             animations.push({
                 value:"STOP",
                 target:fitToDecode.target,
@@ -996,6 +999,7 @@ class Sequenceur{
             }}
         }else{
             if(key>='0010' & key<='0011'){
+                
                 key=instruction.substring(0,7);
                 let taille=instruction.charAt(7);
                 index=hash(key);
@@ -1011,7 +1015,10 @@ class Sequenceur{
                     instrObject.taille=taille;
                 }
             }else{
+                console.log("hello worlfd");
+                
                 key=instruction.substring(0,7);
+                
                 let taille=instruction.charAt(7);
                 this.getinstrbyte(animations,false,Contextarray);///was true
                 let secondByte=this.RI.getvalue();
@@ -1019,12 +1026,25 @@ class Sequenceur{
                 let Ind=secondByte.substring(0,2);
                 let regMod1=secondByte.substring(2,5);
                 let regMod2=secondByte.substring(5,8);
-                if(key=='0001100'){
+                if(key=='0001100'||key=='0001001'){
+                   
                     key=key+Ind;
-                    index=hash(key);
-                    instrObject=hashmap[index].instrObject;
-                    animateDecoderSequencer(animations,instrObject.name);
-                    instrObject.taille=taille;
+                    console.log("klkl"+key)
+                  
+                    if (key=='000100111') {
+                        key='1001';
+                    }
+                        index=hash(key);
+                        instrObject=hashmap[index].instrObject;
+                        console.log(instrObject);
+                        animateDecoderSequencer(animations,instrObject.name);
+                        instrObject.taille=taille;
+                        if (key=='1001') {
+                            key='000110011';
+                        }  
+                        
+                   
+                    
                     let value2=0;
                     if(key=='000110000'){
                         if(taille=='1'){
@@ -1135,7 +1155,8 @@ class Sequenceur{
                         instrObject.value2=value2;
                         instrObject.register2=parseInt(regMod2,2);
                         instrObject.addresse1=addresse1;
-                    }else if(key=='000110011'){
+                    }else if(key=='000110011'||key=='000100111'){
+                        console.log("inin");
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresseop1=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -1190,13 +1211,18 @@ class Sequenceur{
                         }
                         instrObject.value2=value2;
                         instrObject.addresse1=addresse1;
+                        
+                       key='000100111' ; 
                     }
                 }else{
+                    
                     index=hash(key);
+                 
                     instrObject=hashmap[index].instrObject;
                     animateDecoderSequencer(animations,instrObject.name);
                     instrObject.taille=taille;
                     if(Ind=='00'){
+                          
                         let value1=0;
                         let value2=0;
                         if(taille=='1'){
@@ -1768,6 +1794,7 @@ class Sequenceur{
                         instrObject.register2=parseInt(regMod2,2);
                         instrObject.register1=parseInt(regMod1,2);
                     }else if(Ind=='01'){
+                        
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresse=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -2074,6 +2101,7 @@ class Sequenceur{
                         ///animation from the register to RUAL1
                         instrObject.value2=value2;
                     }else if(Ind=='10'){
+                        
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresse=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -2379,6 +2407,7 @@ class Sequenceur{
                         instrObject.value2=value2;
                         ///animation from the register to RUAL1
                     }else if(Ind=='11'){
+                        
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresse1=this.RI.getvalue();
                         let immval1=parseInt(adresse1,2);
@@ -2441,14 +2470,17 @@ class Sequenceur{
                 
             }
         }
-        return instrObject;}
+        console.log(instrObject);
+        return instrObject;
+        }
     }
     execute(instrObject,is_animated,animations){
         let res;
         for (let i = 0; i < instrObject.stepsNum ; i++) {
             res = instrObject.steps[i](animations);
+            
         }
-        console.log("inst : ", JSON.stringify(instrObject, null, 2));
+        console.log(instrObject);
         let animationSteps= instrObject.buildanim();
         if(is_animated===1 & animationSteps.length>0){
             for (let i = 0; i < animationSteps.length; i++) {
@@ -2464,6 +2496,7 @@ class Sequenceur{
                 animations.push(tempobj);
             }
         }
+        
     }
 }
 export default Sequenceur;

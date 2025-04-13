@@ -2591,6 +2591,7 @@ class InstructionMOV11{////the difference between them will be in the animation 
         this.steps=[()=>{
             if(this.taille==1){
                 let hexval=this.value2.toString(16);
+                console.log(hexval);
                 while(hexval.length<4){
                     hexval='0'+hexval;
                 }
@@ -4548,16 +4549,33 @@ class InstructionWRITE {
         this.name = "WRITE";
 
         this.steps = [
-            () => {
-                const ioUnit = memory.ioUnit; // Access I/O Unit
+            async () => {
+                const ioUnit = memory.ioUnit;
+                console.log("priviete");
+                console.log(this.value2,this.addresse1); // Access I/O Unit
                 
                 if (!ioUnit.ioController.busy) {
-                    ioUnit.ioController.busy = true; // Mark I/O as busy
+                    ioUnit.ioController.busy = true;
+                    let value;
+                    let temp;
+                    temp=this.addresse1;
+                    ioUnit.emptyBuffer();
+                    for (let index = 0; index < this.value2; index++) {
+                        memory.setRam(TwosComplement(temp,16));
+                        memory.read(false);
+                        memory.getRim();
 
-                    let value = this.value1; // Read from CPU register (e.g., R1)
-                    ioUnit.writeToBuffer(0, value); 
+                        console.log(memory.getRim());
+                       ioUnit.writeToBuffer( index,String.fromCharCode(parseInt(memory.getRim(), 16)));
+                    //    console.log(ioUnit.buffer[index]);
+                        temp++;
+                        
+                    } // Mark I/O as busy
+
+                    // Read from CPU register (e.g., R1)
+                    // ioUnit.writeToBuffer(value); 
                     let popup = window.open("", "Buffer Contents", "width=400,height=300");
-                    popup.document.write(`<h2>Buffer Contents</h2><p>${ioUnit.readFromBuffer(0)}</p>`);
+                    popup.document.write(`<h2>Buffer Contents</h2><p>${ioUnit.readFromBuffer()}</p>`);
                     // alert("Buffer Contents: " + ioUnit.readFromBuffer(0));// Store in I/O buffer register 0
 
                     console.log(`CPU to IO: Moved data ${value} from CPU register R${this.register1} to I/O buffer.`);
@@ -4567,9 +4585,12 @@ class InstructionWRITE {
                     console.log("I/O Unit busy, READ delayed");
                     return false; // Delay execution if busy
                 }
-            },
+            }
         ];
+
+        // Animation sequence
         this.buildanim = function () {
+            const ioUnit = memory.ioUnit;
             return [
                 {
                     value: "WRITE",
@@ -4578,23 +4599,31 @@ class InstructionWRITE {
                     anim: addanim.anim,
                 },
                 {
-                    value: this.value1,
-                    target: RegistersToBus.target,
-                    time: RegistersToBus.time,
-                    anim: RegistersToBus.anim,
+                    value: ioUnit.readFromBuffer(0),
+                    target: IounitToBus.target,
+                    time: IounitToBus.time,
+                    anim: IounitToBus.anim,
                 },
                 {
-                    value: this.value1,
-                    target: BusToIO.target,
-                    time: BusToIO.time,
-                    anim: BusToIO.anim,
+                    value: ioUnit.readFromBuffer(0),
+                    target: BusToRegisters.target,
+                    time: BusToRegisters.time,
+                    anim: BusToRegisters.anim,
                 },
-                
-                
             ];
         };
     }
-   
+
+    resume() {
+        const ioUnit = memory.ioUnit;
+        
+        let value = ioUnit.readFromBuffer(0);
+        let register = parseInt(this.register1, 2);
+        Registers[register].setvalue(TwosComplement(value, 16));
+
+        ioUnit.ioController.busy = false;
+        console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to CPU register R${register}.`);
+    }
 }
 
 

@@ -63,7 +63,7 @@ export class Lexer {
             case 'SHL':
             case 'SHR':
             case 'READ':
-            case 'WRITE':
+              
             case 'PUSH':
             case 'POP':
             case 'ROR':
@@ -86,6 +86,7 @@ export class Lexer {
             case 'ADD':
             case 'SUB':
             case 'MUL':
+              case 'WRITE':
             case 'DIV':
             case 'AND':
             case 'OR':

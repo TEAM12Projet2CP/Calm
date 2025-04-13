@@ -17,8 +17,9 @@ export class SemanticAnalysis {
               let firstword = lexicalList[i][0]
               let firstwordtype = firstword.type
               
-              
+              console.log("here"+firstwordtype);
               switch (firstwordtype) {
+               
                     
                   case 'LABEL':
                     const functLABEL = ()=> {
@@ -92,9 +93,10 @@ export class SemanticAnalysis {
                         //|-----------------------------------------------------------------------------------------.
                         const functINST1 = ()=> {
                             var firstparam = lexicalList[i][1]
-                            if (['NEG','NOT', 'SHL', 'SHR', 'WRITE', 'PUSH', 'POP', 'ROR', 'ROL'].includes( lexicalList[i][0].value )) {
+                            if (['NEG','NOT', 'SHL', 'SHR', 'PUSH', 'POP', 'ROR', 'ROL'].includes( lexicalList[i][0].value )) {
                                 //read or write from or to register only..
                                 // Labels are not allowed
+                                console.log("louai ghouli");
                                 if (firstparam.type == 'REGISTER'  && lexicalList[i].length == 2) {
                                     this.Semanticlist.push([{  type:lexicalList[i][0].type, value: lexicalList[i][0].value, adrmode:0  },lexicalList[i][1]]);
                                 }

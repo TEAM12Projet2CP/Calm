@@ -506,6 +506,9 @@ export class Assembler{
                             opcode = `0001100${size}`;
 
                         break;
+                        case 'WRITE':
+                                opcode = `0001001${size}`;
+                                break;
                         default:
                             opcode = 'error';
                             break;
@@ -713,7 +716,7 @@ export class Assembler{
                             
                     }
                 case 'INST1':
-                if (['NEG', 'NOT', 'SHL', 'SHR', 'WRITE', 'PUSH', 'POP', 'ROR', 'ROL'].includes(element.value)) {
+                if (['NEG', 'NOT', 'SHL', 'SHR', 'PUSH', 'POP', 'ROR', 'ROL'].includes(element.value)) {
                     var reg;
                     var size;
                     var oppcode;
@@ -731,9 +734,7 @@ export class Assembler{
                         case 'SHR':
                             oppcode = '0111';
                             break;
-                        case 'WRITE':
-                            oppcode = '1001';
-                            break;
+                     
                         case 'PUSH':
                             oppcode = '1010';
                             break;
