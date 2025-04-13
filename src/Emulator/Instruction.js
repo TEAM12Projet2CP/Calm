@@ -12,6 +12,9 @@ function Dec2bin(dec){
 function binaryToDecimalNumber(binaryStr) {
     return parseInt(binaryStr, 2);
 }
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 // Ensure receiveWriteValue is globally accessible
 // Ensure receiveWriteValue is globally accessible
 function showWritePopup() {
@@ -44,7 +47,6 @@ function showWritePopup() {
         };
     });
 }
-
 
 
 
@@ -4465,7 +4467,7 @@ class InstructionREAD {
                     // Wait for user input asynchronously before proceeding
                     const value = await showWritePopup();
 
-                    ioUnit.writeToBuffer(value);
+                    ioUnit.writeToBuffer1(value);
                     console.log(`✅ User input received: ${value}. Stored in I/O buffer.`);
                     ioUnit.displayBuffer();
                     // Resume execution
@@ -4505,7 +4507,7 @@ class InstructionREAD {
 
     resume() {
         const ioUnit = memory.ioUnit;
-        let value = ioUnit.readFromBuffer(); // Could be string or number
+        let value = ioUnit.readFromBuffer1(); // Could be string or number
         let baseAddress = parseInt(opValue, 10); // Starting address
     
         if (isNaN(value)) {
@@ -4526,7 +4528,12 @@ class InstructionREAD {
             memory.setRim(hexValue);
             memory.setRam(TwosComplement(baseAddress, 16));
             memory.write();
-    
+            console.log("\n\n\n\n louai");
+            memory.setRam(TwosComplement(baseAddress,16));
+            memory.read(false);
+            memory.getRim();
+            console.log("kjkjkkj", String.fromCharCode(parseInt(memory.getRim(), 16)));
+
             console.log(`📝 Wrote number ${value} as hex ${hexValue} to address ${baseAddress}`);
         }
     
@@ -4569,13 +4576,18 @@ class InstructionWRITE {
                        ioUnit.writeToBuffer( index,String.fromCharCode(parseInt(memory.getRim(), 16)));
                     //    console.log(ioUnit.buffer[index]);
                         temp++;
-                        
+                        console.log("9iiw")
                     } // Mark I/O as busy
 
                     // Read from CPU register (e.g., R1)
                     // ioUnit.writeToBuffer(value); 
                     let popup = window.open("", "Buffer Contents", "width=400,height=300");
-                    popup.document.write(`<h2>Buffer Contents</h2><p>${ioUnit.readFromBuffer()}</p>`);
+                    if (popup) {
+                        popup.document.write(`<h2>Buffer Contents</h2><p>${ioUnit.readFromBuffer()}</p>`);
+                    } else {
+                        alert("Popup was blocked. Please allow popups for this site.");
+                        console.error("Failed to open popup. Possibly blocked by browser.");
+                    }
                     // alert("Buffer Contents: " + ioUnit.readFromBuffer(0));// Store in I/O buffer register 0
 
                     console.log(`CPU to IO: Moved data ${value} from CPU register R${this.register1} to I/O buffer.`);

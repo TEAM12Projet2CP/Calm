@@ -2480,7 +2480,7 @@ class Sequenceur{
             res = instrObject.steps[i](animations);
             
         }
-        console.log(instrObject);
+        console.log("inst : " , JSON.stringify(instrObject,null,2));
         let animationSteps= instrObject.buildanim();
         if(is_animated===1 & animationSteps.length>0){
             for (let i = 0; i < animationSteps.length; i++) {

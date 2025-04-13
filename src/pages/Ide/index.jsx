@@ -83,48 +83,47 @@ const Ide = ({currentUser})=>{
 
   ///////////////////////////////executions function////////////////////////////////////////
 
-  const traitement= (codeArray)=>{
-    for(let i=0;i<50;i++){//initializing first 50 bytes in memory to 0 (data memory)
-      memory.setRam(TwosComplement(i,8));
-      memory.setRim("00000000");
-      memory.write();
+  const traitement = async (codeArray) => {
+    for (let i = 0; i < 50; i++) {
+        memory.setRam(TwosComplement(i, 8));
+        memory.setRim("00000000");
+        memory.write();
     }
 
-    memory.setcode(codeArray)
+    memory.setcode(codeArray);
     queue.instructionset([]);
 
-    let numtmp=0;
-    
-    queue.fetchInstruction(animations,0,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
-    queue.fetchInstruction(animations,1,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
-    queue.fetchInstruction(animations,2,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
+    let numtmp = 0;
 
+    queue.fetchInstruction(animations, 0, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
+    queue.fetchInstruction(animations, 1, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
+    queue.fetchInstruction(animations, 2, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
 
+    console.log(queue.getinstwithoutshift());
 
-    console.log(queue.getinstwithoutshift())
-    // console.log("test"+queue.shift());
-   
-    let instrobject={};
-    while(instrobject.name!=="stop"){
-      
+    let instrobject = {};
+    while (instrobject.name !== "stop") {
+        sequenceur.getinstrbyte(animations, true, Contextarray);
+        instrobject = { ...sequenceur.decode(animations, Contextarray) };
 
-      sequenceur.getinstrbyte(animations,true,Contextarray);
-     
-      instrobject={...sequenceur.decode(animations,Contextarray)};
-      
-      console.log("loop"+Contextarray);
-      if(instrobject.name!=="stop"){
-        console.log(instrobject);
-        sequenceur.execute(instrobject,1,animations);
-       
-      }
+        if (instrobject.name !== "stop") {
+            console.log("wch mami:", instrobject);
+
+            if (instrobject.name === "READ" && typeof instrobject.steps?.[0] === "function") {
+                const result = await instrobject.steps[0](); // ✅ Now await works
+                if (result === false) {
+                    console.log("READ was delayed due to IO being busy");
+                    continue;
+                }
+            } else {
+                sequenceur.execute(instrobject, 1, animations);
+            }
+        }
     }
-   
-
-  }
+}
 
   let [checktest,setChecktest]=useState(false);
 
