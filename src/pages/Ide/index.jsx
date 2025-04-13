@@ -84,11 +84,11 @@ const Ide = ({currentUser})=>{
   ///////////////////////////////executions function////////////////////////////////////////
 
   const traitement= (codeArray)=>{
-    /*for(let i=0;i<50;i++){//initializing first 50 bytes in memory to 0 (data memory)
+    for(let i=0;i<50;i++){//initializing first 50 bytes in memory to 0 (data memory)
       memory.setRam(TwosComplement(i,8));
       memory.setRim("00000000");
       memory.write();
-    }*/
+    }
 
     memory.setcode(codeArray)
     queue.instructionset([]);

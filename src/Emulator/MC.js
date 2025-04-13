@@ -1,4 +1,5 @@
 import { Register } from "./Register.js"
+import  Cache from "./Cache.js"; // Import the cache class
 class MC {
     constructor(){
     this.rim=new Register()
@@ -7,8 +8,7 @@ class MC {
     this.data = new Array (100)
     this.code = new Array(100)  
 
-    this.cache = Array.from({ length: this.cacheSize }, () => ({ address: null, data: "00000000",iscode:false }));
-    this.cacheSize = 50;
+    this.cache = new Cache(50,this)
     }
     setcode(code){
         this.code=code;
@@ -25,22 +25,13 @@ class MC {
     getRim (){
     return this.rim
     }
-
-    checkCache(address) {
-        for (let i = 0; i < this.cache.length; i++) {
-            if (this.cache[i].address === address) {
-                return { hit: true, index: i };
-            }
-        }
-        return { hit: false, index: -1 };
-    }
-
     read(iscode){
         
         // Check cache first
-        let cacheResult = this.checkCache(parseInt(this.ram,2));
-        if (cacheResult.hit && this.cache[cacheResult.index].iscode===iscode) {
-            this.rim = this.cache[cacheResult.index].data;
+        let cacheResult = this.cache.checkCache(parseInt(this.ram,2),iscode);
+        if (cacheResult.hit) {
+            this.rim = this.cache.blocks[cacheResult.index].data;
+            
             console.log(`Cache HIT: Address ${parseInt(this.ram,2)}`);
             return;
         }
@@ -51,7 +42,7 @@ class MC {
 
 
         // Update cache
-        this.updateCache(parseInt(this.ram,2), this.rim,iscode);
+        this.cache.updateCache(parseInt(this.ram,2),iscode);
 
     
     }
@@ -64,21 +55,28 @@ class MC {
         this.data[address] = value;
 
         // Update cache if present
-        let cacheResult = this.checkCache(address);
-        if (cacheResult.hit && this.cache[cacheResult.index].iscode==false) {
-            this.cache[cacheResult.index].data = value;
+        let cacheResult = this.cache.checkCache(address,false);
+        if (cacheResult.hit) {
+            this.cache.blocks[cacheResult.index].data = value;
         } else {
-            this.updateCache(address, value,false);
-        }
-    }
-
-    updateCache(address, data, iscode) {
-        if (this.cache.length >= this.cacheSize) {
-            let randomIndex = Math.floor(Math.random() * this.cacheSize);
-            console.log(`Replacing cache entry at index ${randomIndex}`);
-            this.cache[randomIndex] = { address, data, iscode };
-        } else {
-            this.cache.push({ address, data, iscode });
+            if (this.cache.blocks.length >= this.cache.cacheSize) {
+                let randomIndex = Math.floor(Math.random() * this.cache.cacheSize);
+                
+                this.cache.blocks[randomIndex] =  { 
+                    address: address,
+                    priority: 0,
+                    data: value,
+                    type: "data",
+                }  ;
+                
+            } else {
+                this.cache.blocks.push({ 
+                    address: address,
+                    priority: 0,
+                    data: value,
+                    type: "data", });
+            }
+            //this.cache.updateCache(address,false);
         }
     }
     popval(){
