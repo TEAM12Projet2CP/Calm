@@ -1,6 +1,7 @@
 import { Lexer } from './Lexer.js';
 import {Errorcalm} from './Errorcalm.js'
 import {SemanticAnalysis} from './SemanticAnalysis.js'
+export let opValue;
 export const FuncInterface ={
 
     adrmap : (txt,size,dep)=>{
@@ -231,6 +232,7 @@ while (hexString.length < size) {
         else{
         for (let index = 0; index < input.length; index++) {
             if (input[index] instanceof Errorcalm) {
+            console.log("input : ", input[index])
                 errormsg.push({line: input[index].linenum, message:input[index].message})
                 err = true
             }
@@ -440,6 +442,8 @@ export class Assembler{
         this.input = lexicalList;
         console.log("\nLexicalList:\n",lexicalList)
         this.toAssemble = new SemanticAnalysis(this.input);
+        console.log("this input : "+ this.input)
+        console.log("this assemble : "+ this.toAssemble)
         let ret = FuncInterface.confirmationfunction(this.toAssemble.Semanticlist);
         if (!ret.status) {
             console.log("\nThere are errors in your code cannot assemble:\n");
@@ -709,157 +713,132 @@ export class Assembler{
                             
                     }
                 case 'INST1':
-                    if (['NEG', 'NOT', 'SHL', 'SHR', 'READ', 'WRITE', 'PUSH', 'POP', 'ROR', 'ROL'].includes(element.value)) {
-                        var reg ;
-                        var size  ;
-                        var oppcode;
-                        //console.log(element);
-                        switch(element.value){
-                            case 'NEG':
-                                oppcode = '0100';
-                                break;
-                            case 'NOT':
-                                oppcode = '0101';
-                                break;
-                            case 'SHL':
-                                oppcode = '0110';
-                                break;
-                            case 'SHR':
-                                oppcode = '0111';
-                                break;
-                            case 'READ':
-                                oppcode = '1000';
-                                break;
-                            case 'WRITE':
-                                oppcode = '1001';
-                                break;
-                            case 'PUSH':
-                                oppcode = '1010';
-                                break;
-                            case 'POP':
-                                oppcode = '1011';
-                                break;
-                            case 'ROR':
-                                oppcode = '1100';
-                                break;
-                            case 'ROL':
-                                oppcode = '1101';
-                                break;
-                            default:
-                                break;
-                        }
-
-                        if (element.adrmode === 0 && input[1].type === 'REGISTER') {
-                            switch(input[1].value){
-                                case 'R1':
-                                    reg = '000';
-                                    size = '1';
-                                    break;
-                                case 'R2':
-                                    reg = '001';
-                                    size = '1';
-                                    break;
-                                case 'R3':
-                                    reg = '010';
-                                    size = '1';
-                                    break;
-                                case 'R4':
-                                    reg = '011';
-                                    size = '1';
-                                    break;
-                                case 'ACC':
-                                    reg = '100';
-                                    size = '1';
-                                    break;
-                                case 'BR':
-                                    reg = '101';
-                                    size = '1';
-                                    break;
-                                case 'IDR':
-                                    reg = '110';
-                                    size = '1';
-                                    break;
-                                case 'SR':
-                                    reg = '111';
-                                    size = '1';
-                                    break;
-                                case 'R1R':
-                                    reg = '000';
-                                    size = '0';
-                                    break;
-                                case 'R2R':
-                                    reg = '001';
-                                    size = '0';
-                                    break;
-                                case 'R3R':
-                                    reg = '010';
-                                    size = '0';
-                                    break;
-                                case 'ACCR':
-                                    reg = '011';
-                                    size = '0';
-                                    break;
-                                case 'R1L':
-                                    reg = '100';
-                                    size = '0';
-                                    break;
-                                case 'R2L':
-                                    reg = '101';
-                                    size = '0';
-                                    break;
-                                case 'R3L':
-                                    reg = '110';
-                                    size = '0';
-                                    break;
-                                case 'ACCL':
-                                    reg = '111';
-                                    size = '0';
-                                    break;
-                                
-                                default:
-                                    break;
-                            }
-                            
-                            let instcode=oppcode+reg+size;
-                            return FuncInterface.binaryToHexoneByte(instcode) ;
-                        }
-
-                    }else{
-                    var oppcode = "";
-                    var adr= FuncInterface.decimalToHex(input[1].value,4);
+                if (['NEG', 'NOT', 'SHL', 'SHR', 'WRITE', 'PUSH', 'POP', 'ROR', 'ROL'].includes(element.value)) {
+                    var reg;
+                    var size;
+                    var oppcode;
+            
                     switch(element.value){
-                        case 'CALL':
-                            oppcode = '33';
+                        case 'NEG':
+                            oppcode = '0100';
                             break;
-                        case 'BE':
-                            oppcode = '25';
+                        case 'NOT':
+                            oppcode = '0101';
                             break;
-                        case 'BNE':
-                            oppcode = '27';
+                        case 'SHL':
+                            oppcode = '0110';
                             break;
-                        case 'BS':
-                            oppcode = '29';
+                        case 'SHR':
+                            oppcode = '0111';
                             break;
-                        case 'BI':
-                            oppcode = '2B';
+                        case 'WRITE':
+                            oppcode = '1001';
                             break;
-                        case 'BIE':
-                            oppcode = '2D';
+                        case 'PUSH':
+                            oppcode = '1010';
                             break;
-                        case 'BSE':
-                            oppcode = '2F';
+                        case 'POP':
+                            oppcode = '1011';
                             break;
-                        case 'BRI':
-                            oppcode = '31';
+                        case 'ROR':
+                            oppcode = '1100';
                             break;
-
+                        case 'ROL':
+                            oppcode = '1101';
+                            break;
                         default:
                             break;
                     }
-                    let instcode=oppcode+adr;
+            
+                    if (element.adrmode === 0 && input[1].type === 'REGISTER') {
+                        switch(input[1].value){
+                            case 'R1': reg = '000'; size = '1'; break;
+                            case 'R2': reg = '001'; size = '1'; break;
+                            case 'R3': reg = '010'; size = '1'; break;
+                            case 'R4': reg = '011'; size = '1'; break;
+                            case 'ACC': reg = '100'; size = '1'; break;
+                            case 'BR': reg = '101'; size = '1'; break;
+                            case 'IDR': reg = '110'; size = '1'; break;
+                            case 'SR': reg = '111'; size = '1'; break;
+                            case 'R1R': reg = '000'; size = '0'; break;
+                            case 'R2R': reg = '001'; size = '0'; break;
+                            case 'R3R': reg = '010'; size = '0'; break;
+                            case 'ACCR': reg = '011'; size = '0'; break;
+                            case 'R1L': reg = '100'; size = '0'; break;
+                            case 'R2L': reg = '101'; size = '0'; break;
+                            case 'R3L': reg = '110'; size = '0'; break;
+                            case 'ACCL': reg = '111'; size = '0'; break;
+                            default:
+                                break;
+                        }
+                        let instcode = oppcode + reg + size;
+                        return FuncInterface.binaryToHexoneByte(instcode);
+                    }
+                } else {
+                    var oppcode = "";
+                    var regmod;
+                    var op;
+                    var dep;
+            
+                    if (element.value === 'READ') {
+                        regmod = FuncInterface.adrmap(input[1].adrmode, size, typeof input[1].depl == 'undefined' ? 0 : input[1].depl > 255 ? '1' : '0');
+                        console.log("reg: " ,regmod)
+                        switch (regmod) {
+                            case '000':
+                                let long = size == 0 ? 8 : 16;
+                                op = FuncInterface.decimalTobinByte(input[1].value, long);
+                                break;
+                            case '001':
+                            case '010':
+                                op = FuncInterface.decimalTobinByte(input[1].value, 16);
+                                break;
+                            case '110':
+                                dep = FuncInterface.decimalTobinByte(input[1].depl, input[1].depl > 255 ? 16 : 8);
+                                op = FuncInterface.decimalTobinByte(input[1].value, 16);
+                                break;
+                            case '111':
+                                dep = FuncInterface.decimalTobinByte(input[1].depl, input[1].depl > 255 ? 16 : 8);
+                                op = FuncInterface.decimalTobinByte(input[1].value, 16);
+                                console.log("dep here", FuncInterface.binaryToHex(dep, 4));
+                                break;
+                            case '011':
+                            case '100':
+                            case '101':
+                                op = FuncInterface.decimalTobinByte(input[1].value, 16);
+                                break;
+                            default:
+                                op = 'error';
+                                dep = 'error';
+                                break;
+                        }
+                        oppcode = '8';
+                    } else {
+                        switch(element.value){
+                            case 'CALL': oppcode = '33'; break;
+                            case 'BE': oppcode = '25'; break;
+                            case 'BNE': oppcode = '27'; break;
+                            case 'BS': oppcode = '29'; break;
+                            case 'BI': oppcode = '2B'; break;
+                            case 'BIE': oppcode = '2D'; break;
+                            case 'BSE': oppcode = '2F'; break;
+                            case 'BRI': oppcode = '31'; break;
+                            default: return "error";
+                        }
+                    }
+                    let instcode = oppcode + FuncInterface.binaryToHex(op, 4) + (dep ? FuncInterface.binaryToHex(dep, 4) : "");
+                    console.log("op (binary): ", op);
+
+                    // Convert 'op' from binary to decimal
+                    const opDecimal = parseInt(op, 2);
+                    console.log("op (decimal): ", opDecimal);
+                    
+                    // Store the decimal value in the exported variable
+                    opValue = opDecimal;
+
+                    console.log("dep : " ,dep)
                     return instcode;
-                   
                 }
+            
 
             }
             
@@ -871,7 +850,7 @@ export class Assembler{
             var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
             console.log("\nSemantic list: \n",toassmb)
             if ( Errorcalm.SemanticError.length ===0 ) {
-
+                console.log("length : ", toassmb[0])
                 for (let index = 0; index < toassmb.length; index++) {
          
                     assembledcode.push(Assembler.assemble(toassmb[index])) 
