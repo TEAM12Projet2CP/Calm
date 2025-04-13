@@ -506,6 +506,9 @@ export class Assembler{
                             opcode = `0001100${size}`;
 
                         break;
+                        case 'WRITE':
+                                opcode = `0001001${size}`;
+                                break;
                         default:
                             opcode = 'error';
                             break;
@@ -713,68 +716,116 @@ export class Assembler{
                             
                     }
                 case 'INST1':
-                if (['NEG', 'NOT', 'SHL', 'SHR', 'WRITE', 'PUSH', 'POP', 'ROR', 'ROL'].includes(element.value)) {
-                    var reg;
-                    var size;
-                    var oppcode;
-            
-                    switch(element.value){
-                        case 'NEG':
-                            oppcode = '0100';
-                            break;
-                        case 'NOT':
-                            oppcode = '0101';
-                            break;
-                        case 'SHL':
-                            oppcode = '0110';
-                            break;
-                        case 'SHR':
-                            oppcode = '0111';
-                            break;
-                        case 'WRITE':
-                            oppcode = '1001';
-                            break;
-                        case 'PUSH':
-                            oppcode = '1010';
-                            break;
-                        case 'POP':
-                            oppcode = '1011';
-                            break;
-                        case 'ROR':
-                            oppcode = '1100';
-                            break;
-                        case 'ROL':
-                            oppcode = '1101';
-                            break;
-                        default:
-                            break;
-                    }
-            
-                    if (element.adrmode === 0 && input[1].type === 'REGISTER') {
-                        switch(input[1].value){
-                            case 'R1': reg = '000'; size = '1'; break;
-                            case 'R2': reg = '001'; size = '1'; break;
-                            case 'R3': reg = '010'; size = '1'; break;
-                            case 'R4': reg = '011'; size = '1'; break;
-                            case 'ACC': reg = '100'; size = '1'; break;
-                            case 'BR': reg = '101'; size = '1'; break;
-                            case 'IDR': reg = '110'; size = '1'; break;
-                            case 'SR': reg = '111'; size = '1'; break;
-                            case 'R1R': reg = '000'; size = '0'; break;
-                            case 'R2R': reg = '001'; size = '0'; break;
-                            case 'R3R': reg = '010'; size = '0'; break;
-                            case 'ACCR': reg = '011'; size = '0'; break;
-                            case 'R1L': reg = '100'; size = '0'; break;
-                            case 'R2L': reg = '101'; size = '0'; break;
-                            case 'R3L': reg = '110'; size = '0'; break;
-                            case 'ACCL': reg = '111'; size = '0'; break;
+                    if (['NEG', 'NOT', 'SHL', 'SHR', 'PUSH', 'POP', 'ROR', 'ROL'].includes(element.value)) {
+                        var reg ;
+                        var size  ;
+                        var oppcode;
+                        //console.log(element);
+                        switch(element.value){
+                            case 'NEG':
+                                oppcode = '0100';
+                                break;
+                            case 'NOT':
+                                oppcode = '0101';
+                                break;
+                            case 'SHL':
+                                oppcode = '0110';
+                                break;
+                            case 'SHR':
+                                oppcode = '0111';
+                                break;
+                            case 'PUSH':
+                                oppcode = '1010';
+                                break;
+                            case 'POP':
+                                oppcode = '1011';
+                                break;
+                            case 'ROR':
+                                oppcode = '1100';
+                                break;
+                            case 'ROL':
+                                oppcode = '1101';
+                                break;
                             default:
                                 break;
                         }
-                        let instcode = oppcode + reg + size;
-                        return FuncInterface.binaryToHexoneByte(instcode);
-                    }
-                } else {
+
+                        if (element.adrmode === 0 && input[1].type === 'REGISTER') {
+                            switch(input[1].value){
+                                case 'R1':
+                                    reg = '000';
+                                    size = '1';
+                                    break;
+                                case 'R2':
+                                    reg = '001';
+                                    size = '1';
+                                    break;
+                                case 'R3':
+                                    reg = '010';
+                                    size = '1';
+                                    break;
+                                case 'R4':
+                                    reg = '011';
+                                    size = '1';
+                                    break;
+                                case 'ACC':
+                                    reg = '100';
+                                    size = '1';
+                                    break;
+                                case 'BR':
+                                    reg = '101';
+                                    size = '1';
+                                    break;
+                                case 'IDR':
+                                    reg = '110';
+                                    size = '1';
+                                    break;
+                                case 'SR':
+                                    reg = '111';
+                                    size = '1';
+                                    break;
+                                case 'R1R':
+                                    reg = '000';
+                                    size = '0';
+                                    break;
+                                case 'R2R':
+                                    reg = '001';
+                                    size = '0';
+                                    break;
+                                case 'R3R':
+                                    reg = '010';
+                                    size = '0';
+                                    break;
+                                case 'ACCR':
+                                    reg = '011';
+                                    size = '0';
+                                    break;
+                                case 'R1L':
+                                    reg = '100';
+                                    size = '0';
+                                    break;
+                                case 'R2L':
+                                    reg = '101';
+                                    size = '0';
+                                    break;
+                                case 'R3L':
+                                    reg = '110';
+                                    size = '0';
+                                    break;
+                                case 'ACCL':
+                                    reg = '111';
+                                    size = '0';
+                                    break;
+                                
+                                default:
+                                    break;
+                            }
+                            
+                            let instcode=oppcode+reg+size;
+                            return FuncInterface.binaryToHexoneByte(instcode) ;
+                        }
+
+                    }else{
                     var oppcode = "";
                     var regmod;
                     var op;

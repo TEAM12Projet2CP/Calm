@@ -105,16 +105,24 @@ const Ide = ({currentUser})=>{
 
 
     console.log(queue.getinstwithoutshift())
-    
+    // console.log("test"+queue.shift());
+   
     let instrobject={};
     while(instrobject.name!=="stop"){
+      
+
       sequenceur.getinstrbyte(animations,true,Contextarray);
+     
       instrobject={...sequenceur.decode(animations,Contextarray)};
+      
+      console.log("loop"+Contextarray);
       if(instrobject.name!=="stop"){
-        console.log(instrobject);
+       
         sequenceur.execute(instrobject,1,animations);
+       
       }
     }
+   
 
   }
 
