@@ -5,7 +5,7 @@ import UAParser from 'ua-parser-js';
 import "./style.css"
 
 ///// import components //////
-import { NavBar, HelpSection, SaveCodeButton } from "../../components"
+import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
 
 
 ////// import machine components //////
@@ -24,10 +24,10 @@ import "../../codemirror/theme/material.css";
 import "../../codemirror/mode/myLang/assembly.js"
 
 /////import assembler modules//////////
-import { Assembler } from "../../assembler/Assembler";
-import {helpDescription} from "../../Constants/HelpDescription";
-import {HexaToCode} from "../../HexaToCode/HexaToCode"
-import { Errorcalm } from "../../assembler/Errorcalm";
+import { Assembler } from "../../assembler/Assembler.js";
+import {helpDescription} from "../../Constants/HelpDescription.js";
+import {HexaToCode} from "../../HexaToCode/HexaToCode.js"
+import { Errorcalm } from "../../assembler/Errorcalm.js";
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -338,20 +338,25 @@ const Ide = ({currentUser})=>{
                   if(iscode){
                     console.log(handleStoreCode)
                     inputouter=Assembler.assemblecode(handleStoreCode())
+                    
                   }else{
                     inputouter=handleStoreCode();
                   }
                   let input=convertStrings(inputouter);
                   input.push("ff");
+                  console.log("this is :"+ input)
                   
                   try {
-    
+                    console.log("hachmi");
                     if (Errorcalm.errorr === 0) {
+                      console.log("drsas")
                       traitement(input);
                       
-                      
+                     
                     }else{
+                      console.log("SIks")
                       setresult(Errorcalm.printError());
+                      
                       seterr(true);
                     }
 
