@@ -1,4 +1,4 @@
-import { memory,IP } from "../pages/Ide";
+import { memory,IP } from "../pages/Ide/index.jsx";
 import { TwosComplement } from "./ALU.js";
 import { gsap } from "gsap";
 

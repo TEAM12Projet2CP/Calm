@@ -6,7 +6,7 @@ import "./style.css"
 
 
 ///// import components //////
-import { NavBar, HelpSection, SaveCodeButton } from "../../components"
+import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
 
 
 ////// import machine components //////
@@ -361,20 +361,25 @@ const Ide = ({currentUser})=>{
 
                   if(iscode){
                     inputouter=Assembler.assemblecode(handleStoreCode())
+                    
                   }else{
                     inputouter=handleStoreCode();
                   }
                   let input=convertStrings(inputouter);
                   input.push("ff");
+                  console.log("this is :"+ input)
                   
                   try {
-    
+                    console.log("hachmi");
                     if (Errorcalm.errorr === 0) {
+                      console.log("drsas")
                       traitement(input);
                       
-                      
+                     
                     }else{
+                      console.log("SIks")
                       setresult(Errorcalm.printError());
+                      
                       seterr(true);
                     }
 

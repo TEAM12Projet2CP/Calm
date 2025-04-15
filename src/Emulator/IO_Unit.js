@@ -1,3 +1,5 @@
+import { generalPurposeRegister } from "./Register.js";
+
 class IOUnit {
   constructor() {
     this.buffer = new Array(50).fill(0); // Each slot holds a character or ASCII code

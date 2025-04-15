@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import { Register } from "./Register.js";
 import IOUnit from "./IO_Unit.js";  // 🔥 Import IOUnit
 
