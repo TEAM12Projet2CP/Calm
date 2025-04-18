@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Register } from "./Register.js";
 import { queue, Registers, addressingModes } from "../pages/Ide/index.jsx";
 import { hash, hashmap } from "./Opcodes.js";

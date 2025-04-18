@@ -10,6 +10,10 @@ import { Lexer } from './Lexer.js';
 import {Errorcalm} from './Errorcalm.js'
 import {SemanticAnalysis} from './SemanticAnalysis.js'
 import { element } from 'prop-types';
+import { preprocessing } from './preprocessing.js';
+import MC from '../Emulator/MC.js';
+import { memory } from '../pages/Ide/index.jsx';
+
 export const FuncInterface ={
 
     adrmap : (txt,size,dep)=>{
@@ -213,13 +217,13 @@ while (hexString.length < size) {
         labelobj = Assembler.Labellist.find(element => { 
             return element.name === labelname;
         });
+        console.log(labelname)
         if (labelobj == false)
         {
             //error
             Errorcalm.set_SemanticError(new Errorcalm("Label not found",null,linenumber));
             return {type: 'ERROR', value: null};
         }else{
-            //return the address
             return {type: 'NUMBER', value: labelobj.address} 
     }},
     
@@ -420,8 +424,6 @@ while (hexString.length < size) {
 
 }
     }
-
-
 export class Assembler{
 
     static MAXNUM = 65535;
@@ -436,13 +438,14 @@ export class Assembler{
                       
 
     constructor(input){
+        
         let lexicalList = input.map((t,index)=> {return new Lexer(t,index).LexicalList} )
         if (Errorcalm.LexicalError.length > 0) {
             Errorcalm.printError();
         }else{
-        this.input = lexicalList;
+        this.input = lexicalList
         this.toAssemble = new SemanticAnalysis(this.input);
-        let ret = FuncInterface.confirmationfunction(this.toAssemble.Semanticlist);
+        // let ret= functinterface.cofirmationfunction(this.input);
        }
     }
 
@@ -849,26 +852,24 @@ export class Assembler{
                 }
             }
         }   
-        static assemblecode(input){
+            static assemblecode(input){
+                
+            let input2 = preprocessing.preprocessor(input)
+            MC.data = Array(100).fill().map((_, i) => FuncInterface.binaryToHexoneByte(input2.data[i] ?? "00000000"))
+            console.log("MC.data:",MC.data)
+            Assembler.Labellist.push(...input2.varList)
             SemanticAnalysis.labeltype = true;
-            console.log("input: ",input)
-            let output = new Assembler(input) ;
-            console.log("output: ",output)
+            let output = new Assembler(input2.code);
             var assembledcode = [];
             var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
-            console.log("to assumb status: ",toassmb)
             var ipTrack = 0;
             var i=0;
             var lines=(Assembler.Labellist.length === 0 )?toassmb.length:Assembler.Labellist[i].linedeclared;
-            console.log("lines: ",lines)
             // deux pass first pass stays as it is with adding a delimater at each label and then re apply the semantic analysis for the labels and then reassemble the code
               if ( Errorcalm.SemanticError.length === 0 ) { 
                 for (let index = 0; index < toassmb.length; index++) {
-                    console.log("index: ",index)
-                    console.log("lines: ",lines)
                     if (index >= lines) {
-                        Assembler.Labellist[i].address = ipTrack
-                        console.log("check labellist: ",Assembler.Labellist);
+                        Assembler.Labellist[i].address = ipTrack;
                         i++;
                         if (i < Assembler.Labellist.length) {
                             lines=Assembler.Labellist[i].linedeclared-Assembler.Labellist[i-1].linedeclared-1+index;
@@ -876,18 +877,15 @@ export class Assembler{
                             lines=toassmb.length;
                         }
                     }
-                    console.log("check labellist: ",Assembler.Labellist);
                     ipTrack = ipTrack+(Assembler.assemble(toassmb[index]).length/2)       
                 }
                 SemanticAnalysis.labeltype = false;
-                output = new Assembler(input) 
+                output = new Assembler(input2.code) 
                 toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
-                console.log("to assumb status: ",toassmb)
                 for (let index = 0; index < toassmb.length; index++) {
                     assembledcode.push(Assembler.assemble(toassmb[index]))
                 }
-                console.log(assembledcode);
-               return assembledcode;
+               return {code: assembledcode, memory: memory.data};
                 // here put the return in case of success
                 
             }else{

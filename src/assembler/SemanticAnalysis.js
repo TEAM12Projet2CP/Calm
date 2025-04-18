@@ -9,7 +9,6 @@ export class SemanticAnalysis {
     Semanticlist = []
     static labeltype = true;
     constructor(input) { 
-
         let lexicalList = input;
         for(let i = 0; i < lexicalList.length; i++){
             let firstword = lexicalList[i][0]
@@ -18,7 +17,7 @@ export class SemanticAnalysis {
                 if (lexicalList[i].length == 3) {
                     if (lexicalList[i][2].type == 'NUMBER') {
                         if( lexicalList[i][2].value < Assembler.MAXNUM){
-                            if(lexicalList[i][1].type == 'TEXT' ||lexicalList[i][1].type == 'TEXTT'){
+                            if(lexicalList[i][1].type == 'TEXT' || lexicalList[i][1].type == 'TEXTT'){
                                 if(Lexer.isValidString(lexicalList[i][1].value)){
                                 //  filters for text standards and validity of the text
                                 // check if label already existing 
@@ -33,12 +32,12 @@ export class SemanticAnalysis {
                                     if (!found) {  
                                         if (lexicalList[i][1].type === 'TEXTT') {
                                             if (SemanticAnalysis.labeltype){
-                                            Assembler.Labellist.push({ name: labelname, address: lexicalList[i][2].value, linedeclared:i, label: true })
+                                            Assembler.Labellist.push({ name: labelname, address: parseInt(lexicalList[i][2].value), linedeclared:i, label: true })
                                         }
                                     }
                                         else {
                                             if (!SemanticAnalysis.labeltype){
-                                            Assembler.Labellist.push({ name: labelname, address: lexicalList[i][2].value, linedeclared:i, label: false })
+                                            Assembler.Labellist.push({ name: labelname, address: parseInt(lexicalList[i][2].value), linedeclared:i, label: false })
                                         }
                                     }
                                     }else{
@@ -64,6 +63,7 @@ export class SemanticAnalysis {
                 }
             }
         }
+        if (!SemanticAnalysis.labeltype){
         for(let i = 0; i < lexicalList.length; i++){
             // here operation with each line of code
             // we must check if it is a label or an instruction
@@ -241,7 +241,7 @@ export class SemanticAnalysis {
           
         }
          
-    }
+    }}
 
 
 

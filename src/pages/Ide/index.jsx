@@ -37,7 +37,7 @@ let animations=[];
 let Contextarray=[];
 
 ////////////////machine declarations////////////////////////////////
-let memory=new MC();
+let memory = new MC();
 let sequenceur=new Sequenceur();
 let queue = new Queue();
 let addressingModes=new AddressingModes();
@@ -75,7 +75,7 @@ const Ide = ({currentUser})=>{
   let [simul,setsimul]=useState(false)
   let [memo,setmemo]=useState(false);
   let [reg,setreg]=useState(false);
-  let [stk,setstk]=useState(false);//for showing stack
+  let [stk,setstk]=useState(false); //for showing stack
   let [isHexa,setIsHexa]=useState(false);
   let [iscode,setIsCode]=useState(true);
   let [iserr,seterr]=useState(false);
@@ -91,7 +91,6 @@ const Ide = ({currentUser})=>{
     }
 
     memory.setcode(codeArray)
-    console.log("long waited memory code is here:\n\n"+memory.code)
     queue.instructionset([]);
 
     let numtmp=0;
@@ -108,6 +107,7 @@ const Ide = ({currentUser})=>{
     console.log(queue.getinstwithoutshift())
     
     let instrobject={};
+    memory.data = MC.data
     while(instrobject.name!=="stop"){
       sequenceur.getinstrbyte(animations,true,Contextarray);
       instrobject={...sequenceur.decode(animations,Contextarray)};
@@ -122,6 +122,7 @@ const Ide = ({currentUser})=>{
   let [checktest,setChecktest]=useState(false);
 
   /////////////////////returning the component//////////////////
+
   let tablec=[];
   memory.getData().forEach( (element,index) => {
     tablec.push(
@@ -170,7 +171,7 @@ const Ide = ({currentUser})=>{
   const handleStoreCode = () => {
     const editor = codeMirrorRef.current.editor;
     const code = editor.getValue(); // Get the current content of the editor
-
+ 
     // Split the code into lines
     const lines = code.split('\n');
 
@@ -333,28 +334,24 @@ const Ide = ({currentUser})=>{
                 className='ide-exec-button' 
                 onClick={()=>{
                   setdone(true);
-                  let inputouter=[];
+                  let inputouter;
 
                   if(iscode){
                     console.log(handleStoreCode)
                     inputouter=Assembler.assemblecode(handleStoreCode())
-                    
                   }else{
                     inputouter=handleStoreCode();
                   }
-                  let input=convertStrings(inputouter);
+                  let input=convertStrings(inputouter.code);
+                  // not checked yet
+                  memory.data = inputouter.memory;
                   input.push("ff");
-                  console.log("this is :"+ input)
-                  
                   try {
-                    console.log("hachmi");
                     if (Errorcalm.errorr === 0) {
-                      console.log("drsas")
                       traitement(input);
                       
                      
                     }else{
-                      console.log("SIks")
                       setresult(Errorcalm.printError());
                       
                       seterr(true);
@@ -392,10 +389,8 @@ const Ide = ({currentUser})=>{
                     console.log(arr);
                     console.log("old arr=",arr);
                     localStorage.setItem('arr', JSON.stringify(arr));
-                    console.log("current local storage : ",localStorage.getItem('arr'))
                     window.location.reload();
                   }}>re-write</button>
-
                   {!iserr &&< button 
                     className='ide-exec-button' 
                     onClick={()=>{

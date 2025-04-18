@@ -1,3 +1,6 @@
+/* eslint-disable no-useless-concat */
+/* eslint-disable no-unused-vars */
+/* eslint-disable eqeqeq */
 import { Assembler,FuncInterface } from "./Assembler.js";
 import { SemanticAnalysis } from "./SemanticAnalysis.js";
 import { Lexer } from "./Lexer.js";

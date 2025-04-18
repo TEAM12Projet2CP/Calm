@@ -16,7 +16,8 @@ let [IPval,setipval]=useState(0);
 let [AluVal,setAluVal]=useState("");
 let [MCVal,setMCVal]=useState("");
 
-let MC=props.mem.getData();
+let MC= props.mem.getData();
+console.log("yokosooooo hereeee's",MC)
 let tablec=[];
 MC.forEach((element,index) => {
     tablec.push( <tr>
@@ -66,7 +67,7 @@ MC.forEach((element,index) => {
                 //decalage par 1
                 gsap.fromTo(".queuearrow",{top:"60%",left:"83%",opacity:"0"},{top:"60%",left:"73%",opacity:"1",duration:0.3});
                 gsap.to(".queuearrow",{opacity:"0",duration:"0.1",delay:"0.3"});
-                if(animqueuelen()==6){
+                if(animqueuelen() == 6){
                     gsap.to(".queue6",{opacity:"0",duration:0.4})
                     gsap.to(".queue5",{opacity:"1",duration:0.4})
                     gsap.to(".queue4",{opacity:"1",duration:0.4})

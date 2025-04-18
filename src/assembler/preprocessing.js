@@ -1,12 +1,14 @@
-const ErrorCalm = require("./assembler/Errorcalm.js")
-
-class preprocessing{
+/* eslint-disable no-loop-func */
+import { FuncInterface } from './Assembler.js'
+import {Errorcalm} from './Errorcalm.js'
+export class preprocessing{
     //this should include all reserved words, or if there is a global object serving the same purpose
     static reservedWords = new Set(['R1', 'R2', 'R3', 'R4', 'ACC', 'BR', 'IDR', 'SR', 'R1R', 'R2R', 'R3R', 'ACCR', 'R1L', 'R2L', 'R3L', 'ACCL'
                                         , 'PUSHA', 'POPA', 'RET', 'NEG', 'NOT', 'SHL', 'SHR', 'READ', 'WRITE', 'PUSH', 'POP', 'ROR', 'ROL', 'CALL', 'BE', 'BNE', 'BS', 'BI', 'BIE', 'BSE', 'BRI'
                                         , 'NAND', 'CMP', 'MOV', 'ADD', 'SUB', 'MUL', 'DIV', 'AND', 'OR', 'XOR', 'NOR', 'MACRO', 'ENDM', 'START', 'END','SDATA', 'ENDS'])
     static macroKeyWords = ['MACRO', 'ENDM']
     static DataKeyword = ['SDATA', 'ENDS']
+
     constructor(){
         this.MACROS = []
         this.macroKeyWord = new Set()
@@ -31,7 +33,7 @@ class preprocessing{
                     }
                     if(i === n){
                         //error segment not closed
-                        this.errors.push(new ErrorCalm("Data segment not closed", "PREPROCESSING", i))
+                        this.errors.push(new Errorcalm("Data segment not closed", "PREPROCESSING", i))
                         return
                     }
                     this.dataSegment.push(code[i++])
@@ -59,28 +61,30 @@ class preprocessing{
             //                               for example [X, db, 15]
             if(line.length < 3){
                 // throw error, wrong variable declaration
-                this.errors.push(new ErrorCalm("Wrong variable declaration", "PREPROCESSING", i))
+                this.errors.push(new Errorcalm("Wrong variable declaration", "PREPROCESSING", i))
                 return
             }
             if(this.varList.includes(line[0])){
                 // throw error, variable already declared
-                this.errors.push(new ErrorCalm("Variable already declared", "PREPROCESSING", i))
+                this.errors.push(new Errorcalm("Variable already declared", "PREPROCESSING", i))
                 return
             }
             if(!isNaN(Number(line[0][0]))){
                 // throw error, variable name cannot start with a number
-                this.errors.push(new ErrorCalm("Variable name cannot start with a number", "PREPROCESSING", i))
+                this.errors.push(new Errorcalm("Variable name cannot start with a number", "PREPROCESSING", i))
                 return
             }
 
             let varHolder = {}
             // assign the name of the var to the corresponding object
-            varHolder.label = line[0]
+            varHolder.label = false
+            varHolder.linedeclared = i
+            varHolder.name = line[0]
             varHolder.address ??= curAddress
             this.varList.push(varHolder)
             if(!(['DB', 'DW']).includes(line[1])){
                 // throw error, wrong variable length declaration
-                this.errors.push(new ErrorCalm("Wrong variable type", "PREPROCESSING", i))
+                this.errors.push(new Errorcalm("Wrong variable type", "PREPROCESSING", i))
                 return
             }
             let length = line[1] === 'DB' ? 0 : 1 // data on one byte or on two bytes if line[0] === 'DW'
@@ -103,23 +107,29 @@ class preprocessing{
                     if(length === 1){
                         if(val <= Math.abs(Math.pow(2,16))){
                             // use 2s complement instead of this expression
-                             val = val.toString(2).padStart(16, '0')
+                            val = FuncInterface.decimalTobinByte(val,1)
                             
                             return [String(val).substring(0,Math.floor(val.length / 2)), String(val).substring(Math.floor(val.length / 2))]
                         } else {
-                            this.errors.push(new ErrorCalm("value out of bounds", "PREPROCESSING", index))
-                            return
+                            this.errors.push(new Errorcalm("value out of bounds", "PREPROCESSING", index))
+                            return null
                         }
                     } else {
                         if(val <= Math.abs(Math.pow(2,8))){
                             // use 2s complement instead of this expression
-                            return val.toString(2).padStart(8, '0')
+                            return FuncInterface.decimalTobinByte(val,0)
                         } else {
-                            this.errors.push(new ErrorCalm("value out of bounds", "PREPROCESSING", index))
-                            return
+                            this.errors.push(new Errorcalm("value out of bounds", "PREPROCESSING", index))
+                            return null
                         }  
                     }
                 } else{
+                    if (val[0] !== '"' || val[val.length - 1] !== '"') {
+                        // throw error, string not closed
+                        this.errors.push(new Errorcalm("String must be unclosed within in a pair of \"\"", "PREPROCESSING", index))
+                        return null;
+                        
+                    }
                     // we have a string I guess, we convert to ascii and we pad when we write binary string in the memory
                     if(length === 0){
                        return val.split('').filter(char => char !== '"').map(char => char.charCodeAt(0).toString(2).padStart(8,'0'))
@@ -135,31 +145,6 @@ class preprocessing{
         console.log(this.varList)
         
     }
-    
-    // remove static from all methods below, cuz we are acting on objects
-    removeComments(code){  //removes comments from all code as well as empty lines
-        console.log(typeof(code))
-        code = code.toUpperCase().split('\n')
-        
-        const output = []
-        const n = code.length
-
-        for(let i = 0; i < n; i++){
-            let temp = code[i].split('//')
-            if(temp[0] === '' || temp[0].trim(' ','') === ''){
-                continue
-            }
-            
-            if(temp.length === 1){
-
-                output.push(temp[0].trim())
-                continue
-            }
-
-            output.push(temp[0].trim())
-        }
-        return output
-    }
     // we suppose the code is given to use as 
     extractMacro(input /*it should be the whole code  */){
         // input is the whole code which we divided into an array of strings
@@ -171,38 +156,38 @@ class preprocessing{
             let line = input[curLine].match(/([a-zA-Z_][a-zA-Z0-9_]*|[,:])/g)
             if(line[0] === 'ENDM'){
                 // throw error, macro not declared
-                this.errors.push(new ErrorCalm("Macro not declared", "PREPROCESSING", curLine))
+                this.errors.push(new Errorcalm("Macro not declared", "PREPROCESSING", curLine))
                 return
             }
             if(line[0] === 'MACRO'){
                 let macroClosed = false
                 if(line.length < 2){
                     // throw error, no macro name provided
-                    this.errors.push(new ErrorCalm("No macro name provided", "PREPROCESSING", curLine))
+                    this.errors.push(new Errorcalm("No macro name provided", "PREPROCESSING", curLine))
                     return
                 }
 
                 if(preprocessing.reservedWords.has(line[1])){
                     // a macro instruction cannot be a reserved word
-                    this.errors.push(new ErrorCalm("Macro instruction cannot be a reserved word (register or instruction)", "PREPROCESSING", curLine))
+                    this.errors.push(new Errorcalm("Macro instruction cannot be a reserved word (register or instruction)", "PREPROCESSING", curLine))
                     return
                 }
 
                 if([',',':','/','\\','.'].includes(line[1])){
                     // macro name cannot be a special character
-                    this.errors.push(new ErrorCalm("Macro name cannot be a special character", "PREPROCESSING", curLine))
+                    this.errors.push(new Errorcalm("Macro name cannot be a special character", "PREPROCESSING", curLine))
                     return
                 }
 
                 if(!isNaN(Number(line[1][0]))){
                     // macro name cannot start with a number or be a number
-                    this.errors.push(new ErrorCalm("Macro name cannot start with a number or be a number", "PREPROCESSING", curLine))
+                    this.errors.push(new Errorcalm("Macro name cannot start with a number or be a number", "PREPROCESSING", curLine))
                     return
                 }
 
                 if(this.macroKeyWord.has(line[1])){
                     // macro already declared
-                    this.errors.push(new ErrorCalm("Macro already declared", "PREPROCESSING", curLine))
+                    this.errors.push(new Errorcalm("Macro already declared", "PREPROCESSING", curLine))
                     return
                 }
 
@@ -215,13 +200,13 @@ class preprocessing{
                     if(!input[curLine]){
                         // console.log("not closed, and main function not declared") 
                         // end of code without any end of macro or beginning of code
-                        this.errors.push(new ErrorCalm("Macro not closed", "PREPROCESSING", curLine))
+                        this.errors.push(new Errorcalm("Macro not closed", "PREPROCESSING", curLine))
                         return
                     }
 
                     if(input[curLine] === 'START'){
                         // code starts and macro not closed
-                        this.errors.push(new ErrorCalm("Macro not closed", "PREPROCESSING", curLine))
+                        this.errors.push(new Errorcalm("Macro not closed", "PREPROCESSING", curLine))
                         return
                     }
 
@@ -235,13 +220,13 @@ class preprocessing{
                     line = input[curLine++].match(/([a-zA-Z_][a-zA-Z0-9_]*:?|\d+|,)/g)
                     if(line[0] === 'MACRO'){
                         // throw error, no macros allowed inside a macro
-                        this.errors.push(new ErrorCalm("No macros allowed inside a macro", "PREPROCESSING", curLine))
+                        this.errors.push(new Errorcalm("No macros allowed inside a macro", "PREPROCESSING", curLine))
                         return
                     }
 
                     if(line[0][line[0].length - 1] === ':'){
                         // throw error, no labels allowed inside a macro
-                        this.errors.push(new ErrorCalm("No labels allowed inside a macro", "PREPROCESSING", curLine))
+                        this.errors.push(new Errorcalm("No labels allowed inside a macro", "PREPROCESSING", curLine))
                         return
                     }
                     macroHolder.body.push(line)
@@ -275,7 +260,7 @@ class preprocessing{
         while(!endOfCode){
             if(!input[curLine]){
                 // throw error and quit
-                this.errors.push(new ErrorCalm("no END keyword detected", "PREPROCESSING", curLine))
+                this.errors.push(new Errorcalm("no END keyword detected", "PREPROCESSING", curLine))
                 //console.log("does'nt work")
                 return {error: "this thing doesn't work"}
             }
@@ -291,6 +276,8 @@ class preprocessing{
                     // replaceMacro(line,output) // pushes directly in the output code
                     output.push( ...this.expandMacro(line,line[1],true))
                     //output.push('this is a macro')
+                } else {
+                    output.push(input[curLine - 1])
                 }
             } else if(this.macroKeyWord.has(line[0])){
                 // replace again
@@ -318,7 +305,7 @@ class preprocessing{
         }
         if(newLine.length !== expandedMacroTemplate.instruction.length){
             //throw error, different number of args
-            this.errors.push(new ErrorCalm(`Different number of arguments for macro ${newLine[0][newLine.length - 1] === ':' ? newLine[1]: newLine[0]}`, "PREPROCESSING", newLine))
+            this.errors.push(new Errorcalm(`Different number of arguments for macro ${newLine[0][newLine.length - 1] === ':' ? newLine[1]: newLine[0]}`, "PREPROCESSING", newLine))
             return ["error here"]
         }
             //there is no label, direct matching
@@ -332,57 +319,106 @@ class preprocessing{
     // no errors are handled here
     // no spaces allowed between labelName and :
     
-    detectLabels(code /* */){
-        let n = code.length
-        for(let i = 0; i < n; i++){
-            let line = code[i].match(/([a-zA-Z_][a-zA-Z0-9_]*:?|\d+|,)/g)
-            if(line[0][line[0].length - 1] === ":"){
-                if(line[0].length === 1){
-                    // throw error
-                    console.log("error, empty label")
-                    return
-                }
+    // detectLabels(code){
+    //     console.log(code)
+    //     let n = code.length
+    //     for(let i = 0; i < n; i++){
+    //         let line = code[i].match(/([a-zA-Z_][a-zA-Z0-9_]*:?|\d+|,)/g)
+    //         if(line[0][line[0].length - 1] === ":"){
+    //             if(line[0].length === 1){
+    //                 // throw error
+    //                 console.log("error, empty label")
+    //                 return
+    //             }
 
-                if(preprocessing.reservedWords.has(line[0].slice(0,-1)) || this.macroKeyWord.has(line[0].slice(0,-1))){
-                    // reserved word cannot be a label
-                    this.errors.push(new ErrorCalm("Reserved word cannot be a label", "PREPROCESSING", i))
-                    console.log("reserved")
-                    return
-                }
-                //label does not start with a number
-                if(!isNaN(Number(line[0][0]))){
-                    // label cannot start with a number
-                    this.errors.push(new ErrorCalm("Label cannot start with a number", "PREPROCESSING", i))
-                    console.log("number")
-                    return
-                }
+    //             if(preprocessing.reservedWords.has(line[0].slice(0,-1)) || this.macroKeyWord.has(line[0].slice(0,-1))){
+    //                 // reserved word cannot be a label
+    //                 this.errors.push(new Errorcalm("Reserved word cannot be a label", "PREPROCESSING", i))
+    //                 console.log("reserved")
+    //                 return
+    //             }
+    //             //label does not start with a number
+    //             if(!isNaN(Number(line[0][0]))){
+    //                 // label cannot start with a number
+    //                 this.errors.push(new Errorcalm("Label cannot start with a number", "PREPROCESSING", i))
+    //                 console.log("number")
+    //                 return
+    //             }
 
-                this.labelSymbolList.push({label: line[0].slice(0,-1), line: i + 1})
-            }
+    //             this.labelSymbolList.push({label: line[0].slice(0,-1), line: i + 1})
+    //         }
+    //     }
+    //     console.log(this.labelSymbolList)
+    // }
+
+    // removeAndReplaceLabels(code){
+    //     // replace labels with their line numbers I guess
+    //     let n = code.length
+    //     let output = []
+    //     for(let i = 0; i < n; i++){
+    //         //check in each line if there is a use of the label, if definition, we remove it, if use, replace with line number
+    //         let line = code[i].match(/([a-zA-Z_][a-zA-Z0-9_]*:?|\d+|,)/g)
+    //         console.log(line)
+    //         if(line[0][line[0].length - 1] === ":"){
+
+    //             output.push(line.filter(word => word[word.length - 1] !== ':').join(' '))
+    //         }
+    //         else{
+    //             output.push(line.join(' '))
+    //         }
+    //     }
+    //     return output
+    // }
+    static preprocessor(code){
+        const preprocessor = new preprocessing();
+        let str = code
+        console.log("code 1 here:"+str)
+        preprocessor.getDataSegment(str)
+        //console.log("code 2 here:"+str)
+        if(preprocessor.errors.length > 0){
+            Errorcalm.printError(preprocessor.errors)
+            // force exit
+            return
         }
-        console.log(this.labelSymbolList)
-    }
+        preprocessor.allocateData()
 
-    removeAndReplaceLabels(code){
-        // replace labels with their line numbers I guess
-        let n = code.length
-        let output = []
-        for(let i = 0; i < n; i++){
-            //check in each line if there is a use of the label, if definition, we remove it, if use, replace with line number
-            let line = code[i].match(/([a-zA-Z_][a-zA-Z0-9_]*:?|\d+|,)/g)
-            console.log(line)
-            if(line[0][line[0].length - 1] === ":"){
-
-                output.push(line.filter(word => word[word.length - 1] !== ':').join(' '))
-            }
-            else{
-                output.push(line.join(' '))
-            }
+        if(preprocessor.errors.length > 0){
+            Errorcalm.printError(preprocessor.errors)
+            // force exit
+            return
         }
-        return output
+
+        preprocessor.extractMacro(str)
+
+        //console.log("code 2 here:"+str)
+        if(preprocessor.errors.length > 0){
+            Errorcalm.printError(preprocessor.errors)
+            // force exit
+            return
+        }
+
+            str = preprocessor.replaceMacro(str)
+
+            console.log("code 2 here:"+str)
+            if(preprocessor.errors.length > 0){
+                Errorcalm.printError(preprocessor.errors)
+                // force exit
+                return
+            }
+        // preprocessor.detectLabels(str)
+        
+        // console.log("code 2 here:"+str)
+        // if(preprocessor.errors.length > 0){
+        //     Errorcalm.printError(preprocessor.errors)
+        //     // force exit
+        //     return
+        // }
+        // str = preprocessor.removeAndReplaceLabels(str)
+
+        console.log("code 4 here:"+str)
+
+        return {code: str, labels: preprocessor.labelSymbolList, data: preprocessor.data, varList: preprocessor.varList}
+
     }
 
 }
-
-
-module.exports = { preprocessing }

@@ -2,37 +2,62 @@ import { generalPurposeRegister } from "./Register.js";
 
 class IOUnit {
     constructor() {
-        // Buffer: 4 registers, each holding 2 bytes (total 8 bytes)
-        this.buffer = new Array(4).fill(null).map(() => new generalPurposeRegister());
-
-        // I/O Controller: Manages data transfer and communication
-        this.ioController = {
-            busy: false,  // Indicates if an I/O operation is in progress
-            sequencerSignal: null,  // Signal from sequencer
-            ioInterfaceSignal: null // Signal from I/O interface
-        };
+      // Buffer with 50 slots, initially empty
+      this.buffer = new Array(50).fill(null).map(() => ({ value: null, filled: false }));
+  
+      this.ioController = {
+        status: "idle",
+        transferInProgress: false,
+      };
     }
-    writeToBuffer(registerIndex, value) {
-        if (registerIndex < 0 || registerIndex >= 4) {
-            throw new Error("Invalid register index");
-        }
-        this.buffer[registerIndex].setvalue(value);
-        this.ioController.busy = true;
+  
+    // Write data into the buffer
+    writeToBuffer(index, value) {
+      if (index < 0 || index >= this.buffer.length) {
+        console.error(`Invalid index: ${index}. Must be between 0 and ${this.buffer.length - 1}`);
+        return;
+      }
+    
+      this.buffer[index].value = value;
+      this.buffer[index].filled = true;
+    
+      console.log(`Value "${value}" written to buffer slot ${index}`);
     }
-
-   
-    readFromBuffer(registerIndex) {
-        if (registerIndex < 0 || registerIndex >= 4) {
-            throw new Error("Invalid register index");
-        }
-        return this.buffer[registerIndex].getvalue();
+  
+    // Read data while ignoring truly empty slots
+    readFromBuffer() {
+      const bufferString = this.buffer
+        .filter(slot => slot.filled)  // Keep only filled slots
+        .map(slot => slot.value)      // Extract values
+        .join("");
+  
+      console.log(`Buffer content (excluding empty columns): "${bufferString}"`);
+      return bufferString;
     }
-    displayValue() {
-        console.log("I/O Buffer Contents:");
-        this.buffer.forEach((reg, index) => {
-            console.log(`Register ${index}: ${reg.getvalue()}`);
-        });
+  convertCharToASCII(index) {
+    if (index >= 0 && index < this.buffer.length) {
+      const asciiValue = this.buffer[index].toString().charCodeAt(0) || 0;
+      console.log(`Character at index ${index}: ${this.buffer[index]}, ASCII: ${asciiValue}`);
+      return asciiValue;
+    } else {
+      console.error("Index out of bounds");
+      return null;
     }
+  }
+  writeASCIIToBuffer(asciiValue, index) {
+    if (index >= 0 && index < this.buffer.length) {
+      this.buffer[index] = String.fromCharCode(asciiValue);
+      console.log(`Stored character '${this.buffer[index]}' at index ${index} from ASCII ${asciiValue}`);
+    } else {
+      console.error("Index out of bounds");
+    }
+  }
+  emptyBuffer() {
+    this.buffer.forEach(slot => {
+      slot.value = 0;      // Reset value to 0
+      slot.filled = false; // Mark as empty
+    });
+    
 }
-
+}
 export default IOUnit;
