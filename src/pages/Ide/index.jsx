@@ -343,6 +343,7 @@ const Ide = ({currentUser})=>{
                   let inputouter=[];
 
                   if(iscode){
+                    console.log(handleStoreCode)
                     inputouter=Assembler.assemblecode(handleStoreCode())
                   }else{
                     inputouter=handleStoreCode();
