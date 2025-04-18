@@ -339,6 +339,7 @@ const Ide = ({currentUser})=>{
                   if(iscode){
                     console.log(handleStoreCode)
                     inputouter=Assembler.assemblecode(handleStoreCode())
+                    
                   }else{
                     inputouter=handleStoreCode();
                   }
@@ -348,11 +349,14 @@ const Ide = ({currentUser})=>{
                   input.push("ff");
                   try {
                     if (Errorcalm.errorr === 0) {
+                      console.log("drsas")
                       traitement(input);
                       
                      
                     }else{
+                      console.log("SIks")
                       setresult(Errorcalm.printError());
+                      
                       
                       seterr(true);
                     }
