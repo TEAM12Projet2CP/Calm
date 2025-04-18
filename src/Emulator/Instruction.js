@@ -4528,7 +4528,6 @@ class InstructionREAD {
             memory.setRim(hexValue);
             memory.setRam(TwosComplement(baseAddress, 16));
             memory.write();
-            console.log("\n\n\n\n louai");
             memory.setRam(TwosComplement(baseAddress,16));
             memory.read(false);
             memory.getRim();
@@ -4567,17 +4566,29 @@ class InstructionWRITE {
                     let temp;
                     temp=this.addresse1;
                     ioUnit.emptyBuffer();
-                    for (let index = 0; index < this.value2; index++) {
-                        memory.setRam(TwosComplement(temp,16));
-                        memory.read(false);
-                        memory.getRim();
+                    console.log("animation is here", this.value2);
 
-                        console.log(memory.getRim());
-                       ioUnit.writeToBuffer( index,String.fromCharCode(parseInt(memory.getRim(), 16)));
-                    //    console.log(ioUnit.buffer[index]);
+                    for (let index = 0; index < this.value2; index++) {
+                        memory.setRam(TwosComplement(temp, 16));
+                        memory.read(false);
+                        const rawHex = memory.getRim();
+                        const intValue = parseInt(rawHex, 16);
+                    
+                        // Decide what to write: if intValue is a printable character, write char, else write as number
+                        let valueToWrite;
+                        if (intValue >= 32 && intValue <= 126) {
+                            // Printable ASCII range (space to ~)
+                            valueToWrite = String.fromCharCode(intValue);
+                        } else {
+                            // Non-printable or numeric value
+                            valueToWrite = intValue.toString();
+                        }
+                    
+                        ioUnit.writeToBuffer(index, valueToWrite);
                         temp++;
-                        console.log("9iiw")
-                    } // Mark I/O as busy
+                        console.log(`Wrote to buffer:`, valueToWrite);
+                    }
+                    
 
                     // Read from CPU register (e.g., R1)
                     // ioUnit.writeToBuffer(value); 
@@ -4603,27 +4614,44 @@ class InstructionWRITE {
         // Animation sequence
         this.buildanim = function () {
             const ioUnit = memory.ioUnit;
-            return [
-                {
-                    value: "WRITE",
-                    target: addanim.target,
-                    time: addanim.time,
-                    anim: addanim.anim,
-                },
-                {
-                    value: ioUnit.readFromBuffer(0),
-                    target: IounitToBus.target,
-                    time: IounitToBus.time,
-                    anim: IounitToBus.anim,
-                },
-                {
-                    value: ioUnit.readFromBuffer(0),
-                    target: BusToRegisters.target,
-                    time: BusToRegisters.time,
-                    anim: BusToRegisters.anim,
-                },
-            ];
+            const animSteps = [];
+        
+            for (let i = 0; i < this.value2; i++) {
+                const char = ioUnit.buffer[i];
+                console.log("animation is here",this.value2);
+               
+                
+                animSteps.push(
+                    {
+                        value: `WRITE: ${char}`,
+                        target: addanim.target,
+                        time: addanim.time,
+                        anim: addanim.anim,
+                    },
+                    {
+                        value: char,
+                        target: MdrToBus.target,
+                        time: MdrToBus.time,
+                        anim: MdrToBus.anim,
+                    },
+                    {
+                        value: char,
+                        target: MdrToIO.target,
+                        time: MdrToIO.time,
+                        anim: MdrToIO.anim,
+                    },
+                    {
+                        value: char,
+                        target: BusToIO.target,
+                        time: BusToIO.time,
+                        anim: BusToIO.anim,
+                    }
+                );
+            }
+        
+            return animSteps;
         };
+        
     }
 
     resume() {
