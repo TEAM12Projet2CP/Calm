@@ -1,7 +1,9 @@
+import { speedRef } from "../pages/Arch/speedStore";
 import { Registers, memory, Alu1, IP ,queue } from "../pages/Ide";
 import { TwosComplement } from "./ALU.js";
 import { gsap } from "gsap";
 // import { Register } from "./Register.js";
+
 ////////////////////////////////////////////////
 function Dec2bin(dec){
     return ("00000000" + (parseInt(dec, 10)).toString(2)).substr(-8);
@@ -11,190 +13,190 @@ function Dec2bin(dec){
 const IounitToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.221,y:h*0.39,opacity:"0"}, {opacity:"1",duration:1});
-    gsap.fromTo(".ball", {x:w*0.221,y:h*0.39}, {y:h*0.46 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.221,y:h*0.39,opacity:"0"}, {opacity:"1",duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball", {x:w*0.221,y:h*0.39}, {y:h*0.46 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
     },
 }
 
 const BusToRual1={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 54% , 24,45% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.143,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56},{y:h*0.625 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.143,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56},{y:h*0.625 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
 },}
 
 const Rual1ToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 54% , 24,45% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.143,y:h*0.625,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.143,y:h*0.625},{ y:h*0.56,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.143,y:h*0.625,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.143,y:h*0.625},{ y:h*0.56,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const BusToRual2={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 54% , 35,2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const BusToRegisters={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 53.7% , 47.8% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.555,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.481,y:h*0.555},{y:h*0.58 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.555,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.481,y:h*0.555},{y:h*0.58 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const RegistersToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 53.7% , 47.8% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.58,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.481,y:h*0.58},{y:h*0.555 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.58,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.481,y:h*0.58},{y:h*0.555 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const IrToDecoder={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 59% , 78.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.708,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.644,y:h*0.708},{y:h*0.725 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.708,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.644,y:h*0.708},{y:h*0.725 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const DecoderToSequencer={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 59% , 78.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.813,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.644,y:h*0.813},{y:h*0.827 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.813,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.644,y:h*0.813},{y:h*0.827 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const QueueToIr={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 64.9% , 64.2% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.711 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.711 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const BusToQueue={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/speedRef.current*4000,
     anim:(val,h,w)=>{
     ///depart: ( 79.1% , 53.6% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1,delay:1});
-    gsap.to(".ball",{x:w*0.921 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{x:w*0.921 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*3});
   },}
   
   const BusToAcc={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/speedRef.current*4000,
     anim:(val,h,w)=>{
     ///depart: ( 39.7% , 54% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.361,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.361,y:h*0.56},{y:h*0.923 ,duration:1,delay:1});
-    gsap.to(".ball",{x:w*0.282 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.361,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.361,y:h*0.56},{y:h*0.923 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{x:w*0.282 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*3});
   },}
   const AccToBus={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/speedRef.current*4000,
     anim:(val,h,w)=>{
     ///depart: ( 39.7% , 54% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.282,y:h*0.923,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.282,y:h*0.923},{x:w*0.361 ,duration:1,delay:1});
-    gsap.to(".ball",{y:h*0.56 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.282,y:h*0.923,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.282,y:h*0.923},{x:w*0.361 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{y:h*0.56 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*3});
   },}
   
   const AluToAcc={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 30.3% , 83.5% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.226,y:h*0.863,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.226,y:h*0.863},{y:h*0.877 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.226,y:h*0.863,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.226,y:h*0.863},{y:h*0.877 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const MdrToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 51.8% , 43.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const BusToMdr={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 51.8% , 43.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.465,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.539,y:h*0.465},{y:h*0.445 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.465,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.539,y:h*0.465},{y:h*0.445 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const AdrToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 66.3% , 25.4% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.784,y:h*0.137,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.784,y:h*0.137},{y:h*0.18 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.784,y:h*0.137,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.784,y:h*0.137},{y:h*0.18 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const IpToAdr={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
     ///depart: ( 69% , 13.7% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.746,y:h*0.26,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.746,y:h*0.26},{y:h*0.46 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.746,y:h*0.26,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.746,y:h*0.26},{y:h*0.46 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   /////////////data bus animations/////////////////:
@@ -202,462 +204,462 @@ const Rual1ToBus={
   const MdrTOQue={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:1,delay:1})
-    gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+    gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const MdrToReg={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.44,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.44,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const RegToMdr={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.497,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.497,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   let queueExitToReg={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1})
-        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.44,duration:1,delay:1})
-        gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.44,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
     }
 }
   const MdrToIO={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.182,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.182,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   const IOToMdr={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.182,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.182},{x:w*0.497,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.182,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.182},{x:w*0.497,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   const MdrToRual1={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.262,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.262,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const RegToRual1={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1,delay:1})
-    gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+    gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+    gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
     },}
 
 const MdrToRual2={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.106,duration:1,delay:1})
-    gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.106,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+    gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
     },}
 
   const RegToRual2={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const AccToMDR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   const MDRToAcc={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const AccToReg={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.44,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.44,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const RegToAcc={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.321,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.321,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   const MdrToADR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.705,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.705,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const AccToADR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.705,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.705,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
 
   const Rual1ToADR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.705,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.705,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
   const BusToIr={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/speedRef.current*4000,
     anim:(val,h,w)=>{
     ///depart: ( 79.1% , 53.6% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1,delay:1});
-    gsap.to(".ball",{x:w*0.711 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+    gsap.to(".ball",{x:w*0.711 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*3});
   },}
 
   //////////////// Adresse bus animations ///////////////////////////////
 const IPToMAR={
     value:"",
     target:".box-ADR",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1,delay:1})
-    gsap.to(".box-ADR",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+    gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+    gsap.to(".box-ADR",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
 
 const ADRToMAR={
     value:"",
     target:".box-ADR",
-    time:3000,
+  time:1/speedRef.current*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-ADR",{x:w*0.712,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-ADR",{x:w*0.712},{x:w*0.648,duration:1,delay:1})
-    gsap.to(".box-ADR",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-ADR",{x:w*0.712,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+    gsap.fromTo(".box-ADR",{x:w*0.712},{x:w*0.648,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+    gsap.to(".box-ADR",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
   },}
   
   ////////////////////////fitting animations//////////////////////
   const fitToRual1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const infitToRual1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.12,y:h*0.658,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.12,y:h*0.658,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
   const fitToRual2={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.275,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.275,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const fitToR2={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const infitToR2={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
 
   const fitToR1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-      gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1});
-    //   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    //   gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+      gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    //   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    //   gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
     },}
     const infitToR1={
         value:"",
         target:".ball",
-        time:1000,
+      time:1/speedRef.current*1000,
         anim:(val,h,w)=>{
-            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-            // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-            gsap.to(".ball",{opacity:"0" ,duration:1});
+            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+            // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+            gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
         },}
 
   const fitToR3={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
 
   const infitToR3={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
 
   const fitToR4={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
 
   const infitToR4={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
 
   const fitToIdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const infitToIdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
   const fitToBr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const infitToBr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
   const fitToSr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const infitToSR={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
   const fitToIr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.6495,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.6495,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const fitToDecode={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.753,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.753,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const fitToSequencer={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.858,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.858,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const fitToAcc={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.07,height:h*0.055,x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.07,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.07,height:h*0.055,x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.07,height:h*0.055,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const infitToAcc={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
   const fitToMdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
   const infitToMdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1});
     },}
   const fitToMar={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/speedRef.current*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*:3});
   },}
 
   const addanim={
     value:"",
     target:".ALU",
-    time:2000,
+  time:1/speedRef.current*2000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".ALU",{opacity:"0"},{opacity:"1" ,duration:1});
-        gsap.fromTo(".ALU",{opacity:"1"},{opacity:"0" ,duration:1,delay:1});
+        gsap.fromTo(".ALU",{opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+        gsap.fromTo(".ALU",{opacity:"1"},{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
     },}
 
     const MCanim={
         value:"",
         target:".MC",
-        time:2000,
+      time:1/speedRef.current*2000,
         anim:(val,h,w)=>{
-            gsap.fromTo(".MC",{opacity:"0"},{opacity:"1" ,duration:1});
-            gsap.fromTo(".MC",{opacity:"1"},{opacity:"0" ,duration:1,delay:1});
+            gsap.fromTo(".MC",{opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+            gsap.fromTo(".MC",{opacity:"1"},{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
         },}
 
 ////////////////////////////////////////////////
@@ -697,19 +699,19 @@ class InstructionADD{
             return[{
                 value:"ADD",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -738,13 +740,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/speedRef.current*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -752,13 +754,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/speedRef.current*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/speedRef.current*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -767,13 +769,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/speedRef.current*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/speedRef.current*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -781,13 +783,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/speedRef.current*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -795,25 +797,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/speedRef.current*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/speedRef.current*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/speedRef.current*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/speedRef.current*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -821,13 +823,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/speedRef.current*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/speedRef.current*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -835,13 +837,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/speedRef.current*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/speedRef.current*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -849,13 +851,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/speedRef.current*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/speedRef.current*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -865,12 +867,12 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         value:"value2",
                         anim:fitToR2.anim,
                     },
@@ -879,13 +881,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/speedRef.current*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -894,13 +896,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/speedRef.current*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -908,13 +910,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/speedRef.current*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -922,25 +924,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/speedRef.current*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/speedRef.current*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/speedRef.current*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -948,13 +950,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/speedRef.current*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -962,13 +964,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/speedRef.current*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -976,13 +978,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/speedRef.current*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -992,13 +994,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1006,13 +1008,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/speedRef.current*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1021,13 +1023,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/speedRef.current*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1035,13 +1037,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/speedRef.current*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1049,25 +1051,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/speedRef.current*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/speedRef.current*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/speedRef.current*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1075,13 +1077,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/speedRef.current*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1089,13 +1091,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/speedRef.current*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1103,13 +1105,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/speedRef.current*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1119,13 +1121,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1133,13 +1135,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/speedRef.current*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1148,13 +1150,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/speedRef.current*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1162,13 +1164,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/speedRef.current*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1176,25 +1178,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/speedRef.current*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/speedRef.current*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/speedRef.current*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1202,13 +1204,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/speedRef.current*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1216,13 +1218,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/speedRef.current*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1230,13 +1232,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/speedRef.current*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1246,25 +1248,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/speedRef.current*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/speedRef.current*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1272,25 +1274,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/speedRef.current*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/speedRef.current*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/speedRef.current*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1299,25 +1301,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/speedRef.current*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/speedRef.current*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/speedRef.current*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1325,25 +1327,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/speedRef.current*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/speedRef.current*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/speedRef.current*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1351,13 +1353,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/speedRef.current*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1365,25 +1367,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/speedRef.current*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/speedRef.current*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/speedRef.current*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1391,25 +1393,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/speedRef.current*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/speedRef.current*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/speedRef.current*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1417,25 +1419,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/speedRef.current*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/speedRef.current*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/speedRef.current*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1445,13 +1447,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1459,13 +1461,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/speedRef.current*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1474,13 +1476,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/speedRef.current*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1488,13 +1490,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/speedRef.current*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1502,25 +1504,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/speedRef.current*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/speedRef.current*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/speedRef.current*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1528,13 +1530,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/speedRef.current*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1542,13 +1544,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/speedRef.current*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1556,13 +1558,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/speedRef.current*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1572,13 +1574,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1586,13 +1588,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/speedRef.current*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1601,13 +1603,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/speedRef.current*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1615,13 +1617,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/speedRef.current*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1629,25 +1631,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/speedRef.current*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/speedRef.current*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/speedRef.current*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1655,13 +1657,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/speedRef.current*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1669,13 +1671,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/speedRef.current*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1683,13 +1685,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/speedRef.current*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1699,13 +1701,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/speedRef.current*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1713,13 +1715,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/speedRef.current*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1728,13 +1730,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/speedRef.current*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1742,13 +1744,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/speedRef.current*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1756,25 +1758,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/speedRef.current*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/speedRef.current*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/speedRef.current*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1782,13 +1784,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/speedRef.current*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1796,13 +1798,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/speedRef.current*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1810,13 +1812,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/speedRef.current*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1850,7 +1852,7 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/speedRef.current*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -1858,25 +1860,25 @@ class InstructionMOV01{
                 return[{
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"",
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"value2",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:"value2",
                     target:fitToR1.target,
-                    time:fitToR1.time,
+                  time:1/speedRef.current*fitToR1.time,
                     anim:fitToR1.anim,
                 },
             ];}
@@ -1886,7 +1888,7 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/speedRef.current*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -1894,25 +1896,25 @@ class InstructionMOV01{
                 return[{
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"",
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"value2",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:"value2",
                     target:fitToR2.target,
-                    time:fitToR2.time,
+                  time:1/speedRef.current*fitToR2.time,
                     anim:fitToR2.anim,
                 },
             ];
@@ -1923,7 +1925,7 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/speedRef.current*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1931,25 +1933,25 @@ class InstructionMOV01{
                 return[{
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"",
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"value2",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:"value2",
                     target:fitToR3.target,
-                    time:fitToR3.time,
+                  time:1/speedRef.current*fitToR3.time,
                     anim:fitToR3.anim,
                 },
             ];}
@@ -1959,7 +1961,7 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/speedRef.current*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1967,25 +1969,25 @@ class InstructionMOV01{
                 return[{
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"",
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"value2",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:"value2",
                     target:fitToR4.target,
-                    time:fitToR4.time,
+                  time:1/speedRef.current*fitToR4.time,
                     anim:fitToR4.anim,
                 },
             ];}
@@ -1995,13 +1997,13 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/speedRef.current*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/speedRef.current*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -2009,31 +2011,31 @@ class InstructionMOV01{
                 return[{
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"",
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"value2",
                     target:MDRToAcc.target,
-                    time:MDRToAcc.time,
+                  time:1/speedRef.current*MDRToAcc.time,
                     anim:MDRToAcc.anim,
                 },
                 {
                     value:"value2",
                     target:BusToAcc.target,
-                    time:BusToAcc.time,
+                  time:1/speedRef.current*BusToAcc.time,
                     anim:BusToAcc.anim,
                 },
                 {
                     value:"value2",
                     target:fitToAcc.target,
-                    time:fitToAcc.time,
+                  time:1/speedRef.current*fitToAcc.time,
                     anim:fitToAcc.anim,
                 },
             ];}
@@ -2043,7 +2045,7 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/speedRef.current*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -2051,25 +2053,25 @@ class InstructionMOV01{
                 return[{
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"",
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"value2",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:"value2",
                     target:fitToBr.target,
-                    time:fitToBr.time,
+                  time:1/speedRef.current*fitToBr.time,
                     anim:fitToBr.anim,
                 },
             ];}
@@ -2079,7 +2081,7 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/speedRef.current*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -2087,25 +2089,25 @@ class InstructionMOV01{
                 return[{
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"",
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"value2",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:"value2",
                     target:fitToIdr.target,
-                    time:fitToIdr.time,
+                  time:1/speedRef.current*fitToIdr.time,
                     anim:fitToIdr.anim,
                 },
             ];}
@@ -2115,7 +2117,7 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/speedRef.current*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -2123,25 +2125,25 @@ class InstructionMOV01{
                 return[{
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"",
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"value2",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:"value2",
                     target:fitToSr.target,
-                    time:fitToSr.time,
+                  time:1/speedRef.current*fitToSr.time,
                     anim:fitToSr.anim,
                 },
             ];
@@ -2184,37 +2186,37 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToR1.target,
-                    time:infitToR1.time,
+                  time:1/speedRef.current*infitToR1.time,
                     anim:infitToR1.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/speedRef.current*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
                 
@@ -2223,37 +2225,37 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToR2.target,
-                    time:infitToR2.time,
+                  time:1/speedRef.current*infitToR2.time,
                     anim:infitToR2.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/speedRef.current*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }            
             ];
@@ -2262,37 +2264,37 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToR3.target,
-                    time:infitToR3.time,
+                  time:1/speedRef.current*infitToR3.time,
                     anim:infitToR3.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/speedRef.current*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
                 
@@ -2301,37 +2303,37 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToR4.target,
-                    time:infitToR4.time,
+                  time:1/speedRef.current*infitToR4.time,
                     anim:infitToR4.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/speedRef.current*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
                 
@@ -2340,37 +2342,37 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToAcc.target,
-                    time:infitToAcc.time,
+                  time:1/speedRef.current*infitToAcc.time,
                     anim:infitToAcc.anim,//we have to change animations here___________________________________
                 },
                 {
                     value:"",
                     target:AccToBus.target,
-                    time:AccToBus.time,
+                  time:1/speedRef.current*AccToBus.time,
                     anim:AccToBus.anim,
                 },
                 {
                     value:"value2",
                     target:AccToMDR.target,
-                    time:AccToMDR.time,
+                  time:1/speedRef.current*AccToMDR.time,
                     anim:AccToMDR.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
                 
@@ -2379,37 +2381,37 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToBr.target,
-                    time:infitToBr.time,
+                  time:1/speedRef.current*infitToBr.time,
                     anim:infitToBr.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/speedRef.current*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -2417,37 +2419,37 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToIdr.target,
-                    time:infitToIdr.time,
+                  time:1/speedRef.current*infitToIdr.time,
                     anim:infitToIdr.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/speedRef.current*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -2455,37 +2457,37 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToSR.target,
-                    time:infitToSR.time,
+                  time:1/speedRef.current*infitToSR.time,
                     anim:infitToSR.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/speedRef.current*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -2531,37 +2533,37 @@ class InstructionMOV11{////the difference between them will be in the animation 
                 return[{
                     value:"addresse1",
                     target:infitToAcc.target,
-                    time:infitToAcc.time,
+                  time:1/speedRef.current*infitToAcc.time,
                     anim:infitToAcc.anim,
                 },
                 {
                     value:"",
                     target:AccToBus.target,
-                    time:AccToBus.time,
+                  time:1/speedRef.current*AccToBus.time,
                     anim:AccToBus.anim,
                 },
                 {
                     value:"addresse1",
                     target:AccToADR.target,
-                    time:AccToADR.time,
+                  time:1/speedRef.current*AccToADR.time,
                     anim:AccToADR.anim,
                 },
                 {
                     value:"addresse1",
                     target:ADRToMAR.target,
-                    time:ADRToMAR.time,
+                  time:1/speedRef.current*ADRToMAR.time,
                     anim:ADRToMAR.anim,
                 },
                 {
                     value:"addresse1",
                     target:fitToMar.target,
-                    time:fitToMar.time,
+                  time:1/speedRef.current*fitToMar.time,
                     anim:fitToMar.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];}else{
@@ -2569,13 +2571,13 @@ class InstructionMOV11{////the difference between them will be in the animation 
                     {
                         value:"value2",
                         target:infitToMdr.target,
-                        time:infitToMdr.time,
+                      time:1/speedRef.current*infitToMdr.time,
                         anim:infitToMdr.anim,
                     },
                     {
                         value:"WRITE",
                         target:MCanim.target,
-                        time:MCanim.time,
+                      time:1/speedRef.current*MCanim.time,
                         anim:MCanim.anim,
                     }
                 ];///animation of writing in MC/___________________________
@@ -2616,19 +2618,19 @@ class InstructionSUB{
             return[{
                 value:"SUB",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2670,19 +2672,19 @@ class InstructionMUL{
             return[{
                 value:"MUL",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2723,19 +2725,19 @@ class InstructionDIV{
             return[{
                 value:"DIV",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2773,19 +2775,19 @@ class InstructionAND{
             return[{
                 value:"AND",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2823,19 +2825,19 @@ class InstructionOR{
             return[{
                 value:"OR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2874,19 +2876,19 @@ class InstructionXOR{
             return[{
                 value:"XOR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2925,19 +2927,19 @@ class InstructionNOR{
             return[{
                 value:"NOR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2975,19 +2977,19 @@ class InstructionNAND{
             return[{
                 value:"NAND",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -3016,43 +3018,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToR1.target,
-                    time:fitToR1.time,
+                  time:1/speedRef.current*fitToR1.time,
                     anim:fitToR1.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR1.target,
-                    time:infitToR1.time,
+                  time:1/speedRef.current*infitToR1.time,
                     anim:infitToR1.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3060,43 +3062,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToR2.target,
-                    time:fitToR2.time,
+                  time:1/speedRef.current*fitToR2.time,
                     anim:fitToR2.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR2.target,
-                    time:infitToR2.time,
+                  time:1/speedRef.current*infitToR2.time,
                     anim:infitToR2.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3104,43 +3106,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToR3.target,
-                    time:fitToR3.time,
+                  time:1/speedRef.current*fitToR3.time,
                     anim:fitToR3.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR3.target,
-                    time:infitToR3.time,
+                  time:1/speedRef.current*infitToR3.time,
                     anim:infitToR3.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3148,43 +3150,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToR4.target,
-                    time:fitToR4.time,
+                  time:1/speedRef.current*fitToR4.time,
                     anim:fitToR4.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR4.target,
-                    time:infitToR4.time,
+                  time:1/speedRef.current*infitToR4.time,
                     anim:infitToR4.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3192,49 +3194,49 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToAcc.target,
-                    time:fitToAcc.time,
+                  time:1/speedRef.current*fitToAcc.time,
                     anim:fitToAcc.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToAcc.target,
-                    time:infitToAcc.time,
+                  time:1/speedRef.current*infitToAcc.time,
                     anim:infitToAcc.anim,
                 },
                 {
                     value:this.value1,
                     target:AccToBus.target,
-                    time:AccToBus.time,
+                  time:1/speedRef.current*AccToBus.time,
                     anim:AccToBus.anim,
                 },
                 {
                     value:this.value1,
                     target:AccToMDR.target,
-                    time:AccToMDR.time,
+                  time:1/speedRef.current*AccToMDR.time,
                     anim:AccToMDR.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3242,43 +3244,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToBr.target,
-                    time:fitToBr.time,
+                  time:1/speedRef.current*fitToBr.time,
                     anim:fitToBr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToBr.target,
-                    time:infitToBr.time,
+                  time:1/speedRef.current*infitToBr.time,
                     anim:infitToBr.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3286,43 +3288,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToIdr.target,
-                    time:fitToIdr.time,
+                  time:1/speedRef.current*fitToIdr.time,
                     anim:fitToIdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToIdr.target,
-                    time:infitToIdr.time,
+                  time:1/speedRef.current*infitToIdr.time,
                     anim:infitToIdr.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3330,43 +3332,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToSr.target,
-                    time:fitToSr.time,
+                  time:1/speedRef.current*fitToSr.time,
                     anim:fitToSr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToSR.target,
-                    time:infitToSR.time,
+                  time:1/speedRef.current*infitToSR.time,
                     anim:infitToSR.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/speedRef.current*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/speedRef.current*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3396,43 +3398,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToR1.target,
-                    time:fitToR1.time,
+                  time:1/speedRef.current*fitToR1.time,
                     anim:fitToR1.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR1.target,
-                    time:infitToR1.time,
+                  time:1/speedRef.current*infitToR1.time,
                     anim:infitToR1.anim,
                 },
             ];
@@ -3440,43 +3442,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToR2.target,
-                    time:fitToR2.time,
+                  time:1/speedRef.current*fitToR2.time,
                     anim:fitToR2.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR2.target,
-                    time:infitToR2.time,
+                  time:1/speedRef.current*infitToR2.time,
                     anim:infitToR2.anim,
                 },
                 ];
@@ -3484,43 +3486,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToR3.target,
-                    time:fitToR3.time,
+                  time:1/speedRef.current*fitToR3.time,
                     anim:fitToR3.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR3.target,
-                    time:infitToR3.time,
+                  time:1/speedRef.current*infitToR3.time,
                     anim:infitToR3.anim,
                 },
             ];
@@ -3528,43 +3530,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToR4.target,
-                    time:fitToR4.time,
+                  time:1/speedRef.current*fitToR4.time,
                     anim:fitToR4.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR4.target,
-                    time:infitToR4.time,
+                  time:1/speedRef.current*infitToR4.time,
                     anim:infitToR4.anim,
                 },
                 //push animation
@@ -3573,49 +3575,49 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MDRToAcc.target,
-                    time:MDRToAcc.time,
+                  time:1/speedRef.current*MDRToAcc.time,
                     anim:MDRToAcc.anim,
                 },
                 {
                     value:"",
                     target:BusToAcc.target,
-                    time:BusToAcc.time,
+                  time:1/speedRef.current*BusToAcc.time,
                     anim:BusToAcc.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToAcc.target,
-                    time:fitToAcc.time,
+                  time:1/speedRef.current*fitToAcc.time,
                     anim:fitToAcc.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToAcc.target,
-                    time:infitToAcc.time,
+                  time:1/speedRef.current*infitToAcc.time,
                     anim:infitToAcc.anim,
                 },
                 //push animation
@@ -3624,43 +3626,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToBr.target,
-                    time:fitToBr.time,
+                  time:1/speedRef.current*fitToBr.time,
                     anim:fitToBr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToBr.target,
-                    time:infitToBr.time,
+                  time:1/speedRef.current*infitToBr.time,
                     anim:infitToBr.anim,
                 },
                 //push animation
@@ -3669,43 +3671,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation of pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToIdr.target,
-                    time:fitToIdr.time,
+                  time:1/speedRef.current*fitToIdr.time,
                     anim:fitToIdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToIdr.target,
-                    time:infitToIdr.time,
+                  time:1/speedRef.current*infitToIdr.time,
                     anim:infitToIdr.anim,
                 },
                 //push animation
@@ -3714,43 +3716,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/speedRef.current*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/speedRef.current*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/speedRef.current*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/speedRef.current*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/speedRef.current*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToSr.target,
-                    time:fitToSr.time,
+                  time:1/speedRef.current*fitToSr.time,
                     anim:fitToSr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToSR.target,
-                    time:infitToSR.time,
+                  time:1/speedRef.current*infitToSR.time,
                     anim:infitToSR.anim,
                 },
                 //push animation
@@ -4024,19 +4026,19 @@ class InstructionSHL{
             return[{
                 value:"SHL",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4073,19 +4075,19 @@ class InstructionSHR{
             return[{
                 value:"SHR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4122,19 +4124,19 @@ class InstructionROR{
             return[{
                 value:"ROR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4171,19 +4173,19 @@ class InstructionROL{
             return[{
                 value:"ROL",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4220,19 +4222,19 @@ class InstructionNOT{
             return[{
                 value:"NOT",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4269,19 +4271,19 @@ class InstructionNEG{
             return[{
                 value:"NEG",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/speedRef.current*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/speedRef.current*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/speedRef.current*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
