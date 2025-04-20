@@ -444,11 +444,7 @@ export class Assembler{
         this.toAssemble = new SemanticAnalysis(this.input);
         console.log("this input : "+ this.input)
         console.log("this assemble : "+ this.toAssemble)
-        let ret = FuncInterface.confirmationfunction(this.toAssemble.Semanticlist);
-        if (!ret.status) {
-            console.log("\nThere are errors in your code cannot assemble:\n");
-            console.log(ret.errors);
-        }}
+        }
     }
 
     static assemble(input){
