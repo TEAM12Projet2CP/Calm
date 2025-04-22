@@ -7,9 +7,10 @@ import { Assembler,FuncInterface } from "./Assembler.js";
 
 export class SemanticAnalysis {
     Semanticlist = []
-    static labeltype = true;
+    static labeling = true;
     constructor(input) { 
         let lexicalList = input;
+        if(SemanticAnalysis.labeling){
         for(let i = 0; i < lexicalList.length; i++){
             let firstword = lexicalList[i][0]
             let firstwordtype = firstword.type
@@ -24,21 +25,18 @@ export class SemanticAnalysis {
                                     var found = false ;
                                     var labelname = lexicalList[i][1].value ;
                                     Assembler.Labellist.forEach(element => { 
-                                        if((element.name === labelname) && (SemanticAnalysis.labeltype === element.label)){
+                                        if((element.name === labelname)){
                                             console.log(element.name + " " + labelname + " " + SemanticAnalysis.labeltype + " " + element.label) 
                                             found = true
                                         }
                                     });
                                     if (!found) {  
                                         if (lexicalList[i][1].type === 'TEXTT') {
-                                            if (SemanticAnalysis.labeltype){
                                             Assembler.Labellist.push({ name: labelname, address: parseInt(lexicalList[i][2].value), linedeclared:i, label: true })
-                                        }
-                                    }
-                                        else {
-                                            if (!SemanticAnalysis.labeltype){
+                                }
+                                        else if (lexicalList[i][1].type === 'TEXT') {
                                             Assembler.Labellist.push({ name: labelname, address: parseInt(lexicalList[i][2].value), linedeclared:i, label: false })
-                                        }
+
                                     }
                                     }else{
                                         this.Semanticlist.push(new Errorcalm("LABEL already declared",null,i))
@@ -62,8 +60,7 @@ export class SemanticAnalysis {
                     }
                 }
             }
-        }
-        if (!SemanticAnalysis.labeltype){
+        }}
         for(let i = 0; i < lexicalList.length; i++){
             // here operation with each line of code
             // we must check if it is a label or an instruction
@@ -201,6 +198,7 @@ export class SemanticAnalysis {
                             // check also for first operand based ind and second indexed or based or opposite 
                             // check if size of first list == size of second list and assign it to the size of the instruction
                             var list1,list2 =[];
+                            console.log("lexicalList[i]",lexicalList[i])
                             list1 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list1 ;
                             //console.log("list1",list1[0].type)
                             list2 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list2 ;
@@ -276,8 +274,6 @@ export class SemanticAnalysis {
     
 
     // Label instformat LABEL num check this num if it is valid.;
-
-}
 
 
 /*
