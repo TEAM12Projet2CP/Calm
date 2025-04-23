@@ -771,7 +771,7 @@ export class Assembler{
                     var regmod;
                     var op;
                     var dep;
-            
+                    let instcode = "";
                     if (element.value === 'READ') {
                         regmod = FuncInterface.adrmap(input[1].adrmode, size, typeof input[1].depl == 'undefined' ? 0 : input[1].depl > 255 ? '1' : '0');
                         console.log("reg: " ,regmod)
@@ -804,6 +804,7 @@ export class Assembler{
                                 break;
                         }
                         oppcode = '8';
+                        instcode = oppcode + FuncInterface.binaryToHex(op, 4) + (dep ? FuncInterface.binaryToHex(dep, 4) : "");
                     } else {
                         switch(element.value){
                             case 'CALL': oppcode = '33'; break;
@@ -816,9 +817,8 @@ export class Assembler{
                             case 'BRI': oppcode = '31'; break;
                             default: return "error";
                         }
+                        instcode = oppcode+FuncInterface.decimalToHex(input[1].value,4);
                     }
-                    let instcode = oppcode + FuncInterface.binaryToHex(op, 4) + (dep ? FuncInterface.binaryToHex(dep, 4) : "");
-                    console.log("op (binary): ", op);
 
                     // Convert 'op' from binary to decimal
                     const opDecimal = parseInt(op, 2);

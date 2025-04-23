@@ -3,6 +3,7 @@ import Toggle from 'react-styled-toggle';
 import { Controlled as CodeMirror } from "react-codemirror2";
 import UAParser from 'ua-parser-js';
 import "./style.css"
+import { opValue } from '../../assembler/Assembler.js';
 
 ///// import components //////
 import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
@@ -24,10 +25,10 @@ import "../../codemirror/theme/material.css";
 import "../../codemirror/mode/myLang/assembly.js"
 
 /////import assembler modules//////////
-import { Assembler, opValue } from "../../assembler/Assembler";
-import {helpDescription} from "../../Constants/HelpDescription";
-import {HexaToCode} from "../../HexaToCode/HexaToCode"
-import { Errorcalm } from "../../assembler/Errorcalm";
+import { Assembler } from "../../assembler/Assembler.js";
+import {helpDescription} from "../../Constants/HelpDescription.js";
+import {HexaToCode} from "../../HexaToCode/HexaToCode.js"
+import { Errorcalm } from "../../assembler/Errorcalm.js";
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -37,7 +38,7 @@ let animations=[];
 let Contextarray=[];
 
 ////////////////machine declarations////////////////////////////////
-let memory=new MC();
+let memory = new MC();
 let sequenceur=new Sequenceur();
 let queue = new Queue();
 let addressingModes=new AddressingModes();
@@ -75,7 +76,7 @@ const Ide = ({currentUser})=>{
   let [simul,setsimul]=useState(false)
   let [memo,setmemo]=useState(false);
   let [reg,setreg]=useState(false);
-  let [stk,setstk]=useState(false);//for showing stack
+  let [stk,setstk]=useState(false); //for showing stack
   let [isHexa,setIsHexa]=useState(false);
   let [iscode,setIsCode]=useState(true);
   let [iserr,seterr]=useState(false);
@@ -144,6 +145,7 @@ const Ide = ({currentUser})=>{
   let [checktest,setChecktest]=useState(false);
 
   /////////////////////returning the component//////////////////
+
   let tablec=[];
   memory.getData().forEach( (element,index) => {
     tablec.push(
@@ -192,6 +194,7 @@ const Ide = ({currentUser})=>{
   const handleStoreCode = () => {
     const editor = codeMirrorRef.current.editor;
     const code = editor.getValue(); // Get the current content of the editor
+ 
     // Split the code into lines
     const lines = code.split('\n');
 
