@@ -3,7 +3,6 @@ import Toggle from 'react-styled-toggle';
 import { Controlled as CodeMirror } from "react-codemirror2";
 import UAParser from 'ua-parser-js';
 import "./style.css"
-import { opValue } from '../../assembler/Assembler.js';
 
 ///// import components //////
 import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
@@ -84,63 +83,41 @@ const Ide = ({currentUser})=>{
 
   ///////////////////////////////executions function////////////////////////////////////////
 
-  const traitement = async (codeArray) => {
-    for (let i = 0; i < 50; i++) {
-        memory.setRam(TwosComplement(i, 8));
-        memory.setRim("00000000");
-        memory.write();
+  const traitement= (codeArray)=>{
+    for(let i=0;i<50;i++){//initializing first 50 bytes in memory to 0 (data memory)
+      memory.setRam(TwosComplement(i,8));
+      memory.setRim("00000000");
+      memory.write();
     }
-    const index = codeArray.indexOf('80');
-    if (index !== -1 && index + 2 < codeArray.length) {
-        codeArray.splice(index + 1, 2); // remove 2 elements after '80'
-    }
-    
-    console.log(codeArray);
-    memory.setcode(codeArray);
+
+    memory.setcode(codeArray)
     queue.instructionset([]);
 
-    let numtmp = 0;
+    let numtmp=0;
+    
+    queue.fetchInstruction(animations,0,1,Contextarray,0);
+    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
+    queue.fetchInstruction(animations,1,1,Contextarray,0);
+    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
+    queue.fetchInstruction(animations,2,1,Contextarray,0);
+    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
 
-    queue.fetchInstruction(animations, 0, 1, Contextarray, 0);
-    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
-    queue.fetchInstruction(animations, 1, 1, Contextarray, 0);
-    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
-    queue.fetchInstruction(animations, 2, 1, Contextarray, 0);
-    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
 
-    console.log(queue.getinstwithoutshift());
 
-    let instrobject = {};
-    while (instrobject.name !== "stop") {
-        sequenceur.getinstrbyte(animations, true, Contextarray);
-        instrobject = { ...sequenceur.decode(animations, Contextarray) };
-
-        if (instrobject.name !== "stop") {
-            console.log("wch mami:", instrobject);
-          let save= new Array(8).fill(0);
-            if (instrobject.name === "READ" && typeof instrobject.steps?.[0] === "function") {
-              for (let i=0;i<7;i++){
-                save[i]=Registers[i].getvalue();
-              }
-               instrobject.addresse1 = opValue;
-              
-
-                const result = await instrobject.steps[0](); // ✅ Now await works
-                for (let i=0;i<7;i++){
-                  Registers[i].setvalue(save[i]);
-                }
-                if (result === false) {
-                    console.log("READ was delayed due to IO being busy");
-                    continue;
-                }
-            } else {
-                sequenceur.execute(instrobject, 1, animations);
-            }
-        }
+    console.log(queue.getinstwithoutshift())
+    
+    let instrobject={};
+    memory.data = MC.data
+    while(instrobject.name!=="stop"){
+      sequenceur.getinstrbyte(animations,true,Contextarray);
+      instrobject={...sequenceur.decode(animations,Contextarray)};
+      if(instrobject.name!=="stop"){
+        console.log(instrobject);
+        sequenceur.execute(instrobject,1,animations);
+      }
     }
-}
 
-
+  }
 
   let [checktest,setChecktest]=useState(false);
 
