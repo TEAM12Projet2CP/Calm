@@ -10,6 +10,80 @@ function Dec2bin(dec){
 }
 
 /////////////////animations to test////////////////////
+let queueExitToBus={
+  value:"",
+  target:".ball",
+  time:4000,
+  anim:(val,h,w)=>{
+          gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1/(speedRef.current)*1});
+          gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.715 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+          gsap.to(".ball",{y:h*0.555 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+          gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*3});
+  }
+}
+
+const MDRToCache={
+  value:"",
+  target:".box-data",
+time:1/speedRef.current*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+},}
+
+const CacheToMDR={
+  value:"",
+  target:".box-data",
+time:1/speedRef.current*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+},}
+
+const CacheToReg={
+  value:"",
+  target:".box-data",
+time:1/speedRef.current*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.44,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+},}
+
+const RegToCache={
+  value:"",
+  target:".box-data",
+time:1/speedRef.current*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*1})
+gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.321,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+},}
+
+const CacheToBus={
+  value:"",
+  target:".ball",
+time:1/speedRef.current*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.36,y:h*0.39,opacity:"0"}, {opacity:"1",duration:1/(speedRef.current)*1});
+  gsap.fromTo(".ball", {x:w*0.36,y:h*0.39}, {y:h*0.46 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+  gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+  },
+}
+
+const BusToCache={
+  value:"",
+  target:".ball",
+time:1/speedRef.current*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.36,y:h*0.46,opacity:"0"}, {opacity:"1",duration:1/(speedRef.current)*1});
+  gsap.fromTo(".ball", {x:w*0.36,y:h*0.46}, {y:h*0.39 ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*1});
+  gsap.to(".ball",{opacity:"0" ,duration:1/(speedRef.current)*1,delay:1/(speedRef.current)*2});
+  },
+}
+
 const IounitToBus={
     value:"",
     target:".ball",

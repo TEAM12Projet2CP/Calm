@@ -1,5 +1,5 @@
 import { Register } from "./Register.js";
-import CacheMemory from "./Cache.js"; // 
+import Cache from "./Cache.js"; // 
 
 class MC {
   constructor() {
@@ -10,8 +10,8 @@ class MC {
 
     this.code = new Array(100);
     
-    this.cache = new CacheMemory(40, MC); 
-  this.cache.MC=this;
+    this.cache = new Cache(60, MC); 
+    this.cache.MC=this;
    // this.cache.initializeCache();
 
     // Performance metrics
@@ -64,7 +64,7 @@ class MC {
       if (this.rim !== undefined) {
         const replacedIndex = this.cache.getLeastPriorityBlockIndex();
         console.log(`Replacing cache block at index: ${replacedIndex}`);
-        this.cache.replaceLRU(address, this.rim, iscode ? "code" : "data");
+        if(!iscode){this.cache.replaceLRU(address, this.rim, "data");}
       }
     }
 

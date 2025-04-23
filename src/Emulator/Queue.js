@@ -10,7 +10,7 @@ import { speedRef } from "../pages/Arch/speedStore";
 const IpToAdr={
   value:"",
   target:".ball",
-time:1/speedRef.current*1800/speedRef.current,
+time:1/speedRef.current*1800,
   anim:(val,h,w)=>{
   ///depart: ( 69% , 13.7% )
   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.782,y:h*0.14,opacity:"0"},{opacity:"1" ,duration:1/(speedRef)*0.5/speedRef});
@@ -20,7 +20,7 @@ time:1/speedRef.current*1800/speedRef.current,
 const IPToMAR={
   value:"",
   target:".box-ADR",
-time:1/speedRef.current*0.1800,
+time:1/speedRef.current*1800,
   anim:(val,h,w)=>{
   gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/(speedRef.current)*0.1800})
         gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/(speedRef.current)*0.1800,delay:1/(speedRef.current)*0.1800})
