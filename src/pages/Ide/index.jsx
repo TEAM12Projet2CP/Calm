@@ -83,42 +83,51 @@ const Ide = ({currentUser})=>{
 
   ///////////////////////////////executions function////////////////////////////////////////
 
-  const traitement= (codeArray)=>{
-    for(let i=0;i<50;i++){//initializing first 50 bytes in memory to 0 (data memory)
-      memory.setRam(TwosComplement(i,8));
-      memory.setRim("00000000");
-      memory.write();
-    }
 
-    memory.setcode(codeArray)
+  const traitement = async (codeArray) => {
+    memory.data = MC.data;
+    memory.setcode(codeArray);
     queue.instructionset([]);
 
-    let numtmp=0;
-    
-    queue.fetchInstruction(animations,0,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
-    queue.fetchInstruction(animations,1,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
-    queue.fetchInstruction(animations,2,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
+    let numtmp = 0;
 
+    queue.fetchInstruction(animations, 0, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
+    queue.fetchInstruction(animations, 1, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
+    queue.fetchInstruction(animations, 2, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
 
+    console.log(queue.getinstwithoutshift());
 
-    console.log(queue.getinstwithoutshift())
-    
-    let instrobject={};
-    memory.data = MC.data
-    while(instrobject.name!=="stop"){
-      sequenceur.getinstrbyte(animations,true,Contextarray);
-      instrobject={...sequenceur.decode(animations,Contextarray)};
-      if(instrobject.name!=="stop"){
-        console.log(instrobject);
-        sequenceur.execute(instrobject,1,animations);
-      }
+    let instrobject = {};
+    let save = {};
+    while (instrobject.name !== "stop") {
+        sequenceur.getinstrbyte(animations, true, Contextarray);
+        instrobject = { ...sequenceur.decode(animations, Contextarray) };
+
+        if (instrobject.name !== "stop") {
+            console.log("wch mami:", instrobject);
+
+            if (instrobject.name === "READ" && typeof instrobject.steps?.[0] === "function") {
+              for (let i = 0; i < 7; i++) {
+                save[i] = Registers[i].getvalue();
+              }
+                const result = await instrobject.steps[0](); // ✅ Now await works
+                for (let i = 0; i < 7; i++) {
+                  Registers[i].setvalue(save[i]);
+                }
+                if (result === false) {
+                    console.log("READ was delayed due to IO being busy");
+                    continue;
+                }
+
+            } else {
+                sequenceur.execute(instrobject, 1, animations);
+            }
+        }
     }
-
-  }
-
+}
   let [checktest,setChecktest]=useState(false);
 
   /////////////////////returning the component//////////////////
