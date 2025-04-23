@@ -4,7 +4,6 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 import UAParser from 'ua-parser-js';
 import "./style.css"
 
-
 ///// import components //////
 import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
 
@@ -193,7 +192,6 @@ const Ide = ({currentUser})=>{
   const handleStoreCode = () => {
     const editor = codeMirrorRef.current.editor;
     const code = editor.getValue(); // Get the current content of the editor
-
     // Split the code into lines
     const lines = code.split('\n');
 
@@ -303,7 +301,6 @@ const Ide = ({currentUser})=>{
                     for (let m = 0; m < handleStoreCode().length; m++) {
                       code=code+HexaToCode(handleStoreCode()[m])+"\n";
                     }
-                    console.log("code : ",code)
                     editor.setValue(code);
                     setChecktest(!checktest);
                     setIsCode(true);
@@ -357,20 +354,20 @@ const Ide = ({currentUser})=>{
                 className='ide-exec-button' 
                 onClick={()=>{
                   setdone(true);
-                  let inputouter=[];
+                  let inputouter;
 
                   if(iscode){
+                    console.log(handleStoreCode)
                     inputouter=Assembler.assemblecode(handleStoreCode())
                     
                   }else{
                     inputouter=handleStoreCode();
                   }
-                  let input=convertStrings(inputouter);
+                  let input=convertStrings(inputouter.code);
+                  // not checked yet
+                  memory.data = inputouter.memory;
                   input.push("ff");
-                  console.log("this is :"+ input)
-                  
                   try {
-                    console.log("hachmi");
                     if (Errorcalm.errorr === 0) {
                       console.log("drsas")
                       traitement(input);
@@ -379,6 +376,7 @@ const Ide = ({currentUser})=>{
                     }else{
                       console.log("SIks")
                       setresult(Errorcalm.printError());
+                      
                       
                       seterr(true);
                     }
@@ -415,10 +413,8 @@ const Ide = ({currentUser})=>{
                     console.log(arr);
                     console.log("old arr=",arr);
                     localStorage.setItem('arr', JSON.stringify(arr));
-                    console.log("current local storage : ",localStorage.getItem('arr'))
                     window.location.reload();
                   }}>re-write</button>
-
                   {!iserr &&< button 
                     className='ide-exec-button' 
                     onClick={()=>{

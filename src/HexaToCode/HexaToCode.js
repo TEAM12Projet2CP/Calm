@@ -405,7 +405,7 @@ function hexToBin(hexString) {
         }
       } 
       }
-    console.log("adr1="+adr1);
+    // console.log("adr1="+adr1);
     if(newstr!="error"){
       if(ind[1]==='0' && size=='0'){
         if ((remo1=="110" || remo1=="111") && ind[0]==='1'){     

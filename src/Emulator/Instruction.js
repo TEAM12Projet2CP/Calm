@@ -4,7 +4,8 @@ import { gsap } from "gsap";
 import IOUnit from "./IO_Unit.js";
 import { Register } from "./Register.js";
 import { opValue } from "../assembler/Assembler.js";
-// import { Register } from "./Register.js";
+// import { 
+// Register } from "./Register.js";
 ////////////////////////////////////////////////
 function Dec2bin(dec){
     return ("00000000" + (parseInt(dec, 10)).toString(2)).substr(-8);

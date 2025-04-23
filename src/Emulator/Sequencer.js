@@ -999,7 +999,6 @@ class Sequenceur{
             }}
         }else{
             if(key>='0010' & key<='0011'){
-                
                 key=instruction.substring(0,7);
                 let taille=instruction.charAt(7);
                 index=hash(key);
@@ -1015,10 +1014,7 @@ class Sequenceur{
                     instrObject.taille=taille;
                 }
             }else{
-                console.log("hello worlfd");
-                
                 key=instruction.substring(0,7);
-                
                 let taille=instruction.charAt(7);
                 this.getinstrbyte(animations,false,Contextarray);///was true
                 let secondByte=this.RI.getvalue();
