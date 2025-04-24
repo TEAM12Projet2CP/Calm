@@ -43,7 +43,6 @@ function showWritePopup() {
 
         // Store resolve function globally so it can return the value to the main window
         window.resolveWriteValue = (value) => {
-            console.log("🟢 Received input from user:", value);
             resolve(value); // Pass value as string (can be parsed later if needed)
         };
     });
@@ -53,23 +52,17 @@ function showWritePopup() {
 
 
 window.receiveWriteValue = function(value) {
-    console.log("✅ Main Window: Received value from pop-up:", value);
-
     const ioUnit = memory.ioUnit;
 
     if (!isNaN(value)) {
         value = parseInt(value, 10);
         ioUnit.writeToBuffer(0, value);
-        console.log(`✅ Stored ${value} in I/O buffer register 0.`);
-
         // Resume instruction execution
         if (typeof window.writeCallback === "function") {
-            console.log("🟢 Resuming instruction after user input...");
             window.writeCallback();
             window.writeCallback = null; // Clear the callback after execution
         }
     } else {
-        console.log("❌ Invalid input. Please enter a number.");
     }
 };
 
@@ -2594,7 +2587,6 @@ class InstructionMOV11{////the difference between them will be in the animation 
         this.steps=[()=>{
             if(this.taille==1){
                 let hexval=this.value2.toString(16);
-                console.log(hexval);
                 while(hexval.length<4){
                     hexval='0'+hexval;
                 }
@@ -4462,19 +4454,14 @@ class InstructionREAD {
 
                 if (!ioUnit.ioController.busy) {
                     ioUnit.ioController.busy = true;
-
-                    console.log("🟢 InstructionWRITE: Waiting for user input...");
-
                     // Wait for user input asynchronously before proceeding
                     const value = await showWritePopup();
 
                     ioUnit.writeToBuffer1(value);
-                    console.log(`✅ User input received: ${value}. Stored in I/O buffer.`);
                     ioUnit.displayBuffer();
                     // Resume execution
                     this.resume();
                 } else {
-                    console.log("🔴 InstructionWRITE: I/O Unit busy, WRITE delayed");
                     return false;
                 }
             }
@@ -4508,7 +4495,6 @@ class InstructionREAD {
         const ioUnit = memory.ioUnit;
         let value = ioUnit.readFromBuffer1(); // Could be string or number
         this.addresse1 = opValue;
-        console.log("this is the value",this.addresse1);
         let baseAddress = parseInt(opValue, 10); // Starting address
     
         if (isNaN(value)) {
@@ -4520,26 +4506,19 @@ class InstructionREAD {
                 memory.setRim(hex);
                 memory.setRam(TwosComplement(baseAddress + i, 16)); // Increment address
                 memory.write();
-    
-                console.log(`📝 Wrote char '${value[i]}' as ${hex} to address ${baseAddress + i}`);
-            }
+                }
         } else {
             // NUMBER CASE
             let hexValue = parseInt(value).toString(16).toUpperCase();
             memory.setRim(hexValue);
             memory.setRam(TwosComplement(baseAddress, 16));
             memory.write();
-            console.log("\n\n\n\n louai");
             memory.setRam(TwosComplement(baseAddress,16));
             memory.read(false);
             memory.getRim();
-            console.log("kjkjkkj", String.fromCharCode(parseInt(memory.getRim(), 16)));
-
-            console.log(`📝 Wrote number ${value} as hex ${hexValue} to address ${baseAddress}`);
         }
     
         ioUnit.ioController.busy = false;
-        console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to memory.`);
     }
     
 }
@@ -4559,9 +4538,6 @@ class InstructionWRITE {
         this.steps = [
             async () => {
                 const ioUnit = memory.ioUnit;
-                console.log("priviete");
-                console.log(this.value2,this.addresse1); // Access I/O Unit
-                
                 if (!ioUnit.ioController.busy) {
                     ioUnit.ioController.busy = true;
                     let value;
@@ -4573,11 +4549,9 @@ class InstructionWRITE {
                         memory.read(false);
                         memory.getRim();
 
-                        console.log(memory.getRim());
                        ioUnit.writeToBuffer( index,String.fromCharCode(parseInt(memory.getRim(), 16)));
                     //    console.log(ioUnit.buffer[index]);
                         temp++;
-                        console.log("9iiw")
                     } // Mark I/O as busy
 
                     // Read from CPU register (e.g., R1)
@@ -4590,12 +4564,9 @@ class InstructionWRITE {
                         console.error("Failed to open popup. Possibly blocked by browser.");
                     }
                     // alert("Buffer Contents: " + ioUnit.readFromBuffer(0));// Store in I/O buffer register 0
-
-                    console.log(`CPU to IO: Moved data ${value} from CPU register R${this.register1} to I/O buffer.`);
                     ioUnit.displayValue();
                     ioUnit.ioController.busy = false;
                 } else {
-                    console.log("I/O Unit busy, READ delayed");
                     return false; // Delay execution if busy
                 }
             }
@@ -4607,10 +4578,7 @@ class InstructionWRITE {
             const animSteps = [];
         
             for (let i = 0; i < this.value2; i++) {
-                const char = ioUnit.buffer[i];
-                console.log("animation is here",this.value2);
-               
-                
+                const char = ioUnit.buffer[i];               
                 animSteps.push(
                     {
                         value: `WRITE: ${char}`,
@@ -4651,7 +4619,6 @@ class InstructionWRITE {
         Registers[register].setvalue(TwosComplement(value, 16));
 
         ioUnit.ioController.busy = false;
-        console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to CPU register R${register}.`);
     }
 }
 

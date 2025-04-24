@@ -47,7 +47,6 @@ function hexToBin(hexString) {
       num=parseInt(num, 2).toString(10)
      }else{
       num=TwosComplement2(num)
-      console.log("num="+num);
       num=-parseInt(num, 2).toString(10)
      }
      return num;
@@ -535,10 +534,6 @@ function hexToBin(hexString) {
           shift2=hexToBin(hexcode).substring(i,i+16);
           i+=16;
         }
-        console.log('adr1='+parseInt(adr1,2));
-        console.log('adr2='+parseInt(adr2,2));
-        console.log('shift1='+parseInt(shift1,2));
-        console.log('shift2='+parseInt(shift2,2));
         // console.log("adr2="+adr2);
         //very important test:
         if (isNaN(parseFloat(adr2)) ) {

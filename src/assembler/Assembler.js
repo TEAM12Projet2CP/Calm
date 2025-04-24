@@ -224,8 +224,6 @@ while (hexString.length < size) {
             Errorcalm.set_SemanticError(new Errorcalm("Label not found",null,linenumber));
             return {type: 'ERROR', value: null};
         }else{
-            console.log("Label list :  ",Assembler.Labellist)
-            console.log("labelobj",labelobj)
             return {type: 'NUMBER', value: labelobj.address} 
     }}
 },
@@ -444,7 +442,6 @@ export class Assembler{
         if (Errorcalm.LexicalError.length > 0) {
             Errorcalm.printError();
         }else{
-            console.log("lexicalList fjlsjdflsjflsjfs",lexicalList)
         this.input = lexicalList;
         this.toAssemble = new SemanticAnalysis(this.input);
         // let ret= functinterface.cofirmationfunction(this.input);
@@ -685,8 +682,6 @@ export class Assembler{
                             //console.log(dep1)
                             //console.log(FuncInterface.binaryToHex(dep1,4))
                             //console.log(FuncInterface.binaryToHex(code,code.length/4))
-                            console.log("code here",code)
-                            console.log("code here",FuncInterface.binaryToHex(code,code.length/4))
                             return FuncInterface.binaryToHex(code,code.length/4)
                             break;
 
@@ -845,7 +840,6 @@ export class Assembler{
                 for (let index = 0; index < toassmb.length; index++) {
                     if (index >= lines) {
                         if (Assembler.Labellist[i].label) {
-                            console.log("Assembler.Labellist[i].label",Assembler.Labellist[i].label)
                         Assembler.Labellist[i].address = ipTrack;
                         }
                         i++;
@@ -860,7 +854,6 @@ export class Assembler{
                 SemanticAnalysis.labeling = false;
                 output = new Assembler(input2.code) 
                 toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
-                console.log("toassmb",toassmb)
                 for (let index = 0; index < toassmb.length; index++) {
                     assembledcode.push(Assembler.assemble(toassmb[index]))
                 }

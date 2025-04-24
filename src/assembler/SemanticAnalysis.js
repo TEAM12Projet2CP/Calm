@@ -26,7 +26,6 @@ export class SemanticAnalysis {
                                     var labelname = lexicalList[i][1].value ;
                                     Assembler.Labellist.forEach(element => { 
                                         if((element.name === labelname)){
-                                            console.log(element.name + " " + labelname + " " + SemanticAnalysis.labeltype + " " + element.label) 
                                             found = true
                                         }
                                     });
@@ -101,7 +100,6 @@ export class SemanticAnalysis {
                             if (['NEG','NOT', 'SHL', 'SHR', 'PUSH', 'POP', 'ROR', 'ROL'].includes( lexicalList[i][0].value )) {
                                 //read or write from or to register only..
                                 // Labels are not allowed
-                                console.log("louai ghouli");
                                 if (firstparam.type == 'REGISTER'  && lexicalList[i].length == 2) {
                                     this.Semanticlist.push([{  type:lexicalList[i][0].type, value: lexicalList[i][0].value, adrmode:0  },lexicalList[i][1]]);
                                 }
@@ -127,17 +125,11 @@ export class SemanticAnalysis {
                                         case 3:
                                             var list1;
                                             list1 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list1 ;
-                                            console.log("list1 the fuck is here",list1)
-                                            console.log("\nlist1hh what do u mean ",FuncInterface.defadrmod(list1))
                                             let asize =   ( FuncInterface.defadrmod(list1,i).size == 1 )? 1 : 0;
                                              //console.log(asize);
-                                            console.log("l3ziz : " +asize)
                                              this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value,size:asize},FuncInterface.defadrmod(list1,i),]);
                                             break;
                                         default:
-                                            
-                                            console.log("here baby")
-                                            console.log(lexicalList[i].length)
                                             this.Semanticlist.push(new Errorcalm("Wrong number or type of operands",null,i))
                                             break;
                                     }    }else{
@@ -156,11 +148,9 @@ export class SemanticAnalysis {
                                     // add addressing modes direct and indirect for labels
 
                                     //check if it's present in label list
-                                    console.log("should find the label ",lexicalList[i])
                                     switch (lexicalList[i].length) {
 
                                         case 2:
-                                            console.log("here baby")
                                             this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value, adrmode:0 },{type:FuncInterface.Label_To_Num(firstparam.value,i).type, value:FuncInterface.Label_To_Num(firstparam.value,i).value}]);
                                             
                                             break;
@@ -169,11 +159,8 @@ export class SemanticAnalysis {
                                             case 3:
                                                 var list1;
                                                 list1 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list1 ;
-                                                console.log("list1",list1)
-                                                console.log("\nlist1hh",FuncInterface.defadrmod(list1))
                                                 let asize =   ( FuncInterface.defadrmod(list1,i).size == 1 )? 1 : 0;
                                                  //console.log(asize);
-                                                console.log("l3ziz : " +asize)
                                                  this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value,adrmode:3},FuncInterface.defadrmod(list1,i),]);
                                                 break;
                                         case 5:
@@ -223,7 +210,6 @@ export class SemanticAnalysis {
                             // check if size of first list == size of second list and assign it to the size of the instruction
                             var list1,list2 =[];
                             list1 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list1 ;
-                            console.log("list1",list1[0].type)
                             list2 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list2 ;
          
                             if( FuncInterface.defadrmod(list1,i).type=='NUMBER' && lexicalList[i][0].value == 'MOV' && FuncInterface.defadrmod(list1,i).adrmode==0 ) {

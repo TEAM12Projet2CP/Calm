@@ -101,13 +101,10 @@ const Ide = ({currentUser})=>{
     let instrobject = {};
     let save = {};
     // probelm with consecutive reads it will put both read data in the same address corresponding to the address of the last read (ig problem with opvalues)
-    console.log("starting the execution");
     while (instrobject.name !== "stop") {
         sequenceur.getinstrbyte(animations, true, Contextarray);
         instrobject = { ...sequenceur.decode(animations, Contextarray) };
-        console.log("instrobject:", instrobject);
         if (instrobject.name !== "stop") {
-            console.log("wch mami:", instrobject);
             if (instrobject.name === "READ" && typeof instrobject.steps?.[0] === "function") {
               for (let i = 0; i < 7; i++) {
                 save[i] = Registers[i].getvalue();
@@ -117,7 +114,6 @@ const Ide = ({currentUser})=>{
                   Registers[i].setvalue(save[i]);
                 }
                 if (result === false) {
-                    console.log("READ was delayed due to IO being busy");
                     continue;
                 }
 
@@ -164,7 +160,6 @@ const Ide = ({currentUser})=>{
   const [editMode, setEditMode] = useState({isEditMode: false, programName: null, programId: -1});
 
   const {state} = useLocation()
-  console.log("ide state:",state);
   useEffect(()=>{
     if(state){
       setEditMode(state.editMode);
@@ -247,9 +242,7 @@ const Ide = ({currentUser})=>{
 
   useEffect(()=>{
       let storedArray = JSON.parse(localStorage.getItem('arr'));  
-      console.log(storedArray)         
       if(storedArray!=null){
-        console.log("stored_array",storedArray);
         storedArray=storedArray.join('\n');
         localStorage.removeItem('arr');
         setCode(storedArray);
@@ -345,26 +338,21 @@ const Ide = ({currentUser})=>{
                   let inputouter;
 
                   if(iscode){
-                    console.log(handleStoreCode)
                     inputouter=Assembler.assemblecode(handleStoreCode())
                     
                   }else{
                     inputouter=handleStoreCode();
                   }
-                  console.log("inputouter",inputouter.code);
                   let input=convertStrings(inputouter.code);
-                  console.log("input",input);
                   // not checked yet
                   memory.data = inputouter.memory;
                   input.push("ff");
                   try {
                     if (Errorcalm.errorr === 0) {
-                      console.log("drsas")
                       traitement(input);
                       
                      
                     }else{
-                      console.log("SIks")
                       setresult(Errorcalm.printError());
                       
                       

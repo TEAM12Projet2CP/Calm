@@ -16,7 +16,6 @@ const AdressingModes = () => {
     
     axios.get(URL)
     .then(res =>  {
-      console.log(res.data.data)
       setaddressingModesInfos(res.data.data);
     })
     .catch(err => console.log(err))

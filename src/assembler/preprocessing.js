@@ -42,14 +42,12 @@ export class preprocessing{
             }
             i += 1
         }
-        console.log('data: ', this.dataSegment)
     }
 
     // allocate space in memory, to get addresses of variables
     allocateData(){
         if(this.dataSegment.length === 0){
             // no data segment, no need to allocate
-            console.log("no data")
             return
         }
         // here, we first should decide whether we compact the memory or not, so we either work from 0 or from the end of stack segment at @ = 256
@@ -91,7 +89,6 @@ export class preprocessing{
             varHolder.length = length
             let value = line.filter((_,index) => index >= 2).join(" ").match(/"[^"]*"|[^,]+/g)
 
-            console.log(value)
             // parsing value(s) of the variable
             // we should include the number of bytes to calculate the current address
 
@@ -141,9 +138,7 @@ export class preprocessing{
             }).flat() // flatten to get a 1 dimensional array just in case if we have a string in the object
             //we have to work on this
             this.data.push(...value)
-         }
-        console.log(this.varList)
-        
+         }        
     }
     // we suppose the code is given to use as 
     extractMacro(input /*it should be the whole code  */){
@@ -252,7 +247,6 @@ export class preprocessing{
             curLine += 1
             if(!input[curLine]){
                 // throw error
-                console.log("No end")
                 return
             }
         }
@@ -372,7 +366,6 @@ export class preprocessing{
     static preprocessor(code){
         const preprocessor = new preprocessing();
         let str = code
-        console.log("code 1 here:"+str)
         preprocessor.getDataSegment(str)
         //console.log("code 2 here:"+str)
         if(preprocessor.errors.length > 0){
@@ -398,8 +391,6 @@ export class preprocessing{
         }
 
             str = preprocessor.replaceMacro(str)
-
-            console.log("code 2 here:"+str)
             if(preprocessor.errors.length > 0){
                 Errorcalm.printError(preprocessor.errors)
                 // force exit
@@ -414,9 +405,6 @@ export class preprocessing{
         //     return
         // }
         // str = preprocessor.removeAndReplaceLabels(str)
-
-        console.log("code 4 here:"+str)
-
         return {code: str, labels: preprocessor.labelSymbolList, data: preprocessor.data, varList: preprocessor.varList}
 
     }

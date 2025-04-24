@@ -539,19 +539,14 @@ class Sequenceur{
         this.RI=new Register();
     };
     getinstrbyte(animations,is_animated,Contextarray){//from the queue
-        console.log("getinstrbyte is animated : ",is_animated);
         let Inshex2;
         let Inshex=queue.shift();
-        console.log(`Instruction Hex: ${Inshex}`);
         let Ins=hex2bin(Inshex);
-        console.log(`Instruction Binary: ${Ins}`);
         this.RI.setvalue(Ins);
-        console.log(`this is RI here${this.RI.getvalue()}`)
         //the animation for this instruction goes here
         /////those 2 animations must be at the same time___________________
         if(is_animated){
             let key=hex2bin(Inshex).substring(0,4);
-            console.log("key : ",key);
             if(key>="0010"){//instructions with 1 general byte
                 animations.push({
                     value:"",
@@ -1036,9 +1031,7 @@ class Sequenceur{
                 let regMod2=secondByte.substring(5,8);
                 if(key=='0001100'||key=='0001001'){
                    
-                    key=key+Ind;
-                    console.log("klkl"+key)
-                  
+                    key=key+Ind;                  
                     if (key=='000100111') {
                         key='1001';
                     }
@@ -1163,7 +1156,6 @@ class Sequenceur{
                         instrObject.register2=parseInt(regMod2,2);
                         instrObject.addresse1=addresse1;
                     }else if(key=='000110011'||key=='000100111'){
-                        console.log("inin");
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresseop1=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -2486,7 +2478,6 @@ class Sequenceur{
             res = instrObject.steps[i](animations);
             
         }
-        console.log("inst : " , JSON.stringify(instrObject,null,2));
         let animationSteps= instrObject.buildanim();
         if(is_animated===1 & animationSteps.length>0){
             for (let i = 0; i < animationSteps.length; i++) {
