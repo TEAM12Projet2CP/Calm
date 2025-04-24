@@ -774,7 +774,6 @@ export class Assembler{
                     let instcode = "";
                     if (element.value === 'READ') {
                         regmod = FuncInterface.adrmap(input[1].adrmode, size, typeof input[1].depl == 'undefined' ? 0 : input[1].depl > 255 ? '1' : '0');
-                        console.log("reg: " ,regmod)
                         switch (regmod) {
                             case '000':
                                 let long = size == 0 ? 8 : 16;
@@ -791,7 +790,6 @@ export class Assembler{
                             case '111':
                                 dep = FuncInterface.decimalTobinByte(input[1].depl, input[1].depl > 255 ? 16 : 8);
                                 op = FuncInterface.decimalTobinByte(input[1].value, 16);
-                                console.log("dep here", FuncInterface.binaryToHex(dep, 4));
                                 break;
                             case '011':
                             case '100':
@@ -803,9 +801,15 @@ export class Assembler{
                                 dep = 'error';
                                 break;
                         }
-                        oppcode = '8';
-                        instcode = oppcode + FuncInterface.binaryToHex(op, 4) + (dep ? FuncInterface.binaryToHex(dep, 4) : "");
-                    } else {
+                            // Convert 'op' from binary to decimal
+                            const opDecimal = parseInt(op, 2);
+                    
+                            // Store the decimal value in the exported variable
+                            opValue = opDecimal;
+                            oppcode = '80';
+                            instcode = oppcode + FuncInterface.binaryToHex(op, 4) + (dep ? FuncInterface.binaryToHex(dep, 4) : "");
+                            console.log("instcode",instcode)
+                        } else {
                         switch(element.value){
                             case 'CALL': oppcode = '33'; break;
                             case 'BE': oppcode = '25'; break;
@@ -819,15 +823,6 @@ export class Assembler{
                         }
                         instcode = oppcode+FuncInterface.decimalToHex(input[1].value,4);
                     }
-
-                    // Convert 'op' from binary to decimal
-                    const opDecimal = parseInt(op, 2);
-                    console.log("op (decimal): ", opDecimal);
-                    
-                    // Store the decimal value in the exported variable
-                    opValue = opDecimal;
-
-                    console.log("dep : " ,dep)
                     return instcode;
                 }
             

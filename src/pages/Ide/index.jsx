@@ -98,17 +98,16 @@ const Ide = ({currentUser})=>{
     queue.fetchInstruction(animations, 2, 1, Contextarray, 0);
     queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
 
-    console.log(queue.getinstwithoutshift());
-
     let instrobject = {};
     let save = {};
+    // probelm with consecutive reads it will put both read data in the same address corresponding to the address of the last read (ig problem with opvalues)
+    console.log("starting the execution");
     while (instrobject.name !== "stop") {
         sequenceur.getinstrbyte(animations, true, Contextarray);
         instrobject = { ...sequenceur.decode(animations, Contextarray) };
-
+        console.log("instrobject:", instrobject);
         if (instrobject.name !== "stop") {
             console.log("wch mami:", instrobject);
-
             if (instrobject.name === "READ" && typeof instrobject.steps?.[0] === "function") {
               for (let i = 0; i < 7; i++) {
                 save[i] = Registers[i].getvalue();
@@ -352,7 +351,9 @@ const Ide = ({currentUser})=>{
                   }else{
                     inputouter=handleStoreCode();
                   }
+                  console.log("inputouter",inputouter.code);
                   let input=convertStrings(inputouter.code);
+                  console.log("input",input);
                   // not checked yet
                   memory.data = inputouter.memory;
                   input.push("ff");

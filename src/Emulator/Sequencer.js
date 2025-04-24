@@ -536,6 +536,8 @@ class Sequenceur{
         this.RI=new Register();
     };
     getinstrbyte(animations,is_animated,Contextarray){//from the queue
+        console.log("getinstrbyte is animated : ",is_animated);
+        let Inshex2;
         let Inshex=queue.shift();
         console.log(`Instruction Hex: ${Inshex}`);
         let Ins=hex2bin(Inshex);
@@ -546,7 +548,7 @@ class Sequenceur{
         /////those 2 animations must be at the same time___________________
         if(is_animated){
             let key=hex2bin(Inshex).substring(0,4);
-            console.log(key);
+            console.log("key : ",key);
             if(key>="0010"){//instructions with 1 general byte
                 animations.push({
                     value:"",
@@ -574,8 +576,10 @@ class Sequenceur{
                     time:IrToDecoder.time,
                     anim:IrToDecoder.anim,
                 });
+                if(key === "1000"){
+                }
             }else{//instruction with 2 general bytes
-                let Inshex2=queue.getinstwithoutshift();
+                Inshex2=queue.getinstwithoutshift();
                 animations.push({
                     value:"",
                     nom:"QueueToIr",
@@ -666,7 +670,6 @@ class Sequenceur{
     decode(animations,Contextarray){
         let instruction=this.RI.getvalue();
         let key=instruction.substring(0,4);
-        console.log("mami"+key);
         let index=0;
         let instrObject;
         if(key=="1111"){
@@ -997,6 +1000,10 @@ class Sequenceur{
                     anim:fitToRual1.anim,
                 })
             }}
+            if(key ==='1000'){
+                this.getinstrbyte(animations,false,Contextarray);
+                this.getinstrbyte(animations,false,Contextarray);
+            }
         }else{
             if(key>='0010' & key<='0011'){
                 key=instruction.substring(0,7);
@@ -1032,7 +1039,6 @@ class Sequenceur{
                     }
                         index=hash(key);
                         instrObject=hashmap[index].instrObject;
-                        console.log(instrObject);
                         animateDecoderSequencer(animations,instrObject.name);
                         instrObject.taille=taille;
                         if (key=='1001') {
