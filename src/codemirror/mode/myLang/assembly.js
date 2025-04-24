@@ -1,5 +1,5 @@
 import define from 'requirejs'
-import CodeMirror from 'codemirror'
+import  CodeMirror from 'codemirror'
 
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -14,18 +14,11 @@ import CodeMirror from 'codemirror'
 })(function(CodeMirror) { 
 
   CodeMirror.defineMode("8086", function(config, parserConfig) {
-      var keywords = ["mov", "add", "sub", "mul", "div", "jmp", "call", "ret", "push", "pop", 
-                      "label", "bri", "be", "bne", "bs", "bi", "bse", "bie", "ror", "rol", 
-                      "shr", "shl", "read", "write"]; // Added "read" and "write"
-
-      var registers = ["r1", "r2", "r3", "r4", "idr", "br", "sr", "acc", "r1l", "r1h", "r2l", 
-                       "r2h", "r3l", "r3h", "accl", "acch"];
-
+      var keywords = ["mov", "add", "sub", "mul", "div", "jmp", "call", "ret", "push", "pop", "label", "bri", "be", "bne", "bs", "bi", "bse", "bie", "ror", "rol", "shr", "shl"];
+      var registers = ["r1", "r2", "r3", "r4", "idr", "br", "sr", "acc", "r1l", "r1h", "r2l", "r2h", "r3l", "r3h", "accl", "acch"];
       var number = /-?(?:0x[0-9a-f]+|\d+)/i;
-
       function tokenBase(stream, state) {
         var ch = stream.next();
-        
         if (ch === "/") {
           if (stream.eat("")) {
             state.tokenize = tokenComment;
@@ -36,68 +29,69 @@ import CodeMirror from 'codemirror'
             return "comment";
           }
         }
-
         if (ch === ";" || ch === "#") {
           stream.skipToEnd();
           return "comment";
         }
-
         if (/[a-zA-Z_]/.test(ch)) {
           stream.eatWhile(/[\w.]/);
           var cur = stream.current().toLowerCase();
 
-          if (keywords.indexOf(cur) >= 0) {
-              return "key";  // READ & WRITE will now be highlighted as instructions
-          } 
-          if (registers.indexOf(cur) >= 0) {
-              return "reg";
-          }
-        }
+              if (keywords.indexOf(cur) >= 0) {
+              return "key";
+              } 
+              if (registers.indexOf(cur) >= 0) {
+                  return "reg";
+              }
 
-        if (/\d/.test(ch)) {
+          }
+          if (/\d/.test(ch)) {
             stream.match(number);
             return "num";
-        }
+          }
 
         if(/[@*]/.test(ch)){
             return "opadr";
         }
 
         if(/[[]]/.test(ch)){
-            return "opadr";
+            return "opadr"
         }
 
-        return null;
-      }
 
-      function tokenComment(stream, state) {
-        let maybeEnd = false, ch;
+      return null;
+    }
 
-        while ((ch = stream.next())) {
-          if (ch === "/" && maybeEnd) {
-            state.tokenize = null;
-            break;
-          }
-          maybeEnd = ch === "";
+    function tokenComment(stream, state) {
+      let maybeEnd = false, ch;
+
+      while ((ch = stream.next())) {
+        if (ch === "/" && maybeEnd) {
+          state.tokenize = null;
+          break;
         }
 
-        return "comment";
+        maybeEnd = ch === "";
       }
 
-      return {
-        startState: function() {
-          return {
-            tokenize: null,
-          };
-        },
+      return "comment";
+    }
 
-        token: function(stream, state) {
-          if (state.tokenize) {
-            return state.tokenize(stream, state);
-          }
-          return tokenBase(stream, state);
-        },
-      };
+    return {
+      startState: function() {
+        return {
+          tokenize: null,
+        };
+      },
+
+      token: function(stream, state) {
+        if (state.tokenize) {
+          return state.tokenize(stream, state);
+        }
+
+        return tokenBase(stream, state);
+      },
+    };
   });
 
 });

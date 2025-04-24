@@ -2,7 +2,8 @@ import React from "react";
 import {motion} from "framer-motion";
 import "./style.css"
 const ComponentsListing = ({ name, imagepath, imageHeight, open }) => {
-   
+    console.log(imagepath)
+
     return (
         <>
             <motion.div whileHover={{scale: 1.1}}

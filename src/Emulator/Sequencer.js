@@ -1,498 +1,499 @@
 import { Register } from "./Register.js";
-import { queue, Registers, addressingModes, memory } from "../pages/Ide/index.jsx";
+import { queue, Registers, addressingModes} from "../pages/Ide";
 import { hash, hashmap } from "./Opcodes.js";
 import { gsap } from "gsap";
-import {MC} from "./MC.js"
-// import Console from "../Console.jsx";____conflict!!!!!!!!!!
+import { useSpeedStore } from './speedStore.jsx';
+
+//const speed = useSpeedStore.getState().speed;
 const fitToR2={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const AccToRUAL2={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.262,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.262,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const AccToRUAL1={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.106,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.106,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const AccToBus={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/  useSpeedStore.getState().speed*4000,
     anim:(val,h,w)=>{
     ///depart: ( 39.7% , 54% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.282,y:h*0.923,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.282,y:h*0.923},{x:w*0.361 ,duration:1,delay:1});
-    gsap.to(".ball",{y:h*0.56 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.282,y:h*0.923,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.282,y:h*0.923},{x:w*0.361 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{y:h*0.56 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*3});
   },}
   const fitToAcc={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.07,height:h*0.055,x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.07,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.07,height:h*0.055,x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.07,height:h*0.055,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToAcc={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const infitToR2={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
 
   const fitToR1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-      gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1});
-    //   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    //   gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+      gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    //   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    //   gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
     },}
 
 
   const fitToR3={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
 
   const infitToR3={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
 
   const fitToR4={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
 
   const infitToR4={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
 
   const fitToIdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToIdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToBr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToBr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToSr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToSR={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
 
     const BusToRual2={
         value:"",
         target:".ball",
-        time:3000,
+      time:1/  useSpeedStore.getState().speed*3000,
         anim:(val,h,w)=>{
         ///depart: ( 54% , 35,2% )
-        gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-        gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
       },}
       const RegToRual1={
         value:"",
         target:".box-data",
-        time:3000,
+      time:1/  useSpeedStore.getState().speed*3000,
         anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-      gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1,delay:1})
-      gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+      gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+      gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
       },}
       const fitToRual2={
         value:"",
         target:".ball",
-        time:1000,
+      time:1/  useSpeedStore.getState().speed*1000,
         anim:(val,h,w)=>{
-        gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.275,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1});
-        // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1,delay:1});
-        // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+        gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.275,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+        // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
       },}
 const BusToRual1={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 54% , 24,45% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.143,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56},{y:h*0.625 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.143,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56},{y:h*0.625 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const RegToRual2={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const fitToRual1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToR1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
 const IpToAdr={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 69% , 13.7% )
-    gsap.fromTo(".ball",{x:w*0.746,y:h*0.26,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.746,y:h*0.26},{y:h*0.46 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{x:w*0.746,y:h*0.26,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.746,y:h*0.26},{y:h*0.46 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const IPToMAR={
     value:"",
     target:".box-ADR",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1,delay:1})
-    gsap.to(".box-ADR",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.to(".box-ADR",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const fitToMdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToMdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToMar={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const fitToIr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.6495,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.6495,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToIr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    // gsap.fromTo(".ball",{x:w*0.6,y:h*0.6495,borderRadius:"10px",width:w*0.1,height:h*0.055},{opacity:"1" ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1});
+    // gsap.fromTo(".ball",{x:w*0.6,y:h*0.6495,borderRadius:"10px",width:w*0.1,height:h*0.055},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const fitToDecode={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.753,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.753,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToDecode={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    // gsap.fromTo(".ball",{x:w*0.6,y:h*0.753,borderRadius:"10px",width:w*0.1,height:h*0.055,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1});
+    // gsap.fromTo(".ball",{x:w*0.6,y:h*0.753,borderRadius:"10px",width:w*0.1,height:h*0.055,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const fitToSequencer={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.858,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.858,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const MdrToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 51.8% , 43.2% )
-    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:1,});
-    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,});
+    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const MdrTOQue={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:1,delay:1})
-    gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const BusToQueue={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/  useSpeedStore.getState().speed*4000,
     anim:(val,h,w)=>{
     ///depart: ( 79.1% , 53.6% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1,delay:1});
-    gsap.to(".ball",{x:w*0.921 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{x:w*0.921 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*3});
   },}
   const QueueToIr={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 64.9% , 64.2% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.711 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.711 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const IrToDecoder={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 59% , 78.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.708,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.644,y:h*0.708},{y:h*0.725 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.708,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.644,y:h*0.708},{y:h*0.725 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   const DecoderToSequencer={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 59% , 78.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.813,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.644,y:h*0.813},{y:h*0.827 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.813,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.644,y:h*0.813},{y:h*0.827 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const fitqueue6={
     value:"",
     target:".queue1",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue1",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue1",{opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const fitqueue5={
     value:"",
     target:".queue2",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue2",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue2",{opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const fitqueue4={
     value:"",
     target:".queue3",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue3",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue3",{opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const fitqueue3={
     value:"",
     target:".queue4",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue4",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue4",{opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const fitqueue2={
     value:"",
     target:".queue5",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue5",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue5",{opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const fitqueue1={
     value:"",
     target:".queue6",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue6",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue6",{opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   
   const infitqueue6={
     value:"",
     target:".queue1",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue1",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue1",{opacity:"1"},{opacity:"0",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const infitqueue5={
     value:"",
     target:".queue2",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue2",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue2",{opacity:"1"},{opacity:"0",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const infitqueue4={
     value:"",
     target:".queue3",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue3",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue3",{opacity:"1"},{opacity:"0",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const infitqueue3={
     value:"",
     target:".queue4",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue4",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue4",{opacity:"1"},{opacity:"0",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const infitqueue2={
     value:"",
     target:".queue5",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue5",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue5",{opacity:"1"},{opacity:"0",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const infitqueue1={
     value:"",
     target:".queue6",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue6",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue6",{opacity:"1"},{opacity:"0",duration:1/(  useSpeedStore.getState().speed)*1});
   },}
   const MCanim={
     value:"",
     target:".MC",
-    time:2000,
+  time:1/  useSpeedStore.getState().speed*2000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".MC",{opacity:"0"},{opacity:"1" ,duration:1});
-        gsap.fromTo(".MC",{opacity:"1"},{opacity:"0" ,duration:1,delay:1});
+        gsap.fromTo(".MC",{opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".MC",{opacity:"1"},{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
     },}
 
 
@@ -508,25 +509,25 @@ function animateDecoderSequencer(animations,InsName){
     animations.push({
             value:InsName,
             target:fitToDecode.target,
-            time:fitToDecode.time,
+          time:1/  useSpeedStore.getState().speed*fitToDecode.time,
             anim:fitToDecode.anim,
         });
         animations.push({
             value:InsName,
             target:infitToDecode.target,
-            time:infitToDecode.time,
+          time:1/  useSpeedStore.getState().speed*infitToDecode.time,
             anim:infitToDecode.anim,
         });
         animations.push({
             value:"",
             target:DecoderToSequencer.target,
-            time:DecoderToSequencer.time,
+          time:1/  useSpeedStore.getState().speed*DecoderToSequencer.time,
             anim:DecoderToSequencer.anim,
         });
         animations.push({
             value:InsName,
             target:fitToSequencer.target,
-            time:fitToSequencer.time,
+          time:1/  useSpeedStore.getState().speed*fitToSequencer.time,
             anim:fitToSequencer.anim,
         });
 }
@@ -536,81 +537,75 @@ class Sequenceur{
         this.RI=new Register();
     };
     getinstrbyte(animations,is_animated,Contextarray){//from the queue
-        console.log("getinstrbyte is animated : ",is_animated);
-        let Inshex2;
         let Inshex=queue.shift();
-        console.log(`Instruction Hex: ${Inshex}`);
         let Ins=hex2bin(Inshex);
-        console.log(`Instruction Binary: ${Ins}`);
         this.RI.setvalue(Ins);
         console.log(`this is RI here${this.RI.getvalue()}`)
         //the animation for this instruction goes here
         /////those 2 animations must be at the same time___________________
         if(is_animated){
             let key=hex2bin(Inshex).substring(0,4);
-            console.log("key : ",key);
+            console.log(key);
             if(key>="0010"){//instructions with 1 general byte
                 animations.push({
                     value:"",
                     nom:"QueueToIr",
                     target:QueueToIr.target,
-                    time:QueueToIr.time,
+                  time:1/  useSpeedStore.getState().speed*QueueToIr.time,
                     anim:QueueToIr.anim,
                 });
                 animations.push({
                     value:Ins,
                     nom:"fitToIr",
                     target:fitToIr.target,
-                    time:fitToIr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToIr.time,
                     anim:fitToIr.anim,
                 });
                 animations.push({
                     value:Ins,
                     target:infitToIr.target,
-                    time:infitToIr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToIr.time,
                     anim:infitToIr.anim,
                 });
                 animations.push({
                     value:"",
                     target:IrToDecoder.target,
-                    time:IrToDecoder.time,
+                  time:1/  useSpeedStore.getState().speed*IrToDecoder.time,
                     anim:IrToDecoder.anim,
                 });
-                if(key === "1000"){
-                }
             }else{//instruction with 2 general bytes
-                Inshex2=queue.getinstwithoutshift();
+                let Inshex2=queue.getinstwithoutshift();
                 animations.push({
                     value:"",
                     nom:"QueueToIr",
                     target:QueueToIr.target,
-                    time:QueueToIr.time,
+                  time:1/  useSpeedStore.getState().speed*QueueToIr.time,
                     anim:QueueToIr.anim,
                 });
                 animations.push({
                     value:"",
                     nom:"QueueToIr",
                     target:QueueToIr.target,
-                    time:QueueToIr.time,
+                  time:1/  useSpeedStore.getState().speed*QueueToIr.time,
                     anim:QueueToIr.anim,
                 });
                 animations.push({
                     value:Inshex.toString()+Inshex2.toString(),
                     nom:"fitToIr",
                     target:fitToIr.target,
-                    time:fitToIr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToIr.time,
                     anim:fitToIr.anim,
                 });
                 animations.push({
                     value:Inshex.toString()+Inshex2.toString(),
                     target:infitToIr.target,
-                    time:infitToIr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToIr.time,
                     anim:infitToIr.anim,
                 });
                 animations.push({
                     value:"",
                     target:IrToDecoder.target,
-                    time:IrToDecoder.time,
+                  time:1/  useSpeedStore.getState().speed*IrToDecoder.time,
                     anim:IrToDecoder.anim,
                 });
             }
@@ -618,49 +613,49 @@ class Sequenceur{
         //     value:"",
         //     nom:"QueueToIr",
         //     target:QueueToIr.target,
-        //     time:QueueToIr.time,
+        //   time:1/  useSpeedStore.getState().speed*QueueToIr.time,
         //     anim:QueueToIr.anim,
         // });
         // animations.push({
         //     value:Ins,
         //     target:fitToIr.target,
-        //     time:fitToIr.time,
+        //   time:1/  useSpeedStore.getState().speed*fitToIr.time,
         //     anim:fitToIr.anim,
         // });
         // animations.push({
         //     value:Ins,
         //     target:infitToIr.target,
-        //     time:infitToIr.time,
+        //   time:1/  useSpeedStore.getState().speed*infitToIr.time,
         //     anim:infitToIr.anim,
         // });
         // animations.push({
         //     value:"",
         //     target:IrToDecoder.target,
-        //     time:IrToDecoder.time,
+        //   time:1/  useSpeedStore.getState().speed*IrToDecoder.time,
         //     anim:IrToDecoder.anim,
         // });
         // animations.push({
         //     value:Ins,
         //     target:fitToDecode.target,
-        //     time:fitToDecode.time,
+        //   time:1/  useSpeedStore.getState().speed*fitToDecode.time,
         //     anim:fitToDecode.anim,
         // });
         // animations.push({
         //     value:Ins,
         //     target:infitToDecode.target,
-        //     time:infitToDecode.time,
+        //   time:1/  useSpeedStore.getState().speed*infitToDecode.time,
         //     anim:infitToDecode.anim,
         // });
         // animations.push({
         //     value:"",
         //     target:DecoderToSequencer.target,
-        //     time:DecoderToSequencer.time,
+        //   time:1/  useSpeedStore.getState().speed*DecoderToSequencer.time,
         //     anim:DecoderToSequencer.anim,
         // });
         // animations.push({
         //     value:Ins,
         //     target:fitToSequencer.target,
-        //     time:fitToSequencer.time,
+        //   time:1/  useSpeedStore.getState().speed*fitToSequencer.time,
         //     anim:fitToSequencer.anim,
         // });
         ///animation of the sequencer
@@ -673,29 +668,28 @@ class Sequenceur{
         let index=0;
         let instrObject;
         if(key=="1111"){
-            
             animations.push({
                 value:"STOP",
                 target:fitToDecode.target,
-                time:fitToDecode.time,
+              time:1/  useSpeedStore.getState().speed*fitToDecode.time,
                 anim:fitToDecode.anim,
             })
             animations.push({
                 value:"STOP",
                 target:infitToDecode.target,
-                time:infitToDecode.time,
+              time:1/  useSpeedStore.getState().speed*infitToDecode.time,
                 anim:infitToDecode.anim,
             })
             animations.push({
                 value:"",
                 target:DecoderToSequencer.target,
-                time:DecoderToSequencer.time,
+              time:1/  useSpeedStore.getState().speed*DecoderToSequencer.time,
                 anim:DecoderToSequencer.anim,
             })
             animations.push({
                 value:"STOP",
                 target:fitToSequencer.target,
-                time:fitToSequencer.time,
+              time:1/  useSpeedStore.getState().speed*fitToSequencer.time,
                 anim:fitToSequencer.anim,
             })
             return {
@@ -746,62 +740,62 @@ class Sequenceur{
                 animations.push({
                     value:value,
                     target:fitToR1.target,
-                    time:fitToR1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR1.time,
                     anim:fitToR1.anim,
                 })
                 animations.push({
                     value:value,
                     target:infitToR1.target,
-                    time:infitToR1.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR1.time,
                     anim:infitToR1.anim,
                 })
                 animations.push({
                     value:value,
                     target:RegToRual1.target,
-                    time:RegToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                     anim:RegToRual1.anim,
                 })
                 animations.push({
                     value:"",
                     target:BusToRual1.target,
-                    time:BusToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                     anim:BusToRual1.anim,
                 })
                 animations.push({
                     value:value,
                     target:fitToRual1.target,
-                    time:fitToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
             }else if(numreg=='001'){
                 animations.push({
                     value:value,
                     target:fitToR2.target,
-                    time:fitToR2.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR2.time,
                     anim:fitToR2.anim,
                 })
                 animations.push({
                     value:value,
                     target:infitToR2.target,
-                    time:infitToR2.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR2.time,
                     anim:infitToR2.anim,
                 })
                 animations.push({
                     value:value,
                     target:RegToRual1.target,
-                    time:RegToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                     anim:RegToRual1.anim,
                 })
                 animations.push({
                     value:"",
                     target:BusToRual1.target,
-                    time:BusToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                     anim:BusToRual1.anim,
                 })
                 animations.push({
                     value:value,
                     target:fitToRual1.target,
-                    time:fitToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
             }
@@ -809,62 +803,62 @@ class Sequenceur{
                 animations.push({
                     value:value,
                     target:fitToR3.target,
-                    time:fitToR3.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR3.time,
                     anim:fitToR3.anim,
                 })
                 animations.push({
                     value:value,
                     target:infitToR3.target,
-                    time:infitToR3.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR3.time,
                     anim:infitToR3.anim,
                 })
                 animations.push({
                     value:value,
                     target:RegToRual1.target,
-                    time:RegToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                     anim:RegToRual1.anim,
                 })
                 animations.push({
                     value:"",
                     target:BusToRual1.target,
-                    time:BusToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                     anim:BusToRual1.anim,
                 })
                 animations.push({
                     value:value,
                     target:fitToRual1.target,
-                    time:fitToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
             }else if(numreg=='011'){
                 animations.push({
                     value:value,
                     target:fitToR4.target,
-                    time:fitToR4.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR4.time,
                     anim:fitToR4.anim,
                 })
                 animations.push({
                     value:value,
                     target:infitToR4.target,
-                    time:infitToR4.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR4.time,
                     anim:infitToR4.anim,
                 })
                 animations.push({
                     value:value,
                     target:RegToRual1.target,
-                    time:RegToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                     anim:RegToRual1.anim,
                 })
                 animations.push({
                     value:"",
                     target:BusToRual1.target,
-                    time:BusToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                     anim:BusToRual1.anim,
                 })
                 animations.push({
                     value:value,
                     target:fitToRual1.target,
-                    time:fitToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
             }
@@ -872,68 +866,68 @@ class Sequenceur{
                 animations.push({
                     value:value,
                     target:fitToAcc.target,
-                    time:fitToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                     anim:fitToAcc.anim,
                 })
                 animations.push({
                     value:value,
                     target:infitToAcc.target,
-                    time:infitToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                     anim:infitToAcc.anim,
                 })
                 animations.push({
                     value:value,
                     target:AccToBus.target,
-                    time:AccToBus.time,
+                  time:1/  useSpeedStore.getState().speed*AccToBus.time,
                     anim:AccToBus.anim,
                 })
                 animations.push({
                     value:value,
                     target:AccToRUAL1.target,
-                    time:AccToRUAL1.time,
+                  time:1/  useSpeedStore.getState().speed*AccToRUAL1.time,
                     anim:AccToRUAL1.anim,
                 })
                 animations.push({
                     value:"",
                     target:BusToRual1.target,
-                    time:BusToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                     anim:BusToRual1.anim,
                 })
                 animations.push({
                     value:value,
                     target:fitToRual1.target,
-                    time:fitToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
             }else if(numreg=='101'){
                 animations.push({
                     value:value,
                     target:fitToBr.target,
-                    time:fitToBr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToBr.time,
                     anim:fitToBr.anim,
                 })
                 animations.push({
                     value:value,
                     target:infitToBr.target,
-                    time:infitToBr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToBr.time,
                     anim:infitToBr.anim,
                 })
                 animations.push({
                     value:value,
                     target:RegToRual1.target,
-                    time:RegToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                     anim:RegToRual1.anim,
                 })
                 animations.push({
                     value:"",
                     target:BusToRual1.target,
-                    time:BusToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                     anim:BusToRual1.anim,
                 })
                 animations.push({
                     value:value,
                     target:fitToRual1.target,
-                    time:fitToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
             }
@@ -941,69 +935,65 @@ class Sequenceur{
                 animations.push({
                     value:value,
                     target:fitToIdr.target,
-                    time:fitToIdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                     anim:fitToIdr.anim,
                 })
                 animations.push({
                     value:value,
                     target:infitToIdr.target,
-                    time:infitToIdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                     anim:infitToIdr.anim,
                 })
                 animations.push({
                     value:value,
                     target:RegToRual1.target,
-                    time:RegToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                     anim:RegToRual1.anim,
                 })
                 animations.push({
                     value:"",
                     target:BusToRual1.target,
-                    time:BusToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                     anim:BusToRual1.anim,
                 })
                 animations.push({
                     value:value,
                     target:fitToRual1.target,
-                    time:fitToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
             }else if(numreg=='111'){
                 animations.push({
                     value:value,
                     target:fitToSr.target,
-                    time:fitToSr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToSr.time,
                     anim:fitToSr.anim,
                 })
                 animations.push({
                     value:value,
                     target:infitToSR.target,
-                    time:infitToSR.time,
+                  time:1/  useSpeedStore.getState().speed*infitToSR.time,
                     anim:infitToSR.anim,
                 })
                 animations.push({
                     value:value,
                     target:RegToRual1.target,
-                    time:RegToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                     anim:RegToRual1.anim,
                 })
                 animations.push({
                     value:"",
                     target:BusToRual1.target,
-                    time:BusToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                     anim:BusToRual1.anim,
                 })
                 animations.push({
                     value:value,
                     target:fitToRual1.target,
-                    time:fitToRual1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
             }}
-            if(key ==='1000'){
-                this.getinstrbyte(animations,false,Contextarray);
-                this.getinstrbyte(animations,false,Contextarray);
-            }
         }else{
             if(key>='0010' & key<='0011'){
                 key=instruction.substring(0,7);
@@ -1029,24 +1019,12 @@ class Sequenceur{
                 let Ind=secondByte.substring(0,2);
                 let regMod1=secondByte.substring(2,5);
                 let regMod2=secondByte.substring(5,8);
-                if(key=='0001100'||key=='0001001'){
-                   
+                if(key=='0001100'){
                     key=key+Ind;
-                    console.log("klkl"+key)
-                  
-                    if (key=='000100111') {
-                        key='1001';
-                    }
-                        index=hash(key);
-                        instrObject=hashmap[index].instrObject;
-                        animateDecoderSequencer(animations,instrObject.name);
-                        instrObject.taille=taille;
-                        if (key=='1001') {
-                            key='000110011';
-                        }  
-                        
-                   
-                    
+                    index=hash(key);
+                    instrObject=hashmap[index].instrObject;
+                    animateDecoderSequencer(animations,instrObject.name);
+                    instrObject.taille=taille;
                     let value2=0;
                     if(key=='000110000'){
                         if(taille=='1'){
@@ -1157,8 +1135,7 @@ class Sequenceur{
                         instrObject.value2=value2;
                         instrObject.register2=parseInt(regMod2,2);
                         instrObject.addresse1=addresse1;
-                    }else if(key=='000110011'||key=='000100111'){
-                        console.log("inin");
+                    }else if(key=='000110011'){
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresseop1=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -1213,18 +1190,13 @@ class Sequenceur{
                         }
                         instrObject.value2=value2;
                         instrObject.addresse1=addresse1;
-                        
-                       key='000100111' ; 
                     }
                 }else{
-                    
                     index=hash(key);
-                 
                     instrObject=hashmap[index].instrObject;
                     animateDecoderSequencer(animations,instrObject.name);
                     instrObject.taille=taille;
                     if(Ind=='00'){
-                          
                         let value1=0;
                         let value2=0;
                         if(taille=='1'){
@@ -1278,62 +1250,62 @@ class Sequenceur{
                             animations.push({
                                 value:value1,
                                 target:fitToR1.target,
-                                time:fitToR1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR1.time,
                                 anim:fitToR1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToR1.target,
-                                time:infitToR1.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR1.time,
                                 anim:infitToR1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }else if(regMod1=='001'){
                             animations.push({
                                 value:value1,
                                 target:fitToR2.target,
-                                time:fitToR2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR2.time,
                                 anim:fitToR2.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToR2.target,
-                                time:infitToR2.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR2.time,
                                 anim:infitToR2.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }
@@ -1341,62 +1313,62 @@ class Sequenceur{
                             animations.push({
                                 value:value1,
                                 target:fitToR3.target,
-                                time:fitToR3.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR3.time,
                                 anim:fitToR3.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToR3.target,
-                                time:infitToR3.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR3.time,
                                 anim:infitToR3.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }else if(regMod1=='011'){
                             animations.push({
                                 value:value1,
                                 target:fitToR4.target,
-                                time:fitToR4.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR4.time,
                                 anim:fitToR4.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToR4.target,
-                                time:infitToR4.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR4.time,
                                 anim:infitToR4.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }
@@ -1404,68 +1376,68 @@ class Sequenceur{
                             animations.push({
                                 value:value1,
                                 target:fitToAcc.target,
-                                time:fitToAcc.time,
+                              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                                 anim:fitToAcc.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToAcc.target,
-                                time:infitToAcc.time,
+                              time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                                 anim:infitToAcc.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:AccToBus.target,
-                                time:AccToBus.time,
+                              time:1/  useSpeedStore.getState().speed*AccToBus.time,
                                 anim:AccToBus.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:AccToRUAL1.target,
-                                time:AccToRUAL1.time,
+                              time:1/  useSpeedStore.getState().speed*AccToRUAL1.time,
                                 anim:AccToRUAL1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }else if(regMod1=='101'){
                             animations.push({
                                 value:value1,
                                 target:fitToBr.target,
-                                time:fitToBr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToBr.time,
                                 anim:fitToBr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToBr.target,
-                                time:infitToBr.time,
+                              time:1/  useSpeedStore.getState().speed*infitToBr.time,
                                 anim:infitToBr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }
@@ -1473,62 +1445,62 @@ class Sequenceur{
                             animations.push({
                                 value:value1,
                                 target:fitToIdr.target,
-                                time:fitToIdr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                                 anim:fitToIdr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToIdr.target,
-                                time:infitToIdr.time,
+                              time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                                 anim:infitToIdr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }else if(regMod1=='111'){
                             animations.push({
                                 value:value1,
                                 target:fitToSr.target,
-                                time:fitToSr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToSr.time,
                                 anim:fitToSr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToSR.target,
-                                time:infitToSR.time,
+                              time:1/  useSpeedStore.getState().speed*infitToSR.time,
                                 anim:infitToSR.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }
@@ -1536,62 +1508,62 @@ class Sequenceur{
                             animations.push({
                                 value:value2,
                                 target:fitToR1.target,
-                                time:fitToR1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR1.time,
                                 anim:fitToR1.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToR1.target,
-                                time:infitToR1.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR1.time,
                                 anim:infitToR1.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }else if(regMod2=='001'){
                             animations.push({
                                 value:value2,
                                 target:fitToR2.target,
-                                time:fitToR2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR2.time,
                                 anim:fitToR2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToR2.target,
-                                time:infitToR2.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR2.time,
                                 anim:infitToR2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }
@@ -1599,62 +1571,62 @@ class Sequenceur{
                             animations.push({
                                 value:value2,
                                 target:fitToR3.target,
-                                time:fitToR3.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR3.time,
                                 anim:fitToR3.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToR3.target,
-                                time:infitToR3.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR3.time,
                                 anim:infitToR3.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }else if(regMod2=='011'){
                             animations.push({
                                 value:value2,
                                 target:fitToR4.target,
-                                time:fitToR4.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR4.time,
                                 anim:fitToR4.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToR4.target,
-                                time:infitToR4.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR4.time,
                                 anim:infitToR4.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }
@@ -1662,68 +1634,68 @@ class Sequenceur{
                             animations.push({
                                 value:value2,
                                 target:fitToAcc.target,
-                                time:fitToAcc.time,
+                              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                                 anim:fitToAcc.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToAcc.target,
-                                time:infitToAcc.time,
+                              time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                                 anim:infitToAcc.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:AccToBus.target,
-                                time:AccToBus.time,
+                              time:1/  useSpeedStore.getState().speed*AccToBus.time,
                                 anim:AccToBus.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:AccToRUAL2.target,
-                                time:AccToRUAL2.time,
+                              time:1/  useSpeedStore.getState().speed*AccToRUAL2.time,
                                 anim:AccToRUAL2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }else if(regMod2=='101'){
                             animations.push({
                                 value:value2,
                                 target:fitToBr.target,
-                                time:fitToBr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToBr.time,
                                 anim:fitToBr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToBr.target,
-                                time:infitToBr.time,
+                              time:1/  useSpeedStore.getState().speed*infitToBr.time,
                                 anim:infitToBr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }
@@ -1731,62 +1703,62 @@ class Sequenceur{
                             animations.push({
                                 value:value2,
                                 target:fitToIdr.target,
-                                time:fitToIdr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                                 anim:fitToIdr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToIdr.target,
-                                time:infitToIdr.time,
+                              time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                                 anim:infitToIdr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }else if(regMod2=='111'){
                             animations.push({
                                 value:value2,
                                 target:fitToSr.target,
-                                time:fitToSr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToSr.time,
                                 anim:fitToSr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToSR.target,
-                                time:infitToSR.time,
+                              time:1/  useSpeedStore.getState().speed*infitToSR.time,
                                 anim:infitToSR.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }
@@ -1796,7 +1768,6 @@ class Sequenceur{
                         instrObject.register2=parseInt(regMod2,2);
                         instrObject.register1=parseInt(regMod1,2);
                     }else if(Ind=='01'){
-                        
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresse=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -1845,62 +1816,62 @@ class Sequenceur{
                             animations.push({
                                 value:value1,
                                 target:fitToR1.target,
-                                time:fitToR1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR1.time,
                                 anim:fitToR1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToR1.target,
-                                time:infitToR1.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR1.time,
                                 anim:infitToR1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }else if(regMod1=='001'){
                             animations.push({
                                 value:value1,
                                 target:fitToR2.target,
-                                time:fitToR2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR2.time,
                                 anim:fitToR2.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToR2.target,
-                                time:infitToR2.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR2.time,
                                 anim:infitToR2.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }
@@ -1908,62 +1879,62 @@ class Sequenceur{
                             animations.push({
                                 value:value1,
                                 target:fitToR3.target,
-                                time:fitToR3.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR3.time,
                                 anim:fitToR3.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToR3.target,
-                                time:infitToR3.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR3.time,
                                 anim:infitToR3.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }else if(regMod1=='011'){
                             animations.push({
                                 value:value1,
                                 target:fitToR4.target,
-                                time:fitToR4.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR4.time,
                                 anim:fitToR4.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToR4.target,
-                                time:infitToR4.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR4.time,
                                 anim:infitToR4.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }
@@ -1971,68 +1942,68 @@ class Sequenceur{
                             animations.push({
                                 value:value1,
                                 target:fitToAcc.target,
-                                time:fitToAcc.time,
+                              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                                 anim:fitToAcc.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToAcc.target,
-                                time:infitToAcc.time,
+                              time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                                 anim:infitToAcc.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:AccToBus.target,
-                                time:AccToBus.time,
+                              time:1/  useSpeedStore.getState().speed*AccToBus.time,
                                 anim:AccToBus.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:AccToRUAL1.target,
-                                time:AccToRUAL1.time,
+                              time:1/  useSpeedStore.getState().speed*AccToRUAL1.time,
                                 anim:AccToRUAL1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }else if(regMod1=='101'){
                             animations.push({
                                 value:value1,
                                 target:fitToBr.target,
-                                time:fitToBr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToBr.time,
                                 anim:fitToBr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToBr.target,
-                                time:infitToBr.time,
+                              time:1/  useSpeedStore.getState().speed*infitToBr.time,
                                 anim:infitToBr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }
@@ -2040,62 +2011,62 @@ class Sequenceur{
                             animations.push({
                                 value:value1,
                                 target:fitToIdr.target,
-                                time:fitToIdr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                                 anim:fitToIdr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToIdr.target,
-                                time:infitToIdr.time,
+                              time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                                 anim:infitToIdr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }else if(regMod1=='111'){
                             animations.push({
                                 value:value1,
                                 target:fitToSr.target,
-                                time:fitToSr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToSr.time,
                                 anim:fitToSr.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:infitToSR.target,
-                                time:infitToSR.time,
+                              time:1/  useSpeedStore.getState().speed*infitToSR.time,
                                 anim:infitToSR.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:RegToRual1.target,
-                                time:RegToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual1.time,
                                 anim:RegToRual1.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual1.target,
-                                time:BusToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual1.time,
                                 anim:BusToRual1.anim,
                             })
                             animations.push({
                                 value:value1,
                                 target:fitToRual1.target,
-                                time:fitToRual1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                                 anim:fitToRual1.anim,
                             })
                         }
@@ -2103,7 +2074,6 @@ class Sequenceur{
                         ///animation from the register to RUAL1
                         instrObject.value2=value2;
                     }else if(Ind=='10'){
-                        
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresse=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -2151,62 +2121,62 @@ class Sequenceur{
                             animations.push({
                                 value:value2,
                                 target:fitToR1.target,
-                                time:fitToR1.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR1.time,
                                 anim:fitToR1.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToR1.target,
-                                time:infitToR1.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR1.time,
                                 anim:infitToR1.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }else if(regMod2=='001'){
                             animations.push({
                                 value:value2,
                                 target:fitToR2.target,
-                                time:fitToR2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR2.time,
                                 anim:fitToR2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToR2.target,
-                                time:infitToR2.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR2.time,
                                 anim:infitToR2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }
@@ -2214,62 +2184,62 @@ class Sequenceur{
                             animations.push({
                                 value:value2,
                                 target:fitToR3.target,
-                                time:fitToR3.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR3.time,
                                 anim:fitToR3.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToR3.target,
-                                time:infitToR3.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR3.time,
                                 anim:infitToR3.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }else if(regMod2=='011'){
                             animations.push({
                                 value:value2,
                                 target:fitToR4.target,
-                                time:fitToR4.time,
+                              time:1/  useSpeedStore.getState().speed*fitToR4.time,
                                 anim:fitToR4.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToR4.target,
-                                time:infitToR4.time,
+                              time:1/  useSpeedStore.getState().speed*infitToR4.time,
                                 anim:infitToR4.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }
@@ -2277,68 +2247,68 @@ class Sequenceur{
                             animations.push({
                                 value:value2,
                                 target:fitToAcc.target,
-                                time:fitToAcc.time,
+                              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                                 anim:fitToAcc.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToAcc.target,
-                                time:infitToAcc.time,
+                              time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                                 anim:infitToAcc.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:AccToBus.target,
-                                time:AccToBus.time,
+                              time:1/  useSpeedStore.getState().speed*AccToBus.time,
                                 anim:AccToBus.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:AccToRUAL2.target,
-                                time:AccToRUAL2.time,
+                              time:1/  useSpeedStore.getState().speed*AccToRUAL2.time,
                                 anim:AccToRUAL2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }else if(regMod2=='101'){
                             animations.push({
                                 value:value2,
                                 target:fitToBr.target,
-                                time:fitToBr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToBr.time,
                                 anim:fitToBr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToBr.target,
-                                time:infitToBr.time,
+                              time:1/  useSpeedStore.getState().speed*infitToBr.time,
                                 anim:infitToBr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }
@@ -2346,62 +2316,62 @@ class Sequenceur{
                             animations.push({
                                 value:value2,
                                 target:fitToIdr.target,
-                                time:fitToIdr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                                 anim:fitToIdr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToIdr.target,
-                                time:infitToIdr.time,
+                              time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                                 anim:infitToIdr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }else if(regMod2=='111'){
                             animations.push({
                                 value:value2,
                                 target:fitToSr.target,
-                                time:fitToSr.time,
+                              time:1/  useSpeedStore.getState().speed*fitToSr.time,
                                 anim:fitToSr.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:infitToSR.target,
-                                time:infitToSR.time,
+                              time:1/  useSpeedStore.getState().speed*infitToSR.time,
                                 anim:infitToSR.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:RegToRual2.target,
-                                time:RegToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*RegToRual2.time,
                                 anim:RegToRual2.anim,
                             })
                             animations.push({
                                 value:"",
                                 target:BusToRual2.target,
-                                time:BusToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*BusToRual2.time,
                                 anim:BusToRual2.anim,
                             })
                             animations.push({
                                 value:value2,
                                 target:fitToRual2.target,
-                                time:fitToRual2.time,
+                              time:1/  useSpeedStore.getState().speed*fitToRual2.time,
                                 anim:fitToRual2.anim,
                             })
                         }
@@ -2409,7 +2379,6 @@ class Sequenceur{
                         instrObject.value2=value2;
                         ///animation from the register to RUAL1
                     }else if(Ind=='11'){
-                        
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresse1=this.RI.getvalue();
                         let immval1=parseInt(adresse1,2);
@@ -2472,17 +2441,14 @@ class Sequenceur{
                 
             }
         }
-        console.log(instrObject);
-        return instrObject;
-        }
+        return instrObject;}
     }
     execute(instrObject,is_animated,animations){
         let res;
         for (let i = 0; i < instrObject.stepsNum ; i++) {
             res = instrObject.steps[i](animations);
-            
         }
-        console.log("inst : " , JSON.stringify(instrObject,null,2));
+        console.log(instrObject);
         let animationSteps= instrObject.buildanim();
         if(is_animated===1 & animationSteps.length>0){
             for (let i = 0; i < animationSteps.length; i++) {
@@ -2498,7 +2464,6 @@ class Sequenceur{
                 animations.push(tempobj);
             }
         }
-        
     }
 }
 export default Sequenceur;

@@ -20,6 +20,7 @@ const AuthForm = ({currentRoute, redirectRoute, updateCurrentUser}) => {
     const handleSubmit = (e) => {
         //prevent the form from reloading the page
         e.preventDefault();
+        console.log(document.querySelector('.auth-button').disabled);
         document.querySelector('.auth-button').disabled = true;
         //get the form error div
         const formError = document.getElementById('form-error')
@@ -36,7 +37,8 @@ const AuthForm = ({currentRoute, redirectRoute, updateCurrentUser}) => {
                 navitage('/check-email');
                 return;
             }
-          
+            console.log(user)
+
             if(currentRoute === '/login' && !user.confirmed){
                 formError.innerText = "Confirm your email first!"
                 return;
@@ -53,6 +55,7 @@ const AuthForm = ({currentRoute, redirectRoute, updateCurrentUser}) => {
         })
         .catch(err => {
             //show the error in the front
+            console.log(err)
             if(!err.response.data.message){
                 formError.innerText = "Unknown Server error";
             }

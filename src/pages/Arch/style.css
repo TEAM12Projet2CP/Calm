@@ -49,13 +49,28 @@
 }
 
 .returnBtn{
+
+    border-radius: 0.6rem;
+    background-color: #1BE985;
+    font-family: "JetBrains Mono", system-ui;
+    font-size: 1rem;
+    text-align: center;
+
+    cursor: pointer;
+}
+
+.returnBtn2{
+    width:70px;
+    height:36px;
     border-radius: 0.6rem;
     background-color: #1BE985;
     font-family: "JetBrains Mono", system-ui;
     font-size: 1rem;
     text-align: center;
     margin-top: 1rem;
+    cursor: pointer;
 }
+
 
 .contentTableMC{
     width:17rem;
@@ -172,4 +187,26 @@
     border-radius:5px;
     background: #ffffff56;
 }
+
   
+   .myBar {
+    margin-top: 15px;
+height: 4px;
+width: 50%;
+ 
+    background-color:#1BE985;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+   .circle {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+   
+    border: 2px solid #1BE985;
+    border-radius: 50%;
+    cursor: pointer;
+    
+  }  

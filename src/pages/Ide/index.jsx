@@ -5,7 +5,7 @@ import UAParser from 'ua-parser-js';
 import "./style.css"
 
 ///// import components //////
-import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
+import { NavBar, HelpSection, SaveCodeButton } from "../../components"
 
 
 ////// import machine components //////
@@ -17,6 +17,9 @@ import { generalPurposeRegister } from "../../Emulator/Register.js";
 import { Register } from "../../Emulator/Register.js";
 import Alu, { TwosComplement } from "../../Emulator/ALU.js";
 import Arch from '../Arch/index.jsx';
+import Cache from '../../Emulator/Cache.js';
+
+
 
 ///// import editor styles //////
 import "../../codemirror/lib/codemirror.css"
@@ -24,10 +27,10 @@ import "../../codemirror/theme/material.css";
 import "../../codemirror/mode/myLang/assembly.js"
 
 /////import assembler modules//////////
-import { Assembler } from "../../assembler/Assembler.js";
-import {helpDescription} from "../../Constants/HelpDescription.js";
-import {HexaToCode} from "../../HexaToCode/HexaToCode.js"
-import { Errorcalm } from "../../assembler/Errorcalm.js";
+import { Assembler } from "../../assembler/Assembler";
+import {helpDescription} from "../../Constants/HelpDescription";
+import {HexaToCode} from "../../HexaToCode/HexaToCode"
+import { Errorcalm } from "../../assembler/Errorcalm";
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -36,8 +39,12 @@ let animations=[];
 ////////////////context declarations///////////////////////////////////
 let Contextarray=[];
 
+
+
 ////////////////machine declarations////////////////////////////////
-let memory = new MC();
+let memory=new MC();
+
+let cache=new Cache(50,MC);
 let sequenceur=new Sequenceur();
 let queue = new Queue();
 let addressingModes=new AddressingModes();
@@ -75,7 +82,7 @@ const Ide = ({currentUser})=>{
   let [simul,setsimul]=useState(false)
   let [memo,setmemo]=useState(false);
   let [reg,setreg]=useState(false);
-  let [stk,setstk]=useState(false); //for showing stack
+  let [stk,setstk]=useState(false);//for showing stack
   let [isHexa,setIsHexa]=useState(false);
   let [iscode,setIsCode]=useState(true);
   let [iserr,seterr]=useState(false);
@@ -83,54 +90,44 @@ const Ide = ({currentUser})=>{
 
   ///////////////////////////////executions function////////////////////////////////////////
 
+  const traitement= (codeArray)=>{
+    for(let i=0;i<50;i++){//initializing first 50 bytes in memory to 0 (data memory)
+      memory.setRam(TwosComplement(i,8));
+      memory.setRim("00000000");
+      memory.write();
+    }
 
-  const traitement = async (codeArray) => {
-    memory.data = MC.data;
-    memory.setcode(codeArray);
+    memory.setcode(codeArray)
     queue.instructionset([]);
 
-    let numtmp = 0;
+    let numtmp=0;
+    
+    queue.fetchInstruction(animations,0,1,Contextarray,0);
+    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
+    queue.fetchInstruction(animations,1,1,Contextarray,0);
+    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
+    queue.fetchInstruction(animations,2,1,Contextarray,0);
+    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
 
-    queue.fetchInstruction(animations, 0, 1, Contextarray, 0);
-    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
-    queue.fetchInstruction(animations, 1, 1, Contextarray, 0);
-    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
-    queue.fetchInstruction(animations, 2, 1, Contextarray, 0);
-    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
 
-    let instrobject = {};
-    let save = {};
-    // probelm with consecutive reads it will put both read data in the same address corresponding to the address of the last read (ig problem with opvalues)
-    console.log("starting the execution");
-    while (instrobject.name !== "stop") {
-        sequenceur.getinstrbyte(animations, true, Contextarray);
-        instrobject = { ...sequenceur.decode(animations, Contextarray) };
-        console.log("instrobject:", instrobject);
-        if (instrobject.name !== "stop") {
-            console.log("wch mami:", instrobject);
-            if (instrobject.name === "READ" && typeof instrobject.steps?.[0] === "function") {
-              for (let i = 0; i < 7; i++) {
-                save[i] = Registers[i].getvalue();
-              }
-                const result = await instrobject.steps[0](); // ✅ Now await works
-                for (let i = 0; i < 7; i++) {
-                  Registers[i].setvalue(save[i]);
-                }
-                if (result === false) {
-                    console.log("READ was delayed due to IO being busy");
-                    continue;
-                }
 
-            } else {
-                sequenceur.execute(instrobject, 1, animations);
-            }
-        }
+    console.log(queue.getinstwithoutshift())
+    
+    let instrobject={};
+    while(instrobject.name!=="stop"){
+      sequenceur.getinstrbyte(animations,true,Contextarray);
+      instrobject={...sequenceur.decode(animations,Contextarray)};
+      if(instrobject.name!=="stop"){
+        console.log(instrobject);
+        sequenceur.execute(instrobject,1,animations);
+      }
     }
-}
+
+  }
+
   let [checktest,setChecktest]=useState(false);
 
   /////////////////////returning the component//////////////////
-
   let tablec=[];
   memory.getData().forEach( (element,index) => {
     tablec.push(
@@ -179,7 +176,7 @@ const Ide = ({currentUser})=>{
   const handleStoreCode = () => {
     const editor = codeMirrorRef.current.editor;
     const code = editor.getValue(); // Get the current content of the editor
- 
+
     // Split the code into lines
     const lines = code.split('\n');
 
@@ -264,7 +261,7 @@ const Ide = ({currentUser})=>{
         <>
           <NavBar/>
           <div style={{display:"flex"}} className="ide_container">
-        
+
             <div className='codeContainer' id="cont">
               <div style={{display:"flex",gap:"10rem",padding:"0.5rem 0",}}>
                 {iscode && 
@@ -342,32 +339,24 @@ const Ide = ({currentUser})=>{
                 className='ide-exec-button' 
                 onClick={()=>{
                   setdone(true);
-                  let inputouter;
+                  let inputouter=[];
 
                   if(iscode){
-                    console.log(handleStoreCode)
                     inputouter=Assembler.assemblecode(handleStoreCode())
-                    
                   }else{
                     inputouter=handleStoreCode();
                   }
-                  console.log("inputouter",inputouter.code);
-                  let input=convertStrings(inputouter.code);
-                  console.log("input",input);
-                  // not checked yet
-                  memory.data = inputouter.memory;
+                  let input=convertStrings(inputouter);
                   input.push("ff");
+                  
                   try {
+    
                     if (Errorcalm.errorr === 0) {
-                      console.log("drsas")
                       traitement(input);
                       
-                     
+                      
                     }else{
-                      console.log("SIks")
                       setresult(Errorcalm.printError());
-                      
-                      
                       seterr(true);
                     }
 
@@ -403,8 +392,10 @@ const Ide = ({currentUser})=>{
                     console.log(arr);
                     console.log("old arr=",arr);
                     localStorage.setItem('arr', JSON.stringify(arr));
+                    console.log("current local storage : ",localStorage.getItem('arr'))
                     window.location.reload();
                   }}>re-write</button>
+
                   {!iserr &&< button 
                     className='ide-exec-button' 
                     onClick={()=>{
@@ -450,10 +441,13 @@ const Ide = ({currentUser})=>{
                 </div>
                 {reg && 
                   <div className="IdeReg">
+                 
                     <div className="aregister">
+
                         <p className="aregide">R1  :</p>
                         <div className="aregC"><p style={{margin:"6px"}}>{Registers[0].getvalue()}</p></div>
                     </div>
+                
                     <div className="aregister">
                         <p className="aregide">R1  :</p>
                         <div className="aregC"><p style={{margin:"6px"}}>{Registers[0].getvalue()}</p></div>
@@ -485,7 +479,9 @@ const Ide = ({currentUser})=>{
                     <div className="aregister">
                         <p className="aregide">Acc :</p>
                         <div className="aregC"><p style={{margin:"6px"}}>{Registers[4].getvalue()}</p></div>
+
                     </div>
+                  
                   </div> 
                 }
                 {memo && 
@@ -497,7 +493,9 @@ const Ide = ({currentUser})=>{
                         </td>
                         <td style={{color:"#1BE985"}}>
                             content
+                      
                         </td>
+                        
                     </tr>
                         {tablec}
                     </tbody>

@@ -1,6 +1,8 @@
 import { memory, BR, IR } from "../pages/Ide";
 import { gsap } from "gsap";
 import Alu from "./ALU";
+import { useSpeedStore } from './speedStore.jsx';
+
 function hex2bin(hex){
     return ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8);
 }
@@ -35,158 +37,168 @@ function TwosComplement(num,size) { //a is a string
     } }
     return a;
 }
+const QueueToCache={
+    value:"",
+    target:".box-data",
+  time:useSpeedStore.getState().speed*3000,
+    anim:(val,h,w)=>{
+    gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/useSpeedStore.getState().speed*1})
+  gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.321,duration:1/useSpeedStore.getState().speed*1,delay:1/useSpeedStore.getState().speed*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/useSpeedStore.getState().speed*1,delay:1/useSpeedStore.getState().speed*2});
+  },}
 const addanim={
+
     value:"",
     target:".ALU",
-    time:2000,
+  time:1/useSpeedStore.getState().speed*2000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".ALU",{opacity:"0"},{opacity:"1" ,duration:1});
-        gsap.fromTo(".ALU",{opacity:"1"},{opacity:"0" ,duration:1,delay:1});
+        gsap.fromTo(".ALU",{opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".ALU",{opacity:"1"},{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
     },}
 const AccToADR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.705,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.705,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
 const AccToBus={
     value:"",
     target:".ball",
-    time:4000,
+    time:4000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
     ///depart: ( 39.7% , 54% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.282,y:h*0.923,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.282,y:h*0.923},{x:w*0.361 ,duration:1,delay:1});
-    gsap.to(".ball",{y:h*0.56 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.282,y:h*0.923,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.282,y:h*0.923},{x:w*0.361 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{y:h*0.56 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*3});
   },}
   const AccToRUAL2={
     value:"",
     target:".box-data",
-    time:3000,
+    time:3000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.262,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.262,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
 
   const AccToRUAL1={
     value:"",
     target:".box-data",
-    time:3000,
+    time:3000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.106,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.106,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
 const RegToRual2={
     value:"",
     target:".box-data",
-    time:3000,
+    time:3000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const AccToMDR={
     value:"",
     target:".box-data",
-    time:3000,
+    time:3000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const fitToBr={
     value:"",
     target:".ball",
-    time:1000,
+    time:1000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
   },}
   const infitToBr={
     value:"",
     target:".ball",
-    time:1000,
+    time:1000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1});
     },}
     const infitToIr={
         value:"",
         target:".ball",
-        time:1000,
+        time:1000/useSpeedStore.getState().speed,
         anim:(val,h,w)=>{
-            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-            // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-            gsap.to(".ball",{opacity:"0" ,duration:1});
+            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+            // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+            gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1});
         },}
     const fitToIr={
         value:"",
         target:".ball",
-        time:1000,
+        time:1000/useSpeedStore.getState().speed,
         anim:(val,h,w)=>{
-        gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.6495,opacity:"0"},{opacity:"1" ,duration:1});
-        // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-        // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+        gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.6495,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+        // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+        // gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
       },}
 const AluToAcc={
     value:"",
     target:".ball",
-    time:3000,
+    time:3000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
     ///depart: ( 30.3% , 83.5% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.226,y:h*0.863,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.226,y:h*0.863},{y:h*0.877 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.226,y:h*0.863,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.226,y:h*0.863},{y:h*0.877 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
 const infitToMar={
     value:"",
     target:".ball",
-    time:1000,
+    time:1000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-    // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1});
+    // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1});
   },}
 let queueExitToBus={
     value:"",
     target:".ball",
-    time:4000,
+    time:4000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-            gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1});
-            gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.715 ,duration:1,delay:1});
-            gsap.to(".ball",{y:h*0.555 ,duration:1,delay:2});
-            gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+            gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+            gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.715 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+            gsap.to(".ball",{y:h*0.555 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+            gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*3});
     }
 }
 const BusToMdr={
     value:"",
     target:".ball",
-    time:3000,
+    time:3000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
     ///depart: ( 51.8% , 43.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.465,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.539,y:h*0.465},{y:h*0.445 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.465,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.539,y:h*0.465},{y:h*0.445 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
 },}
 
 let queueExitToMdr={
     value:"",
     target:".box-data",
-    time:3000,
+    time:3000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1})
-        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.497,duration:1,delay:1})
-        gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.497,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
     }
 }
 let queueExitToAcc={
@@ -194,9 +206,9 @@ let queueExitToAcc={
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1})
-        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.321,duration:1,delay:1})
-        gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
     }
 }
 let queueExitToRual1={
@@ -204,9 +216,9 @@ let queueExitToRual1={
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1})
-        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.106,duration:1,delay:1})
-        gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.106,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
     }
 }
 
@@ -215,9 +227,9 @@ let queueExitToRual2={
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1})
-        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.262,duration:1,delay:1})
-        gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.262,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
     }
 }
 const ADRbusToDATABus={
@@ -226,18 +238,18 @@ const ADRbusToDATABus={
     time:1800,
     anim:(val,h,w)=>{
     ///depart: ( 69% , 13.7% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.746,y:h*0.46,opacity:"0"},{opacity:"1" ,duration:0.5});
-    gsap.fromTo(".ball",{x:w*0.746,y:h*0.46},{y:h*0.26 ,duration:0.8,delay:0.5});
-    gsap.to(".ball",{opacity:"0" ,duration:0.5,delay:1.3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.746,y:h*0.46,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*0.5});
+    gsap.fromTo(".ball",{x:w*0.746,y:h*0.46},{y:h*0.26 ,duration:1/(useSpeedStore.getState().speed)*0.8,delay:1/(useSpeedStore.getState().speed)*0.5});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*0.5,delay:1/(useSpeedStore.getState().speed)*1.3});
   },}
 let queueExitToAdr={
     value:"",
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1})
-        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.71,duration:1,delay:1})
-        gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.71,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
     }
 }
 let queueExitToReg={
@@ -245,9 +257,9 @@ let queueExitToReg={
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1})
-        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.44,duration:1,delay:1})
-        gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.44,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
     }
 }
 
@@ -256,37 +268,37 @@ const ADRToMAR={
     target:".box-ADR",
     time:3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-ADR",{x:w*0.712,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-ADR",{x:w*0.712},{x:w*0.648,duration:1,delay:1})
-    gsap.to(".box-ADR",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-ADR",{x:w*0.712,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-ADR",{x:w*0.712},{x:w*0.648,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+    gsap.to(".box-ADR",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const fitToMdr={
     value:"",
     target:".ball",
     time:1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1});
-    //gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1,delay:1});
-    //gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    //gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    //gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
   },}
   const infitToMdr={
     value:"",
     target:".ball",
     time:1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1});
     },}
   const fitToMar={
     value:"",
     target:".ball",
     time:1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
   },}
   const MdrToBus={
     value:"",
@@ -294,45 +306,45 @@ const ADRToMAR={
     time:3000,
     anim:(val,h,w)=>{
     ///depart: ( 51.8% , 43.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const MdrToRual2={
     value:"",
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.262,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.262,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const MdrToRual1={
     value:"",
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.106,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.106,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const fitToRual1={
     value:"",
     target:".ball",
     time:1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
   },}
   const fitToRual2={
     value:"",
     target:".ball",
     time:1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.275,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.275,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
   },}
   const BusToRual1={
     value:"",
@@ -340,9 +352,9 @@ const ADRToMAR={
     time:3000,
     anim:(val,h,w)=>{
     ///depart: ( 54% , 24,45% )
-    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56},{y:h*0.625 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56},{y:h*0.625 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const BusToRual2={
     value:"",
@@ -350,18 +362,18 @@ const ADRToMAR={
     time:3000,
     anim:(val,h,w)=>{
     ///depart: ( 54% , 35,2% )
-    gsap.fromTo(".ball",{x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const MdrToADR={
     value:"",
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.705,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.705,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const BusToAcc={
     value:"",
@@ -369,70 +381,70 @@ const ADRToMAR={
     time:4000,
     anim:(val,h,w)=>{
     ///depart: ( 39.7% , 54% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.361,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.361,y:h*0.56},{y:h*0.923 ,duration:1,delay:1});
-    gsap.to(".ball",{x:w*0.282 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.361,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.361,y:h*0.56},{y:h*0.923 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{x:w*0.282 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*3});
   },}
   const fitToAcc={
     value:"",
     target:".ball",
     time:1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.07,height:h*0.055,x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.07,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.07,height:h*0.055,x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.07,height:h*0.055,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
   },}
   const MDRToAcc={
     value:"",
     target:".box-data",
     time:3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const fitqueue6={
     value:"",
     target:".queue1",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue1",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue1",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const fitqueue5={
     value:"",
     target:".queue2",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue2",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue2",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const fitqueue4={
     value:"",
     target:".queue3",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue3",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue3",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const fitqueue3={
     value:"",
     target:".queue4",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue4",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue4",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const fitqueue2={
     value:"",
     target:".queue5",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue5",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue5",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const fitqueue1={
     value:"",
     target:".queue6",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue6",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue6",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   
   const infitqueue6={
@@ -440,109 +452,117 @@ const ADRToMAR={
     target:".queue1",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue1",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue1",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const infitqueue5={
     value:"",
     target:".queue2",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue2",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue2",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const infitqueue4={
     value:"",
     target:".queue3",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue3",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue3",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const infitqueue3={
     value:"",
     target:".queue4",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue4",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue4",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const infitqueue2={
     value:"",
     target:".queue5",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue5",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue5",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const infitqueue1={
     value:"",
     target:".queue6",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue6",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue6",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const infitqueue2_1={
     value:"",
     target:".queue6",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue6",{opacity:"1"},{opacity:"0",duration:1});
-        gsap.fromTo(".queue5",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue6",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".queue5",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const infitqueue4_3={
     value:"",
     target:".queue6",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue4",{opacity:"1"},{opacity:"0",duration:1});
-        gsap.fromTo(".queue3",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue4",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".queue3",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const infitqueue6_5={
     value:"",
     target:".queue6",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue2",{opacity:"1"},{opacity:"0",duration:1});
-        gsap.fromTo(".queue1",{opacity:"1"},{opacity:"0",duration:1});
+        gsap.fromTo(".queue2",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".queue1",{opacity:"1"},{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const fitqueue4_3={
     value:"",
     target:".queue6",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue4",{opacity:"0"},{opacity:"1",duration:1});
-        gsap.fromTo(".queue3",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue4",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".queue3",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const fitqueue6_5={
     value:"",
     target:".queue6",
     time:1000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".queue2",{opacity:"0"},{opacity:"1",duration:1});
-        gsap.fromTo(".queue1",{opacity:"0"},{opacity:"1",duration:1});
+        gsap.fromTo(".queue2",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".queue1",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const MCanim={
     value:"",
     target:".MC",
     time:2000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".MC",{opacity:"0"},{opacity:"1" ,duration:1});
-        gsap.fromTo(".MC",{opacity:"1"},{opacity:"0" ,duration:1,delay:1});
+        gsap.fromTo(".MC",{opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".MC",{opacity:"1"},{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
     },}
+    const Cacheanim={
+        value:"",
+        target:".Cache",
+        time:3000,
+        anim:(val,h,w)=>{
+            gsap.fromTo(".Cache",{opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+            gsap.fromTo(".Cache",{opacity:"1"},{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+        },}
     const fitToIdr={
         value:"",
         target:".ball",
         time:1000,
         anim:(val,h,w)=>{
-        gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1});
-        // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+        gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+        // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+        // gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
       },}
       const infitToIdr={
         value:"",
         target:".ball",
         time:1000,
         anim:(val,h,w)=>{
-            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-            // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-            gsap.to(".ball",{opacity:"0" ,duration:1});
+            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+            // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+            gsap.to(".ball",{opacity:"0",duration:1/(useSpeedStore.getState().speed)*1});
         },}
 
 class AddressingModes{
@@ -649,32 +669,48 @@ class AddressingModes{
                 //             anim:fitqueue4_3.anim,
                 //         });
                 // }
-                if(target===0){
-                animations.push({
-                    value:"",
-                    nom:"queueExitToBus",
-                    target:queueExitToBus.target,
-                    time:queueExitToBus.time,
-                    anim:queueExitToBus.anim,
-                });
-                animations.push({
-                    value:adresse,
-                    target:queueExitToMdr.target,
-                    time:queueExitToMdr.time,
-                    anim:queueExitToMdr.anim,
-                });
-                animations.push({
-                    value:"",
-                    target:BusToMdr.target,
-                    time:BusToMdr.time,
-                    anim:BusToMdr.anim,
-                });
-                animations.push({
-                    value:adresse,
-                    target:fitToMdr.target,
-                    time:fitToMdr.time,
-                    anim:fitToMdr.anim,
-                });}else if(target===3){
+                if (target === 0) {
+                    animations.push({
+                        value: "",
+                        nom: "queueExitToBus",
+                        target: queueExitToBus.target,
+                        time: queueExitToBus.time,
+                        anim: queueExitToBus.anim,
+                    });
+                
+                    // Check for cache hit
+                    //const cacheResult = memory.cache.checkCache(adresse, 0);
+                    //if (cacheResult.hit) {
+                        // Cache hit: go from bus to cache
+                        // animations.push({
+                        //     value: adresse,
+                        //     target: QueueToCache.target,  // make sure this exists
+                        //     time: QueueToCache.time,
+                        //     anim: QueueToCache.anim,
+                        // });
+                    //} else {
+                        // Cache miss: normal path to MDR
+                        animations.push({
+                            value: adresse,
+                            target: queueExitToMdr.target,
+                            time: queueExitToMdr.time,
+                            anim: queueExitToMdr.anim,
+                        });
+                        animations.push({
+                            value: "",
+                            target: BusToMdr.target,
+                            time: BusToMdr.time,
+                            anim: BusToMdr.anim,
+                        });
+                        animations.push({
+                            value: adresse,
+                            target: fitToMdr.target,
+                            time: fitToMdr.time,
+                            anim: fitToMdr.anim,
+                        });
+                    //}
+                }
+                else if(target===3){
                     animations.push({
                         value:"",
                         nom:"queueExitToBus",
@@ -758,7 +794,9 @@ class AddressingModes{
                 return adresse;
             },//correspend au mode immediat
             function directVal(adresse,animated,size,depl,animations,is_anim,target){//the animation is missing//adresse is in decimal
-                adresse=TwosComplement(adresse,16)///______________
+                adresse=TwosComplement(adresse,16)///__
+                
+                let  address2= parseInt(adresse,2);// ____________
                 memory.setRam(adresse);
             memory.read(0);
             let byte1=hex2bin(memory.getRim());
@@ -864,42 +902,74 @@ class AddressingModes{
             //         });
             // }
             animations.push({
-                value:"",
-                nom:"queueExitToBus",
-                target:queueExitToBus.target,
-                time:queueExitToBus.time,
-                anim:queueExitToBus.anim,
+                value: "",
+                nom: "queueExitToBus",
+                target: queueExitToBus.target,
+                time: queueExitToBus.time,
+                anim: queueExitToBus.anim,
             });
-            animations.push({
-                value:adresse,
-                target:queueExitToAdr.target,
-                time:queueExitToAdr.time,
-                anim:queueExitToAdr.anim,
-            });
-            animations.push({
-                value:"",
-                target:ADRbusToDATABus.target,
-                time:ADRbusToDATABus.time,
-                anim:ADRbusToDATABus.anim,
-            });
-            animations.push({
-                value:adresse,
-                target:ADRToMAR.target,
-                time:ADRToMAR.time,
-                anim:ADRToMAR.anim,
-            });
-            animations.push({
-                value:adresse,
-                target:fitToMar.target,
-                time:fitToMar.time,
-                anim:fitToMar.anim,
-            });
-            animations.push({
-                value:"READ",
-                target:MCanim.target,
-                time:MCanim.time,
-                anim:MCanim.anim,
-            });
+            
+            // Check for cache hit before proceeding
+            const cacheResult = memory.cache.checkCache(address2,0);
+            
+            if (cacheResult.hit) {
+                animations.push({
+                    value: adresse,
+                    target: QueueToCache.target, // animation path for cache hit
+                    time: QueueToCache.time,
+                    anim: QueueToCache.anim,
+                });
+                animations.push({
+                    value:"hit",
+                    target:Cacheanim.target, // animation path for cache hit
+                    time: Cacheanim.time,
+                    anim: Cacheanim.anim,
+                });
+           
+               
+               
+            } else {
+                console.log("hhhhhhhhhhhhhhhhhhhhhh");
+                animations.push({
+                    value:"miss",
+                    target:Cacheanim.target, // animation path for cache hit
+                    time: Cacheanim.time,
+                    anim: Cacheanim.anim,
+                });
+           
+               
+                // Full memory access sequence (cache miss)
+                animations.push({
+                    value: adresse,
+                    target: queueExitToAdr.target,
+                    time: queueExitToAdr.time,
+                    anim: queueExitToAdr.anim,
+                });
+                animations.push({
+                    value: "",
+                    target: ADRbusToDATABus.target,
+                    time: ADRbusToDATABus.time,
+                    anim: ADRbusToDATABus.anim,
+                });
+                animations.push({
+                    value: adresse,
+                    target: ADRToMAR.target,
+                    time: ADRToMAR.time,
+                    anim: ADRToMAR.anim,
+                });
+                animations.push({
+                    value: adresse,
+                    target: fitToMar.target,
+                    time: fitToMar.time,
+                    anim: fitToMar.anim,
+                });
+                animations.push({
+                    value: "READ",
+                    target: MCanim.target,
+                    time: MCanim.time,
+                    anim: MCanim.anim,
+                });
+            }
             
             
             ///////

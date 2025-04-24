@@ -94,6 +94,9 @@ function hexToBin(hexString) {
           case "0111":
             newstr = "SHR";
             break;
+          case "1000":
+            newstr = "READ";
+            break;
           case "1001":
             newstr = "WRITE";
             break;

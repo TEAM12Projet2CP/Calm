@@ -124,6 +124,7 @@ class Alu{
        
         subBinary(size){
         //get the two's complement of the content of the RUAL2:
+         console.log("RUAL2 Value befor anything "+this.Rual2.value);
          
          //than the one's complement of the result :
          let i=this.Rual2.value.length-1;
@@ -135,14 +136,19 @@ class Alu{
            i--;       
          } 
          this.Rual2.setvalue(b);
-          //first we add (RAL2)+1
+         console.log("Ones complement of  RUAL2  "+this.Rual2.value);
+         
+         //first we add (RAL2)+1
          let x=1;
          let res1=parseInt(this.Rual2.getvalue(),2);
          res1=res1+x;
          this.Rual2.setvalue(fullzero(size,res1.toString(2)));
          b=this.Rual2.getvalue()//very important on overflow detection
+         console.log("Tows complement of RUAL2 "+this.Rual2.value);
          //then the simple binary addition between RUAL1 and RUAL2:
-         this.addBinary(size) 
+         this.addBinary(size)
+         console.log("The result of subsrtaction "+ this.Acc.getvalue());
+         
          //overflow detection:
          if (this.Rual1.getvalue()[0]!=b[0]) {
            if (b[0]==this.Acc.getvalue()[0]) {
@@ -159,7 +165,9 @@ class Alu{
        
  
        binaryMultiply(size) {
-         let binaryString1=(this.Rual1.getvalue()).substring(0,size);  
+         let binaryString1=(this.Rual1.getvalue()).substring(0,size);
+         console.log("string1 :"+binaryString1);
+         
          //two's complement  of the abs part of a     
          if(this.Rual1.getvalue()[0]=='1'){
              let i=size;
@@ -178,7 +186,9 @@ class Alu{
              }
          }
          let binaryString2=this.Rual2.getvalue().substring(0,size);//verifier
-        //two's complement  of the abs part of b  
+         console.log("string2 :"+binaryString2);
+     
+         //two's complement  of the abs part of b  
          if(this.Rual2.getvalue()[0]=='1'){
              let i=size;
              let find1=false
@@ -197,13 +207,18 @@ class Alu{
          } 
          
          let int1 = parseInt(binaryString1, 2)
+         console.log(int1)
          let int2 = parseInt(binaryString2, 2)
+         console.log(int2)
          let res= (int1 * int2).toString(2);
+         console.log(res);
          if(res.length>=16 ){res=fullzero(32,res)}
          else{ res=fullzero(16,res)}
          if (this.Rual1.getvalue()[0]==this.Rual2.getvalue()[0]) {
+             console.log("positive result")
              
          }else{
+             console.log("negative result");
              let find1=false
              for (let i = res.length; i >=0; i--) {
                  if(find1==true){
@@ -219,6 +234,7 @@ class Alu{
             }
         }
         
+        console.log(res);
         if(res.length>16){
             let resacc=res.substring(16,32);
             this.Acc.setvalue(resacc);
@@ -245,7 +261,9 @@ class Alu{
 
        DivBinary(size){
          
-         let binaryString1=(this.Rual1.getvalue()).substring(1,size); 
+         let binaryString1=(this.Rual1.getvalue()).substring(1,size);
+         console.log("string1 :"+binaryString1);
+         
          //two's complement  of the abs part of a     
          if(this.Rual1.getvalue()[0]=='1'){
              let i=size;
@@ -264,6 +282,8 @@ class Alu{
              }
          }
          let binaryString2=this.Rual2.getvalue().substring(1,size);
+         console.log("string2 :"+binaryString2);
+     
          //two's complement  of the abs part of b  
          if(this.Rual2.getvalue()[0]=='1'){
              let i=size;
@@ -283,15 +303,21 @@ class Alu{
          } 
  
          let int1 = parseInt(binaryString1, 2)
+         console.log(int1)
          let int2 = parseInt(binaryString2, 2)
+         console.log(int2)
          let q= (Math.floor(int1 / int2)).toString(2);
+         console.log("le quotient en valeur absolue :"+q);
          let r=(int1 % int2).toString(2)
          q=fullzero(size,q);
+         console.log("quotient before two's complement "+q);
          r=fullzero(size,r);
          //positive or negativ quotient
          if (this.Rual1.getvalue()[0]==this.Rual2.getvalue()[0]) {
-           
+             console.log("positive quotient ")
+             
          }else{
+             console.log("negative quotient");
              let find1=false
              for (let i =q.length; i >=0; i--) {
                  if(find1==true){
@@ -311,7 +337,9 @@ class Alu{
          //positive or negative reste                     
  
          if(this.Rual1.getvalue()[0]=='0') {
-         }else{
+           console.log("positive reste ")
+          }else{
+           console.log("negative rete");
            let find1=false
            for (let i =r.length; i >=0; i--) {
                if(find1==true){
@@ -333,8 +361,13 @@ class Alu{
          //this.Flags[2]=carry.toString();//carry
          let figure="1"
          this.Flags[3] = ((this.Acc.value.match(new RegExp(figure, "g")) || []).length %2).toString();//parity
-         this.Flags[4]=this.Acc.getvalue()[size-1];//p/imp  
-         this.Acc.setvalue(q);
+         this.Flags[4]=this.Acc.getvalue()[size-1];//p/imp
+        
+         console.log("le quotient :" +q);
+         
+         console.log("le reste en valeur absolue: "+r);
+         
+        this.Acc.setvalue(q);
 
         return r;
  

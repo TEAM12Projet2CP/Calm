@@ -1,13 +1,18 @@
 import "./style.css"
-import { useState, useRef} from "react";
-import Archi2 from "../../assets/nvlarchi.png"
+import { useState, useRef,useLayoutEffect} from "react";
+import Archi2 from "../../assets/images/archi.png";
 import gsap from "gsap";
 import queuearrow from "../../assets/images/icons/fleche.png"
+
+import Speed from "../../Emulator/speed.jsx";
+import {  useSpeedStore } from "../../Emulator/speedStore";
 
 //////////////////////////////////////
 
 const Arch = (props)=>{
 
+    const [speed, setSpeed] = useState(1)  
+    
 let [dataBusText,setDataBusText]=useState("");
 let [AdrBusText,setAdrBusText]=useState("");
 let [ballText,setballText]=useState("");
@@ -15,9 +20,11 @@ let [ball2Text,setball2Text]=useState(0);
 let [IPval,setipval]=useState(0);
 let [AluVal,setAluVal]=useState("");
 let [MCVal,setMCVal]=useState("");
+let [CachVal,setCachVal]=useState("");
 
 let MC=props.mem.getData();
 let tablec=[];
+const speed1= useSpeedStore((state) => state.speed); 
 MC.forEach((element,index) => {
     tablec.push( <tr>
     <td>
@@ -60,54 +67,61 @@ MC.forEach((element,index) => {
                 setAluVal(animation.value);
             }else if(animation.target===".MC"){
                 setMCVal(animation.value);
+
+            }else if(animation.target===".Cache"){
+                setCachVal(animation.value);
+
             }
+
+            
+            
             
             if(animation.nom==="QueueToIr"|animation.nom==="queueExitToBus"){
                 //decalage par 1
-                gsap.fromTo(".queuearrow",{top:"60%",left:"83%",opacity:"0"},{top:"60%",left:"73%",opacity:"1",duration:0.3});
-                gsap.to(".queuearrow",{opacity:"0",duration:"0.1",delay:"0.3"});
+                gsap.fromTo(".queuearrow",{top:"60%",left:"83%",opacity:"0"},{top:"60%",left:"73%",opacity:"1",duration:0.3/  speed1});
+                gsap.to(".queuearrow",{opacity:"0",duration:(0.1/  speed1).toString(),delay:(0.3/  speed1).toString()});
                 if(animqueuelen()==6){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"1",duration:0.4})
-                    gsap.to(".queue4",{opacity:"1",duration:0.4})
-                    gsap.to(".queue3",{opacity:"1",duration:0.4})
-                    gsap.to(".queue2",{opacity:"1",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
+                    gsap.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue5",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue4",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue3",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()==5){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"1",duration:0.4})
-                    gsap.to(".queue3",{opacity:"1",duration:0.4})
-                    gsap.to(".queue2",{opacity:"1",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
+                    gsap.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue5",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue4",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue3",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()==4){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"0",duration:0.4})
-                    gsap.to(".queue3",{opacity:"1",duration:0.4})
-                    gsap.to(".queue2",{opacity:"1",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
+                    gsap.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue5",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue4",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue3",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()==3){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"0",duration:0.4})
-                    gsap.to(".queue3",{opacity:"0",duration:0.4})
-                    gsap.to(".queue2",{opacity:"1",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
+                    gsap.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue5",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue4",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue3",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    gsap.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()==2){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"0",duration:0.4})
-                    gsap.to(".queue3",{opacity:"0",duration:0.4})
-                    gsap.to(".queue2",{opacity:"0",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
+                    gsap.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue5",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue4",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue3",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue2",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()==1){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"0",duration:0.4})
-                    gsap.to(".queue3",{opacity:"0",duration:0.4})
-                    gsap.to(".queue2",{opacity:"0",duration:0.4})
-                    gsap.to(".queue1",{opacity:"0",duration:0.4})
+                    gsap.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue5",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue4",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue3",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue2",{opacity:"0",duration:0.4/  speed1})
+                    gsap.to(".queue1",{opacity:"0",duration:0.4/  speed1})
                 }
             }
             animation.anim(animation.value,h,w);
@@ -154,47 +168,47 @@ MC.forEach((element,index) => {
                 .to(".ball2",{x:w*0.921 ,duration:0.5})
                 .to(".ball2",{opacity:"0" ,duration:0.3})
                 if(animqueuelen()===5){
-                    tl.to(".queue6",{opacity:"1",duration:0.4})
-                    tl.to(".queue5",{opacity:"1",duration:0.4})
-                    tl.to(".queue4",{opacity:"1",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
+                    tl.to(".queue6",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue5",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue4",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue3",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()===4){
-                    tl.to(".queue6",{opacity:"1",duration:0.4})
-                    tl.to(".queue5",{opacity:"1",duration:0.4})
-                    tl.to(".queue4",{opacity:"1",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
+                    tl.to(".queue6",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue5",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue4",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue3",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()===3){
-                    tl.to(".queue6",{opacity:"0",duration:0.4})
-                    tl.to(".queue5",{opacity:"1",duration:0.4})
-                    tl.to(".queue4",{opacity:"1",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
+                    tl.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue5",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue4",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue3",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()===2){
-                    tl.to(".queue6",{opacity:"0",duration:0.4})
-                    tl.to(".queue5",{opacity:"0",duration:0.4})
-                    tl.to(".queue4",{opacity:"1",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
+                    tl.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue5",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue4",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue3",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()===1){
-                    tl.to(".queue6",{opacity:"0",duration:0.4})
-                    tl.to(".queue5",{opacity:"0",duration:0.4})
-                    tl.to(".queue4",{opacity:"0",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
+                    tl.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue5",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue4",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue3",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }else if(animqueuelen()===0){
-                    tl.to(".queue6",{opacity:"0",duration:0.4})
-                    tl.to(".queue5",{opacity:"0",duration:0.4})
-                    tl.to(".queue4",{opacity:"0",duration:0.4})
-                    tl.to(".queue3",{opacity:"0",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
+                    tl.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue5",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue4",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue3",{opacity:"0",duration:0.4/  speed1})
+                    tl.to(".queue2",{opacity:"1",duration:0.4/  speed1})
+                    tl.to(".queue1",{opacity:"1",duration:0.4/  speed1})
                 }}
             };
         }, dl);
@@ -403,6 +417,17 @@ MC.forEach((element,index) => {
         fontSize:"32px",
         fontWeight:"800"
     }}>{AluVal}</div>
+    <div className="Cache" style={{
+        height:"5%",
+        width:"10%",
+        position:"absolute",
+        top:"21%",
+        left:"30.7%",
+        opacity:"0",
+        color:"#1BE988",
+        fontSize:"25px",
+        fontWeight:"800"
+    }}>{CachVal}</div>
     <div className="MC" style={{
         height:"5%",
         width:"10%",
@@ -421,9 +446,12 @@ MC.forEach((element,index) => {
         top:"60%",
         left:"73%",
         opacity:"0",
-    }} />
-    </div>{/*///*/}
-    <div style={{
+       
+    }
+    } />
+    
+    </div>{}
+    <div  className="ide"style={{
         height:"90%",
         width:"25%",
         backgroundColor:"#1C2025",
@@ -433,12 +461,19 @@ MC.forEach((element,index) => {
         borderRadius:"20px",
         textAlign:"center",
         border:"1px solid #1BE985"
-    }}>
-        <div>
+        
+    }} 
+
+   
+    
+>
+    
+<button className="returnBtn2" >Cache</button> 
+        <div> 
             <h2 className="contentTableText">Registers</h2>
             <div className="contentTableDiv">
                 <div className="aregister">
-                    <p className="aregP">R1  :</p>
+                    <p className="aregP">R1 :</p>
                     <div className="aregC"><p style={{margin:"6px"}}>{props.reg[0].getvalue()}</p></div>
                 </div>
                 <div className="aregister">
@@ -506,10 +541,17 @@ MC.forEach((element,index) => {
             </table>
             </div>
         </div>
-        <button className="returnBtn" onClick={()=>{
+        
+            <Speed setSpeed={setSpeed} />
+        
+       
+         <button className="returnBtn" onClick={()=>{
                 window.location.reload(false);
         }}>return</button>
+       
+    
     </div>
+
     </>
 }
 export default Arch;

@@ -1,284 +1,474 @@
-import { Registers, memory, Alu1, IP ,queue } from "../pages/Ide/index.jsx";
+import { useSpeedStore } from "./speedStore.jsx"; 
+import { Registers, memory, Alu1, IP ,queue } from "../pages/Ide";
 import { TwosComplement } from "./ALU.js";
 import { gsap } from "gsap";
-import IOUnit from "./IO_Unit.js";
-import { Register } from "./Register.js";
-import { opValue } from "../assembler/Assembler.js";
-// import { 
-// Register } from "./Register.js";
+// import { Register } from "./Register.js";
+
+// Helper function to create animations with dynamic speed
+function createAnimation(animationDef) {
+  return {
+    ...animationDef,
+    anim: function(val, h, w) {
+      // Get current speed every time animation runs
+      const currentSpeed = useSpeedStore.getState().speed;
+      const duration = 1 / currentSpeed;
+      
+      // Kill any existing animations for the target
+      gsap.killTweensOf(animationDef.target);
+      
+      // Execute the animation with current speed
+      animationDef.anim(val, h, w, currentSpeed);
+    }
+  };
+}
+
 ////////////////////////////////////////////////
 function Dec2bin(dec){
     return ("00000000" + (parseInt(dec, 10)).toString(2)).substr(-8);
 }
-function binaryToDecimalNumber(binaryStr) {
-    return parseInt(binaryStr, 2);
-}
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-// Ensure receiveWriteValue is globally accessible
-// Ensure receiveWriteValue is globally accessible
-function showWritePopup() {
-    return new Promise((resolve) => {
-        let popup = window.open("", "Write to Register", "width=400,height=300");
-
-        popup.document.write(`
-            <h2>Write to Register</h2>
-            <label>Enter Value (number or string):</label>
-            <input type="text" id="registerValue">
-            <button onclick="submitValue()">Write</button>
-
-            <script>
-                function submitValue() {
-                    let value = document.getElementById('registerValue').value.trim();
-                    if (value !== "") {
-                        window.opener.resolveWriteValue(value);
-                        window.close();
-                    } else {
-                        alert("Please enter a non-empty value.");
-                    }
-                }
-            </script>
-        `);
-
-        // Store resolve function globally so it can return the value to the main window
-        window.resolveWriteValue = (value) => {
-            console.log("🟢 Received input from user:", value);
-            resolve(value); // Pass value as string (can be parsed later if needed)
-        };
-    });
-}
-
-
-
-
-window.receiveWriteValue = function(value) {
-    console.log("✅ Main Window: Received value from pop-up:", value);
-
-    const ioUnit = memory.ioUnit;
-
-    if (!isNaN(value)) {
-        value = parseInt(value, 10);
-        ioUnit.writeToBuffer(0, value);
-        console.log(`✅ Stored ${value} in I/O buffer register 0.`);
-
-        // Resume instruction execution
-        if (typeof window.writeCallback === "function") {
-            console.log("🟢 Resuming instruction after user input...");
-            window.writeCallback();
-            window.writeCallback = null; // Clear the callback after execution
-        }
-    } else {
-        console.log("❌ Invalid input. Please enter a number.");
-    }
+const rawIounitToBus = {
+  value: "",
+  target: ".ball",
+  time: () => 1000 / useSpeedStore.getState().speed,
+  anim: (val, h, w, speed) => {
+    gsap.fromTo(
+      ".ball",
+      {
+        borderRadius: "10px",
+        width: w * 0.1,
+        height: h * 0.045,
+        x: w * 0.442,
+        y: h * 0.666,
+        opacity: "0",
+      },
+      {
+        opacity: "1",
+        duration: 1 / speed,
+      }
+    );
+  },
 };
-
-
-
-/////////////////animations to test////////////////////
-const IounitToBus={
-    value:"",
-    target:".ball",
-    time:3000,
-    anim:(val,h,w)=>{
-    gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.221,y:h*0.39,opacity:"0"}, {opacity:"1",duration:1});
-    gsap.fromTo(".ball", {x:w*0.221,y:h*0.39}, {y:h*0.46 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
-    },
-}
-const BusToIO = {
-    value: "",
-    target: ".ball",
-    time: 3000,
-    anim: (val, h, w) => {
-        gsap.fromTo(".ball", 
-            { height: "2.812%", width: "1.4%", borderRadius: "50%", x: w * 0.221, y: h * 0.46, opacity: "0" }, 
-            { opacity: "1", duration: 1 }
-        );
-        gsap.fromTo(".ball", 
-            { x: w * 0.221, y: h * 0.46 }, 
-            { y: h * 0.39, duration: 1, delay: 1 } // Moves upward, opposite of IOTOBUS
-        );
-        gsap.to(".ball", { opacity: "0", duration: 1, delay: 2 });
-    },
-};
-
-const BusToRual1={
-    value:"",
-    target:".ball",
-    time:3000,
-    anim:(val,h,w)=>{
-    ///depart: ( 54% , 24,45% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.143,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.143,y:h*0.56},{y:h*0.625 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+const AccToCache={
+  value:"",
+  target:".box-data",
+time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
 },}
 
-const Rual1ToBus={
-    value:"",
-    target:".ball",
-    time:3000,
-    anim:(val,h,w)=>{
-    ///depart: ( 54% , 24,45% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.143,y:h*0.625,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.143,y:h*0.625},{ y:h*0.56,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
-  },}
+const CacheToRual1={
+  value:"",
+  target:".box-data",
+time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)})
+gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.106,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+},}
+
+const CacheToRual2={
+  value:"",
+  target:".box-data",
+time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)})
+gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.262,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+},}
+let queueExitToBus={
+value:"",
+target:".ball",
+time:4000,
+anim:(val,h,w)=>{
+        gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.715 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+        gsap.to(".ball",{y:h*0.555 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*3});
+}
+}
+
+const MDRToCache={
+value:"",
+target:".box-data",
+time:1/useSpeedStore.getState().speed*3000,
+anim:(val,h,w)=>{
+gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+},}
+
+const CacheToMDR={
+value:"",
+target:".box-data",
+time:1/useSpeedStore.getState().speed*3000,
+anim:(val,h,w)=>{
+gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+},}
+
+const CacheToReg={
+value:"",
+target:".box-data",
+time:1/useSpeedStore.getState().speed*3000,
+anim:(val,h,w)=>{
+gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.44,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+},}
+
+const RegToCache={
+value:"",
+target:".box-data",
+time:1/useSpeedStore.getState().speed*3000,
+anim:(val,h,w)=>{
+gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+},}
+
+const CacheToBus={
+value:"",
+target:".ball",
+time:1/useSpeedStore.getState().speed*3000,
+anim:(val,h,w)=>{
+gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.36,y:h*0.39,opacity:"0"}, {opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
+gsap.fromTo(".ball", {x:w*0.36,y:h*0.39}, {y:h*0.46 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+},
+}
+
+const BusToCache={
+value:"",
+target:".ball",
+time:1/useSpeedStore.getState().speed*3000,
+anim:(val,h,w)=>{
+gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.36,y:h*0.46,opacity:"0"}, {opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
+gsap.fromTo(".ball", {x:w*0.36,y:h*0.46}, {y:h*0.39 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+},
+}
+
+/////////////////animations to test////////////////////
+const IounitToBus = {
+  value: "",
+  target: ".ball",
+  time: () => 1000 / useSpeedStore.getState().speed,
+  anim: (val, h, w) => {
+    const speed = useSpeedStore.getState().speed;
+
+    // Kill previous animations if speed changed (optional)
+    gsap.killTweensOf(".ball");
+
+    gsap.fromTo(
+      ".ball",
+      {
+        borderRadius: "10px",
+        width: w * 0.1,
+        height: h * 0.045,
+        x: w * 0.442,
+        y: h * 0.666,
+        opacity: "0",
+      },
+      {
+        opacity: "1",
+        duration: 1 / speed,
+      }
+    );
+  },
+};
+
+
+
+const rawBusToRual1 = {
+  value: "",
+  target: ".ball",
+  time: () => 3000 / useSpeedStore.getState().speed,
+  anim: (val, h, w, speed) => {
+    gsap.killTweensOf(".ball");
+
+    gsap.fromTo(".ball", {
+      height: "2.812%",
+      width: "1.4%",
+      borderRadius: "50%",
+      x: w * 0.143,
+      y: h * 0.56,
+      opacity: "0"
+    }, {
+      opacity: "1",
+      duration: 1 / speed
+    });
+
+    gsap.fromTo(".ball", {
+      x: w * 0.143,
+      y: h * 0.56
+    }, {
+      y: h * 0.625,
+      duration: 1 / speed,
+      delay: 1 / speed
+    });
+
+    gsap.to(".ball", {
+      opacity: "0",
+      duration: 1 / speed,
+      delay: 2 / speed
+    });
+  }
+};
+
+const rawRual1ToBus = {
+  value: "",
+  target: ".ball",
+  time: () => 3000 / useSpeedStore.getState().speed,
+  anim: (val, h, w, speed) => {
+    gsap.killTweensOf(".ball");
+
+    gsap.fromTo(".ball", {
+      height: "2.812%",
+      width: "1.4%",
+      borderRadius: "50%",
+      x: w * 0.143,
+      y: h * 0.625,
+      opacity: "0"
+    }, {
+      opacity: "1",
+      duration: 1 / speed
+    });
+
+    gsap.fromTo(".ball", {
+      x: w * 0.143,
+      y: h * 0.625
+    }, {
+      y: h * 0.56,
+      duration: 1 / speed,
+      delay: 1 / speed
+    });
+
+    gsap.to(".ball", {
+      opacity: "0",
+      duration: 1 / speed,
+      delay: 2 / speed
+    });
+  }
+};
+
   
   const BusToRual2={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 54% , 35,2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   const BusToRegisters={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 53.7% , 47.8% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.555,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.481,y:h*0.555},{y:h*0.58 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.555,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.481,y:h*0.555},{y:h*0.58 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const RegistersToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 53.7% , 47.8% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.58,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.481,y:h*0.58},{y:h*0.555 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.58,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.481,y:h*0.58},{y:h*0.555 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const IrToDecoder={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 59% , 78.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.708,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.644,y:h*0.708},{y:h*0.725 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.708,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.644,y:h*0.708},{y:h*0.725 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   const DecoderToSequencer={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 59% , 78.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.813,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.644,y:h*0.813},{y:h*0.827 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.813,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.644,y:h*0.813},{y:h*0.827 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
-  const QueueToIr={
-    value:"",
-    target:".ball",
-    time:3000,
-    anim:(val,h,w)=>{
-    ///depart: ( 64.9% , 64.2% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.711 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
-  },}
+  const rawQueueToIr = {
+    value: "",
+    target: ".ball",
+    time: () => 3000 / useSpeedStore.getState().speed,
+    anim: (val, h, w, speed) => {
+      gsap.killTweensOf(".ball");
   
-  const BusToQueue={
-    value:"",
-    target:".ball",
-    time:4000,
-    anim:(val,h,w)=>{
-    ///depart: ( 79.1% , 53.6% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1,delay:1});
-    gsap.to(".ball",{x:w*0.921 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
-  },}
+      gsap.fromTo(".ball", {
+        height: "2.812%",
+        width: "1.4%",
+        borderRadius: "50%",
+        x: w * 0.726,
+        y: h * 0.6638,
+        opacity: "0"
+      }, {
+        opacity: "1",
+        duration: 1 / speed
+      });
+  
+      gsap.fromTo(".ball", {
+        x: w * 0.726,
+        y: h * 0.6638
+      }, {
+        x: w * 0.711,
+        duration: 1 / speed,
+        delay: 1 / speed
+      });
+  
+      gsap.to(".ball", {
+        opacity: "0",
+        duration: 1 / speed,
+        delay: 2 / speed
+      });
+    }
+  };
+  
+  const QueueToIr = createAnimation(rawQueueToIr);
+  
+  const rawBusToQueue = {
+    value: "",
+    target: ".ball",
+    time: () => 4000 / useSpeedStore.getState().speed,
+    anim: (val, h, w, speed) => {
+      gsap.killTweensOf(".ball");
+  
+      gsap.fromTo(".ball", {
+        height: "2.812%",
+        width: "1.4%",
+        borderRadius: "50%",
+        x: w * 0.931,
+        y: h * 0.56,
+        opacity: "0"
+      }, {
+        opacity: "1",
+        duration: 1 / speed
+      });
+  
+      gsap.fromTo(".ball", {
+        x: w * 0.931,
+        y: h * 0.56
+      }, {
+        y: h * 0.6638,
+        duration: 1 / speed,
+        delay: 1 / speed
+      });
+  
+      gsap.to(".ball", {
+        x: w * 0.921,
+        duration: 1 / speed,
+        delay: 2 / speed
+      });
+  
+      gsap.to(".ball", {
+        opacity: "0",
+        duration: 1 / speed,
+        delay: 3 / speed
+      });
+    }
+  };
+  
+  const BusToQueue = createAnimation(rawBusToQueue);
+  
   
   const BusToAcc={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/  useSpeedStore.getState().speed*4000,
     anim:(val,h,w)=>{
     ///depart: ( 39.7% , 54% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.361,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.361,y:h*0.56},{y:h*0.923 ,duration:1,delay:1});
-    gsap.to(".ball",{x:w*0.282 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.361,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.361,y:h*0.56},{y:h*0.923 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{x:w*0.282 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*3});
   },}
   const AccToBus={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/  useSpeedStore.getState().speed*4000,
     anim:(val,h,w)=>{
     ///depart: ( 39.7% , 54% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.282,y:h*0.923,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.282,y:h*0.923},{x:w*0.361 ,duration:1,delay:1});
-    gsap.to(".ball",{y:h*0.56 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.282,y:h*0.923,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.282,y:h*0.923},{x:w*0.361 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{y:h*0.56 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*3});
   },}
   
   const AluToAcc={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 30.3% , 83.5% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.226,y:h*0.863,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.226,y:h*0.863},{y:h*0.877 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.226,y:h*0.863,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.226,y:h*0.863},{y:h*0.877 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   const MdrToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 51.8% , 43.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const BusToMdr={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 51.8% , 43.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.465,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.539,y:h*0.465},{y:h*0.445 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.465,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.539,y:h*0.465},{y:h*0.445 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   const AdrToBus={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 66.3% , 25.4% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.784,y:h*0.137,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.784,y:h*0.137},{y:h*0.18 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.784,y:h*0.137,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.784,y:h*0.137},{y:h*0.18 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   const IpToAdr={
     value:"",
     target:".ball",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     ///depart: ( 69% , 13.7% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.746,y:h*0.26,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.746,y:h*0.26},{y:h*0.46 ,duration:1,delay:1});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.746,y:h*0.26,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.746,y:h*0.26},{y:h*0.46 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   /////////////data bus animations/////////////////:
@@ -286,462 +476,462 @@ const Rual1ToBus={
   const MdrTOQue={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:1,delay:1})
-    gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   const MdrToReg={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.44,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.44,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const RegToMdr={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.497,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.497,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   let queueExitToReg={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1})
-        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.44,duration:1,delay:1})
-        gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.44,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
     }
 }
   const MdrToIO={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.182,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.182,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const IOToMdr={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.182,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.182},{x:w*0.497,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.182,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.182},{x:w*0.497,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const MdrToRual1={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.262,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.262,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const RegToRual1={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1,delay:1})
-    gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
     },}
 
 const MdrToRual2={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.106,duration:1,delay:1})
-    gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.106,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
     },}
 
   const RegToRual2={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const AccToMDR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   const MDRToAcc={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const AccToReg={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.44,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.44,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const RegToAcc={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.321,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.321,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   const MdrToADR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.705,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.705,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const AccToADR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.705,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.705,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
 
   const Rual1ToADR={
     value:"",
     target:".box-data",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.705,duration:1,delay:1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.705,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
   const BusToIr={
     value:"",
     target:".ball",
-    time:4000,
+  time:1/  useSpeedStore.getState().speed*4000,
     anim:(val,h,w)=>{
     ///depart: ( 79.1% , 53.6% )  W:1.4% ,H:2.812
-    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1});
-    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1,delay:1});
-    gsap.to(".ball",{x:w*0.711 ,duration:1,delay:2});
-    gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    gsap.fromTo(".ball",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+    gsap.to(".ball",{x:w*0.711 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*3});
   },}
 
   //////////////// Adresse bus animations ///////////////////////////////
 const IPToMAR={
     value:"",
     target:".box-ADR",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1,delay:1})
-    gsap.to(".box-ADR",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.to(".box-ADR",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
 const ADRToMAR={
     value:"",
     target:".box-ADR",
-    time:3000,
+  time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-ADR",{x:w*0.712,opacity:"0"},{opacity:"1",duration:1})
-    gsap.fromTo(".box-ADR",{x:w*0.712},{x:w*0.648,duration:1,delay:1})
-    gsap.to(".box-ADR",{opacity:"0" ,duration:1,delay:2});
+    gsap.fromTo(".box-ADR",{x:w*0.712,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-ADR",{x:w*0.712},{x:w*0.648,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.to(".box-ADR",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
   
   ////////////////////////fitting animations//////////////////////
   const fitToRual1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToRual1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.12,y:h*0.658,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.12,y:h*0.658,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.12,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToRual2={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.275,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"20px",width:w*0.067,height:h*0.05,x:w*0.275,y:h*0.658,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"20px",width:w*0.067,height:h*0.05,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const fitToR2={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToR2={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.666,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
 
   const fitToR1={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-      gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1});
-    //   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    //   gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+      gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    //   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    //   gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
     },}
     const infitToR1={
         value:"",
         target:".ball",
-        time:1000,
+      time:1/  useSpeedStore.getState().speed*1000,
         anim:(val,h,w)=>{
-            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-            // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-            gsap.to(".ball",{opacity:"0" ,duration:1});
+            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+            // gsap.fromTo(".ball",{x:w*0.442,y:h*0.6105,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+            // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+            gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
         },}
 
   const fitToR3={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
 
   const infitToR3={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7205,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
 
   const fitToR4={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
 
   const infitToR4={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.7735,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
 
   const fitToIdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToIdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8277,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToBr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToBr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.8815,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToSr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToSR={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.442,y:h*0.9347,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToIr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.6495,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.6495,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const fitToDecode={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.753,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.753,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const fitToSequencer={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.858,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.055,x:w*0.6,y:h*0.858,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.055,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const fitToAcc={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.07,height:h*0.055,x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.07,height:h*0.055,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.07,height:h*0.055,x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.07,height:h*0.055,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToAcc={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.1995,y:h*0.91,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToMdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
   const infitToMdr={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1,delay:1});
-        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1,delay:1});
-        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1,delay:1});
-        gsap.to(".ball",{opacity:"0" ,duration:1});
+        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0",height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.1,height:h*0.045,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        // gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.1,height:h*0.045,},{height:"2.812%",width:"1.4%",borderRadius:"50%",duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1});
     },}
   const fitToMar={
     value:"",
     target:".ball",
-    time:1000,
+  time:1/  useSpeedStore.getState().speed*1000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1});
-    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1,delay:1});
-    // gsap.to(".ball",{opacity:"0" ,duration:1,delay:3});
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+    // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:1});
+    // gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*:3});
   },}
 
   const addanim={
     value:"",
     target:".ALU",
-    time:2000,
+  time:1/  useSpeedStore.getState().speed*2000,
     anim:(val,h,w)=>{
-        gsap.fromTo(".ALU",{opacity:"0"},{opacity:"1" ,duration:1});
-        gsap.fromTo(".ALU",{opacity:"1"},{opacity:"0" ,duration:1,delay:1});
+        gsap.fromTo(".ALU",{opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".ALU",{opacity:"1"},{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
     },}
 
     const MCanim={
         value:"",
         target:".MC",
-        time:2000,
+      time:1/  useSpeedStore.getState().speed*2000,
         anim:(val,h,w)=>{
-            gsap.fromTo(".MC",{opacity:"0"},{opacity:"1" ,duration:1});
-            gsap.fromTo(".MC",{opacity:"1"},{opacity:"0" ,duration:1,delay:1});
+            gsap.fromTo(".MC",{opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+            gsap.fromTo(".MC",{opacity:"1"},{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
         },}
 
 ////////////////////////////////////////////////
@@ -781,19 +971,19 @@ class InstructionADD{
             return[{
                 value:"ADD",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -822,13 +1012,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -836,13 +1026,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -851,13 +1041,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -865,13 +1055,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -879,25 +1069,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/  useSpeedStore.getState().speed*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -905,13 +1095,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -919,13 +1109,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -933,13 +1123,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
@@ -949,12 +1139,12 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR2.time,
                         value:"value2",
                         anim:fitToR2.anim,
                     },
@@ -963,13 +1153,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -978,13 +1168,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -992,13 +1182,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -1006,25 +1196,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/  useSpeedStore.getState().speed*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -1032,13 +1222,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -1046,13 +1236,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -1060,13 +1250,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR2.target,
-                        time:fitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR2.time,
                         anim:fitToR2.anim,
                     },
                 ];
@@ -1076,13 +1266,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1090,13 +1280,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1105,13 +1295,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1119,13 +1309,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1133,25 +1323,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/  useSpeedStore.getState().speed*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1159,13 +1349,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1173,13 +1363,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1187,13 +1377,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR3.target,
-                        time:fitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR3.time,
                         anim:fitToR3.anim,
                     },
                 ];
@@ -1203,13 +1393,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1217,13 +1407,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1232,13 +1422,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1246,13 +1436,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1260,25 +1450,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/  useSpeedStore.getState().speed*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1286,13 +1476,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1300,13 +1490,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1314,13 +1504,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToR4.target,
-                        time:fitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR4.time,
                         anim:fitToR4.anim,
                     },
                 ];
@@ -1330,25 +1520,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1356,25 +1546,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1383,25 +1573,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1409,25 +1599,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1435,13 +1625,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1449,25 +1639,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1475,25 +1665,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1501,25 +1691,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:RegToAcc.target,
-                        time:RegToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*RegToAcc.time,
                         anim:RegToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:BusToAcc.target,
-                        time:BusToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*BusToAcc.time,
                         anim:BusToAcc.anim,
                     },
                     {
                         value:"value2",
                         target:fitToAcc.target,
-                        time:fitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                         anim:fitToAcc.anim,
                     },
                 ];
@@ -1529,13 +1719,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1543,13 +1733,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1558,13 +1748,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1572,13 +1762,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1586,25 +1776,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/  useSpeedStore.getState().speed*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1612,13 +1802,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1626,13 +1816,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1640,13 +1830,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToBr.target,
-                        time:fitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToBr.time,
                         anim:fitToBr.anim,
                     },
                 ];
@@ -1656,13 +1846,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1670,13 +1860,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1685,13 +1875,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1699,13 +1889,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1713,25 +1903,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/  useSpeedStore.getState().speed*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1739,13 +1929,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1753,13 +1943,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1767,13 +1957,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToIdr.target,
-                        time:fitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                         anim:fitToIdr.anim,
                     },
                 ];
@@ -1783,13 +1973,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR1.target,
-                        time:infitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR1.time,
                         anim:infitToR1.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1797,13 +1987,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR2.target,
-                        time:infitToR2.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1812,13 +2002,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR3.target,
-                        time:infitToR3.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR3.time,
                         anim:infitToR3.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1826,13 +2016,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToR4.target,
-                        time:infitToR4.time,
+                      time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1840,25 +2030,25 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
-                        time:infitToAcc.time,
+                      time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                         anim:infitToAcc.anim,
                     },
                     {
                         value:"",
                         target:AccToBus.target,
-                        time:AccToBus.time,
+                      time:1/  useSpeedStore.getState().speed*AccToBus.time,
                         anim:AccToBus.anim,
                     },
                     {
                         value:"value2",
                         target:AccToReg.target,
-                        time:AccToReg.time,
+                      time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1866,13 +2056,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToBr.target,
-                        time:infitToBr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToBr.time,
                         anim:infitToBr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1880,13 +2070,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToIdr.target,
-                        time:infitToIdr.time,
+                      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                         anim:infitToIdr.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1894,13 +2084,13 @@ class InstructionMOV00{
                     return[{
                         value:"value2",
                         target:infitToSR.target,
-                        time:infitToSR.time,
+                      time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
                     {
                         value:"value2",
                         target:fitToSr.target,
-                        time:fitToSr.time,
+                      time:1/  useSpeedStore.getState().speed*fitToSr.time,
                         anim:fitToSr.anim,
                     },
                 ];
@@ -1934,305 +2124,438 @@ class InstructionMOV01{
                     {
                         value:"value2",
                         target:fitToR1.target,
-                        time:fitToR1.time,
+                      time:1/  useSpeedStore.getState().speed*fitToR1.time,
                         anim:fitToR1.anim,
                     },
                 ];
                 }else{
-                return[{
+                  console.log(`${this.addresse1}`);
+                  if(memory.cache.checkCache(this.addresse1, 0).hit){
+  
+                  return[{
+              
+                    value:"",
+                    target:CacheToBus.target,
+                  time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+                    anim:CacheToBus.anim,
+                },
+                {
+              
+                  value:"value2",
+                  target:CacheToReg.target,
+                time:1/  useSpeedStore.getState().speed*infitToMdr.time,
+                  anim:CacheToReg.anim,
+              },
+              {
+                value:"value2",
+                target:fitToR1.target,
+              time:1/  useSpeedStore.getState().speed*fitToR1.time,
+                anim:fitToR1.anim,
+            },
+
+              ]
+                  }else if(!memory.cache.checkCache(this.addresse1, 0).hit){
+
+                  
+                return[
+                  {
                     value:"value2",
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
-                {
-                    value:"",
-                    target:MdrToBus.target,
-                    time:MdrToBus.time,
-                    anim:MdrToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:MdrToReg.target,
-                    time:MdrToReg.time,
-                    anim:MdrToReg.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToR1.target,
-                    time:fitToR1.time,
-                    anim:fitToR1.anim,
-                },
+             
+              {
+                  value:"",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+              {
+                  value:"value2",
+                  target:MdrToReg.target,
+                time:1/  useSpeedStore.getState().speed*MdrToReg.time,
+                  anim:MdrToReg.anim,
+              },
+              {
+                  value:"value2",
+                  target:fitToR1.target,
+                time:1/  useSpeedStore.getState().speed*fitToR1.time,
+                  anim:fitToR1.anim,
+              },
+              
             ];}
-            }else if (this.register1=="1") {
-                if(this.isimmed===1){
-                    return[
-                    {
-                        value:"value2",
-                        target:fitToR2.target,
-                        time:fitToR2.time,
-                        anim:fitToR2.anim,
-                    },
-                ];
-                }else{
-                return[{
-                    value:"value2",
-                    target:infitToMdr.target,
-                    time:infitToMdr.time,
-                    anim:infitToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:MdrToBus.target,
-                    time:MdrToBus.time,
-                    anim:MdrToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:MdrToReg.target,
-                    time:MdrToReg.time,
-                    anim:MdrToReg.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToR2.target,
-                    time:fitToR2.time,
-                    anim:fitToR2.anim,
-                },
-            ];
-        }
-            }else if (this.register1==2) {
-                if(this.isimmed===1){
-                    return[
-                    {
-                        value:"value2",
-                        target:fitToR3.target,
-                        time:fitToR3.time,
-                        anim:fitToR3.anim,
-                    },
-                ];
-                }else{
-                return[{
-                    value:"value2",
-                    target:infitToMdr.target,
-                    time:infitToMdr.time,
-                    anim:infitToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:MdrToBus.target,
-                    time:MdrToBus.time,
-                    anim:MdrToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:MdrToReg.target,
-                    time:MdrToReg.time,
-                    anim:MdrToReg.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToR3.target,
-                    time:fitToR3.time,
-                    anim:fitToR3.anim,
-                },
-            ];}
-            }else if (this.register1=="3") {
-                if(this.isimmed===1){
-                    return[
-                    {
-                        value:"value2",
-                        target:fitToR4.target,
-                        time:fitToR4.time,
-                        anim:fitToR4.anim,
-                    },
-                ];
-                }else{
-                return[{
-                    value:"value2",
-                    target:infitToMdr.target,
-                    time:infitToMdr.time,
-                    anim:infitToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:MdrToBus.target,
-                    time:MdrToBus.time,
-                    anim:MdrToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:MdrToReg.target,
-                    time:MdrToReg.time,
-                    anim:MdrToReg.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToR4.target,
-                    time:fitToR4.time,
-                    anim:fitToR4.anim,
-                },
-            ];}
-            }else if (this.register1=="4") {
-                if(this.isimmed===1){
-                    return[
-                    {
-                        value:"value2",
-                        target:BusToAcc.target,
-                        time:BusToAcc.time,
-                        anim:BusToAcc.anim,
-                    },
-                    {
-                        value:"value2",
-                        target:fitToAcc.target,
-                        time:fitToAcc.time,
-                        anim:fitToAcc.anim,
-                    },
-                ];
-                }else{
-                return[{
-                    value:"value2",
-                    target:infitToMdr.target,
-                    time:infitToMdr.time,
-                    anim:infitToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:MdrToBus.target,
-                    time:MdrToBus.time,
-                    anim:MdrToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:MDRToAcc.target,
-                    time:MDRToAcc.time,
-                    anim:MDRToAcc.anim,
-                },
-                {
-                    value:"value2",
-                    target:BusToAcc.target,
-                    time:BusToAcc.time,
-                    anim:BusToAcc.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToAcc.target,
-                    time:fitToAcc.time,
-                    anim:fitToAcc.anim,
-                },
-            ];}
-            }else if (this.register1=="5") {
-                if(this.isimmed===1){
-                    return[
-                    {
-                        value:"value2",
-                        target:fitToBr.target,
-                        time:fitToBr.time,
-                        anim:fitToBr.anim,
-                    },
-                ];
-                }else{
-                return[{
-                    value:"value2",
-                    target:infitToMdr.target,
-                    time:infitToMdr.time,
-                    anim:infitToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:MdrToBus.target,
-                    time:MdrToBus.time,
-                    anim:MdrToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:MdrToReg.target,
-                    time:MdrToReg.time,
-                    anim:MdrToReg.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToBr.target,
-                    time:fitToBr.time,
-                    anim:fitToBr.anim,
-                },
-            ];}
-            }else if (this.register1=="6") {
-                if(this.isimmed===1){
-                    return[
-                    {
-                        value:"value2",
-                        target:fitToIdr.target,
-                        time:fitToIdr.time,
-                        anim:fitToIdr.anim,
-                    },
-                ];
-                }else{
-                return[{
-                    value:"value2",
-                    target:infitToMdr.target,
-                    time:infitToMdr.time,
-                    anim:infitToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:MdrToBus.target,
-                    time:MdrToBus.time,
-                    anim:MdrToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:MdrToReg.target,
-                    time:MdrToReg.time,
-                    anim:MdrToReg.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToIdr.target,
-                    time:fitToIdr.time,
-                    anim:fitToIdr.anim,
-                },
-            ];}
-            }else if (this.register1=="7") {
-                if(this.isimmed===1){
-                    return[
-                    {
-                        value:"value2",
-                        target:fitToSr.target,
-                        time:fitToSr.time,
-                        anim:fitToSr.anim,
-                    },
-                ];
-                }else{
-                return[{
-                    value:"value2",
-                    target:infitToMdr.target,
-                    time:infitToMdr.time,
-                    anim:infitToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:MdrToBus.target,
-                    time:MdrToBus.time,
-                    anim:MdrToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:MdrToReg.target,
-                    time:MdrToReg.time,
-                    anim:MdrToReg.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToSr.target,
-                    time:fitToSr.time,
-                    anim:fitToSr.anim,
-                },
-            ];
-            }}
-        }
-    }
+          }
+        } else if (this.register1 == "1") {
+          if (this.isimmed === 1) {
+              return [{
+                  value: "value2",
+                  target: fitToR2.target,
+                  time: 1 / useSpeedStore.getState().speed * fitToR2.time,
+                  anim: fitToR2.anim
+              }];
+          } else {
+              return [{
+                  value: "value2",
+                  target: infitToMdr.target,
+                  time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+                  anim: infitToMdr.anim
+              }, {
+                  value: "",
+                  target: MdrToBus.target,
+                  time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
+                  anim: MdrToBus.anim
+              }, {
+                  value: "value2",
+                  target: MdrToReg.target,
+                  time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
+                  anim: MdrToReg.anim
+              }, {
+                  value: "value2",
+                  target: fitToR2.target,
+                  time: 1 / useSpeedStore.getState().speed * fitToR2.time,
+                  anim: fitToR2.anim
+              }];
+          }
+      } else if (this.register1 == "2") {
+          if (this.isimmed === 1) {
+              return [{
+                  value: "value2",
+                  target: fitToR3.target,
+                  time: 1 / useSpeedStore.getState().speed * fitToR3.time,
+                  anim: fitToR3.anim
+              }];
+          } else {
+              if (memory.cache.checkCache(this.addresse1, 0).hit) {
+                  return [{
+                      value: "value2",
+                      target: CacheToBus.target,
+                      time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
+                      anim: CacheToBus.anim
+                  }, {
+                      value: "value2",
+                      target: CacheToReg.target,
+                      time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+                      anim: CacheToReg.anim
+                  }, {
+                      value: "value2",
+                      target: fitToR3.target,
+                      time: 1 / useSpeedStore.getState().speed * fitToR3.time,
+                      anim: fitToR3.anim
+                  }];
+              } else {
+                  return [{
+                      value: "value2",
+                      target: infitToMdr.target,
+                      time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+                      anim: infitToMdr.anim
+                  }, {
+                      value: "",
+                      target: MdrToBus.target,
+                      time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
+                      anim: MdrToBus.anim
+                  }, {
+                      value: "value2",
+                      target: MdrToReg.target,
+                      time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
+                      anim: MdrToReg.anim
+                  }, {
+                      value: "value2",
+                      target: fitToR3.target,
+                      time: 1 / useSpeedStore.getState().speed * fitToR3.time,
+                      anim: fitToR3.anim
+                  }];
+              }
+          }
+      } else if (this.register1 == "3") {
+          if (this.isimmed === 1) {
+              return [{
+                  value: "value2",
+                  target: fitToR4.target,
+                  time: 1 / useSpeedStore.getState().speed * fitToR4.time,
+                  anim: fitToR4.anim
+              }];
+          } else {
+              if (memory.cache.checkCache(this.addresse1, 0).hit) {
+                  return [{
+                      value: "value2",
+                      target: CacheToBus.target,
+                      time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
+                      anim: CacheToBus.anim
+                  }, {
+                      value: "value2",
+                      target: CacheToReg.target,
+                      time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+                      anim: CacheToReg.anim
+                  }, {
+                      value: "value2",
+                      target: fitToR4.target,
+                      time: 1 / useSpeedStore.getState().speed * fitToR4.time,
+                      anim: fitToR4.anim
+                  }];
+              } else {
+                  return [{
+                      value: "value2",
+                      target: infitToMdr.target,
+                      time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+                      anim: infitToMdr.anim
+                  }, {
+                      value: "",
+                      target: MdrToBus.target,
+                      time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
+                      anim: MdrToBus.anim
+                  }, {
+                      value: "value2",
+                      target: MdrToReg.target,
+                      time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
+                      anim: MdrToReg.anim
+                  }, {
+                      value: "value2",
+                      target: fitToR4.target,
+                      time: 1 / useSpeedStore.getState().speed * fitToR4.time,
+                      anim: fitToR4.anim
+                  }];
+              }
+          }
+      
+      
+    
+        }else if (this.register1 == "4") {
+          if (this.isimmed === 1) {
+              return [
+                  {
+                      value: "value2",
+                      target: BusToAcc.target,
+                      time: 1 / useSpeedStore.getState().speed * BusToAcc.time,
+                      anim: BusToAcc.anim,
+                  },
+                  {
+                      value: "value2",
+                      target: fitToAcc.target,
+                      time: 1 / useSpeedStore.getState().speed * fitToAcc.time,
+                      anim: fitToAcc.anim,
+                  },
+              ];
+          } else if (memory.cache.checkCache(this.address, 0).hit) {
+              return [
+                  {
+                      value: "value2",
+                      target: CacheToBus.target,
+                      time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
+                      anim: CacheToBus.anim,
+                  },
+                  {
+                      value: "value2",
+                      target: CacheToReg.target,
+                      time: 1 / useSpeedStore.getState().speed * CacheToReg.time,
+                      anim: CacheToReg.anim,
+                  },
+                  {
+                      value: "value2",
+                      target: fitToAcc.target,
+                      time: 1 / useSpeedStore.getState().speed * fitToAcc.time,
+                      anim: fitToAcc.anim,
+                  },
+              ];
+          } else {
+              return [
+                  {
+                      value: "value2",
+                      target: infitToMdr.target,
+                      time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+                      anim: infitToMdr.anim,
+                  },
+                  {
+                      value: "",
+                      target: MdrToBus.target,
+                      time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
+                      anim: MdrToBus.anim,
+                  },
+                  {
+                      value: "value2",
+                      target: MDRToAcc.target,
+                      time: 1 / useSpeedStore.getState().speed * MDRToAcc.time,
+                      anim: MDRToAcc.anim,
+                  },
+                  {
+                      value: "value2",
+                      target: BusToAcc.target,
+                      time: 1 / useSpeedStore.getState().speed * BusToAcc.time,
+                      anim: BusToAcc.anim,
+                  },
+                  {
+                      value: "value2",
+                      target: fitToAcc.target,
+                      time: 1 / useSpeedStore.getState().speed * fitToAcc.time,
+                      anim: fitToAcc.anim,
+                  },
+              ];
+          }
+      }
+      
+    else if (this.register1 == "5") {
+      if (this.isimmed === 1) {
+          return [
+              {
+                  value: "value2",
+                  target: fitToBr.target,
+                  time: 1 / useSpeedStore.getState().speed * fitToBr.time,
+                  anim: fitToBr.anim,
+              },
+          ];
+      } else if (memory.cache.checkCache(this.address, 0).hit) {
+          return [
+              {
+                  value: "value2",
+                  target: CacheToBus.target,
+                  time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
+                  anim: CacheToBus.anim,
+              },
+              {
+                  value: "value2",
+                  target: CacheToReg.target,
+                  time: 1 / useSpeedStore.getState().speed * CacheToReg.time,
+                  anim: CacheToReg.anim,
+              },
+              {
+                  value: "value2",
+                  target: fitToBr.target,
+                  time: 1 / useSpeedStore.getState().speed * fitToBr.time,
+                  anim: fitToBr.anim,
+              },
+          ];
+      } else {
+          return [
+              {
+                  value: "value2",
+                  target: infitToMdr.target,
+                  time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+                  anim: infitToMdr.anim,
+              },
+              {
+                  value: "",
+                  target: MdrToBus.target,
+                  time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
+                  anim: MdrToBus.anim,
+              },
+              {
+                  value: "value2",
+                  target: MdrToReg.target,
+                  time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
+                  anim: MdrToReg.anim,
+              },
+              {
+                  value: "value2",
+                  target: fitToBr.target,
+                  time: 1 / useSpeedStore.getState().speed * fitToBr.time,
+                  anim: fitToBr.anim,
+              },
+          ];
+      }
+  }
+else if (this.register1 == "6") {
+  if (this.isimmed === 1) {
+      return [
+          {
+              value: "value2",
+              target: fitToIdr.target,
+              time: 1 / useSpeedStore.getState().speed * fitToIdr.time,
+              anim: fitToIdr.anim,
+          },
+      ];
+  } else if (memory.cache.checkCache(this.address, 0).hit) {
+      return [
+          {
+              value: "value2",
+              target: CacheToBus.target,
+              time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
+              anim: CacheToBus.anim,
+          },
+          {
+              value: "value2",
+              target: CacheToReg.target,
+              time: 1 / useSpeedStore.getState().speed * CacheToReg.time,
+              anim: CacheToReg.anim,
+          },
+          {
+              value: "value2",
+              target: fitToIdr.target,
+              time: 1 / useSpeedStore.getState().speed * fitToIdr.time,
+              anim: fitToIdr.anim,
+          },
+      ];
+  } else {
+      return [
+          {
+              value: "value2",
+              target: infitToMdr.target,
+              time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+              anim: infitToMdr.anim,
+          },
+          {
+              value: "",
+              target: MdrToBus.target,
+              time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
+              anim: MdrToBus.anim,
+          },
+          {
+              value: "value2",
+              target: MdrToReg.target,
+              time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
+              anim: MdrToReg.anim,
+          },
+          {
+              value: "value2",
+              target: fitToIdr.target,
+              time: 1 / useSpeedStore.getState().speed * fitToIdr.time,
+              anim: fitToIdr.anim,
+          },
+      ];
+  }
+
+
+}else if (this.register1 == "7") {
+  if (this.isimmed === 1) {
+      return [
+          {
+              value: "value2",
+              target: fitToSr.target,
+              time: 1 / useSpeedStore.getState().speed * fitToSr.time,
+              anim: fitToSr.anim,
+          },
+      ];
+  } else {
+      return [
+          {
+              value: "value2",
+              target: infitToMdr.target,
+              time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+              anim: infitToMdr.anim,
+          },
+          {
+              value: "",
+              target: MdrToBus.target,
+              time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
+              anim: MdrToBus.anim,
+          },
+          {
+              value: "value2",
+              target: MdrToReg.target,
+              time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
+              anim: MdrToReg.anim,
+          },
+          {
+              value: "value2",
+              target: fitToSr.target,
+              time: 1 / useSpeedStore.getState().speed * fitToSr.time,
+              anim: fitToSr.anim,
+          },
+      ];
+  }
 }
+        }
+      }}
+
 class InstructionMOV10{
     constructor(){
         this.value1=0;
@@ -2268,310 +2591,470 @@ class InstructionMOV10{
                 return[{
                     value:"value2",
                     target:infitToR1.target,
-                    time:infitToR1.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR1.time,
                     anim:infitToR1.anim,
                 },
+
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
-                }
+                },
+                {
+                  value:"value2",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+            
+            {
+              value:"",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+            value:"value2",
+            target:BusToCache.target,
+          time:1/  useSpeedStore.getState().speed*BusToCache.time,
+            anim:BusToCache.anim,
+        },
+
                 
             ];
             }else if (this.register1=="001") {
                 return[{
                     value:"value2",
                     target:infitToR2.target,
-                    time:infitToR2.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR2.time,
                     anim:infitToR2.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
-                }            
+                }  ,
+                {
+                  value:"value2",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+            
+            {
+              value:"",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+            value:"value2",
+            target:BusToCache.target,
+          time:1/  useSpeedStore.getState().speed*BusToCache.time,
+            anim:BusToCache.anim,
+        },          
             ];
                 
             }else if (this.register1=="2") {
                 return[{
                     value:"value2",
                     target:infitToR3.target,
-                    time:infitToR3.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR3.time,
                     anim:infitToR3.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
+                ,
+                {
+                  value:"value2",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+            
+            {
+              value:"",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+            value:"value2",
+            target:BusToCache.target,
+          time:1/  useSpeedStore.getState().speed*BusToCache.time,
+            anim:BusToCache.anim,
+        },
                 
             ];
             }else if (this.register1=="3") {
                 return[{
                     value:"value2",
                     target:infitToR4.target,
-                    time:infitToR4.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR4.time,
                     anim:infitToR4.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
+                ,
+                {
+                  value:"value2",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+            
+            {
+              value:"",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+            value:"value2",
+            target:BusToCache.target,
+          time:1/  useSpeedStore.getState().speed*BusToCache.time,
+            anim:BusToCache.anim,
+        },
                 
             ];
             }else if (this.register1=="4") {
                 return[{
                     value:"value2",
                     target:infitToAcc.target,
-                    time:infitToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                     anim:infitToAcc.anim,//we have to change animations here___________________________________
                 },
                 {
                     value:"",
                     target:AccToBus.target,
-                    time:AccToBus.time,
+                  time:1/  useSpeedStore.getState().speed*AccToBus.time,
                     anim:AccToBus.anim,
                 },
                 {
                     value:"value2",
                     target:AccToMDR.target,
-                    time:AccToMDR.time,
+                  time:1/  useSpeedStore.getState().speed*AccToMDR.time,
                     anim:AccToMDR.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
-                    anim:MCanim.anim,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
+                 anim:MCanim.anim,
                 }
+                ,
+                {
+                  value:"value2",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+            
+            {
+              value:"",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+            value:"value2",
+            target:BusToCache.target,
+          time:1/  useSpeedStore.getState().speed*BusToCache.time,
+            anim:BusToCache.anim,
+        },
                 
             ];
             }else if (this.register1=="5") {
                 return[{
                     value:"value2",
                     target:infitToBr.target,
-                    time:infitToBr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToBr.time,
                     anim:infitToBr.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
+                ,
+                {
+                  value:"value2",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+            
+            {
+              value:"",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+            value:"value2",
+            target:BusToCache.target,
+          time:1/  useSpeedStore.getState().speed*BusToCache.time,
+            anim:BusToCache.anim,
+        },
             ];
             }else if (this.register1=="6") {
                 return[{
                     value:"value2",
                     target:infitToIdr.target,
-                    time:infitToIdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                     anim:infitToIdr.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
+                ,
+                {
+                  value:"value2",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+            
+            {
+              value:"",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+            value:"value2",
+            target:BusToCache.target,
+          time:1/  useSpeedStore.getState().speed*BusToCache.time,
+            anim:BusToCache.anim,
+        },
             ];
             }else if (this.register1=="7") {
                 return[{
                     value:"value2",
                     target:infitToSR.target,
-                    time:infitToSR.time,
+                  time:1/  useSpeedStore.getState().speed*infitToSR.time,
                     anim:infitToSR.anim,
                 },
                 {
                     value:"",
                     target:RegistersToBus.target,
-                    time:RegistersToBus.time,
+                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
                     anim:RegistersToBus.anim,
                 },
                 {
                     value:"value2",
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:"value2",
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:"WRITE",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
+                ,
+                {
+                  value:"value2",
+                  target:MdrToBus.target,
+                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                  anim:MdrToBus.anim,
+              },
+            
+            {
+              value:"",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+            value:"value2",
+            target:BusToCache.target,
+          time:1/  useSpeedStore.getState().speed*BusToCache.time,
+            anim:BusToCache.anim,
+        },
             ];
             }
             
@@ -2594,7 +3077,6 @@ class InstructionMOV11{////the difference between them will be in the animation 
         this.steps=[()=>{
             if(this.taille==1){
                 let hexval=this.value2.toString(16);
-                console.log(hexval);
                 while(hexval.length<4){
                     hexval='0'+hexval;
                 }
@@ -2611,64 +3093,167 @@ class InstructionMOV11{////the difference between them will be in the animation 
             }
         }
         ];
-        this.buildanim=function(){
-            if(this.isimmed==false){
-                return[{
-                    value:"addresse1",
-                    target:infitToAcc.target,
-                    time:infitToAcc.time,
-                    anim:infitToAcc.anim,
-                },
-                {
-                    value:"",
-                    target:AccToBus.target,
-                    time:AccToBus.time,
-                    anim:AccToBus.anim,
-                },
-                {
-                    value:"addresse1",
-                    target:AccToADR.target,
-                    time:AccToADR.time,
-                    anim:AccToADR.anim,
-                },
-                {
-                    value:"addresse1",
-                    target:ADRToMAR.target,
-                    time:ADRToMAR.time,
-                    anim:ADRToMAR.anim,
-                },
-                {
-                    value:"addresse1",
-                    target:fitToMar.target,
-                    time:fitToMar.time,
-                    anim:fitToMar.anim,
-                },
-                {
-                    value:"WRITE",
-                    target:MCanim.target,
-                    time:MCanim.time,
-                    anim:MCanim.anim,
-                }
-            ];}else{
-                return[
-                    {
-                        value:"value2",
-                        target:infitToMdr.target,
-                        time:infitToMdr.time,
-                        anim:infitToMdr.anim,
-                    },
-                    {
-                        value:"WRITE",
-                        target:MCanim.target,
-                        time:MCanim.time,
-                        anim:MCanim.anim,
-                    }
-                ];///animation of writing in MC/___________________________
+        this.buildanim = function () {
+          const speed = 1 / useSpeedStore.getState().speed;
+        
+          if (this.isimmed === false) {
+            const anims = [];
+        
+            // Step 1: In-fit to Accumulator
+            anims.push({
+              value: "addresse1",
+              target: infitToAcc.target,
+              time: speed * infitToAcc.time,
+              anim: infitToAcc.anim,
+            });
+        
+            // Step 2: Acc to Bus
+            anims.push({
+              value: "",
+              target: AccToBus.target,
+              time: speed * AccToBus.time,
+              anim: AccToBus.anim,
+            });
+        
+            // Step 3: Cache hit check
+            const cacheResult = memory.cache.checkCache(this.addresse1, 0);
+        
+            if (cacheResult.hit) {
+              console.log("gggggggggggggggggggggggggggg");
+              anims.push({
+                value: "addresse1",
+                target: BusToCache.target,
+                time: speed * BusToCache.time,
+                anim: BusToCache.anim,
+              });
+              anims.push({
+                value: "WRITE",
+                target: MCanim.target,
+                time: speed * MCanim.time,
+                anim: MCanim.anim,
+              }
+              
+              ,
+              {
+                value:"value2",
+                target:MdrToBus.target,
+              time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                anim:MdrToBus.anim,
+            },
+          
+          {
+            value:"",
+            target:MDRToCache.target,
+          time:1/  useSpeedStore.getState().speed*MDRToCache.time,
+            anim:MDRToCache.anim,
+        },
+        {
+          value:"value2",
+          target:BusToCache.target,
+        time:1/  useSpeedStore.getState().speed*BusToCache.time,
+          anim:BusToCache.anim,
+      })
+             
+        
+            } else {
+              // Cache miss path - full memory route
+              anims.push({
+                value: "addresse1",
+                target: AccToADR.target,
+                time: speed * AccToADR.time,
+                anim: AccToADR.anim,
+              });
+        
+              anims.push({
+                value: "addresse1",
+                target: ADRToMAR.target,
+                time: speed * ADRToMAR.time,
+                anim: ADRToMAR.anim,
+              });
+        
+              anims.push({
+                value: "addresse1",
+                target: fitToMar.target,
+                time: speed * fitToMar.time,
+                anim: fitToMar.anim,
+              });
+        
+              anims.push({
+                value: "WRITE",
+                target: MCanim.target,
+                time: speed * MCanim.time,
+                anim: MCanim.anim,
+              }
+              
+              ,
+              {
+                value:"value2",
+                target:MdrToBus.target,
+              time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+                anim:MdrToBus.anim,
+            },
+          
+          {
+            value:"",
+            target:MdrToBus.target,
+          time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+            anim:MdrToBus.anim,
+        },
+        {
+          value:"value2",
+          target:BusToCache.target,
+        time:1/  useSpeedStore.getState().speed*BusToCache.time,
+          anim:BusToCache.anim,
+      });
+              
             }
+        
+            return anims;
+        
+          } else {
+            // Immediate mode (direct value animation)
+            return [
+              {
+                value: "value2",
+                target: infitToMdr.target,
+                time: speed * infitToMdr.time,
+                anim: infitToMdr.anim,
+              },
+              {
+                value: "WRITE",
+                target: MCanim.target,
+                time: speed * MCanim.time,
+                anim: MCanim.anim,
+              },
+              {
+                value: "value2",
+                target: MdrToBus.target,
+                time: speed * MdrToBus.time,
+                anim: MdrToBus.anim,
+              },
+              {
+                value: "",
+                target: MDRToCache.target,
+                time: speed * MDRToCache.time,
+                anim: MDRToCache.anim,
+              },
+              {
+                value: "value2",
+                target: BusToCache.target,
+                time: speed * BusToCache.time,
+                anim: BusToCache.anim,
+              },
+            
+             /////////////////////////////////////////////////////////////////:aaaaaaaaaaaaaaaaaaaaaaaaaaaa
+              
+            ];
+            const ind1 =memory.cache.checkCache(this.addresse1,0).index;
+            console.log(` aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa${memory.cache.blocks[ind1]}`);
+          }
         }
-    }
-    
-}
+      }}
+        ;
+        
 
 
 class InstructionSUB{
@@ -2701,19 +3286,19 @@ class InstructionSUB{
             return[{
                 value:"SUB",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2755,19 +3340,19 @@ class InstructionMUL{
             return[{
                 value:"MUL",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2808,19 +3393,19 @@ class InstructionDIV{
             return[{
                 value:"DIV",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2858,19 +3443,19 @@ class InstructionAND{
             return[{
                 value:"AND",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2908,19 +3493,19 @@ class InstructionOR{
             return[{
                 value:"OR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -2959,19 +3544,19 @@ class InstructionXOR{
             return[{
                 value:"XOR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -3010,19 +3595,19 @@ class InstructionNOR{
             return[{
                 value:"NOR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -3060,19 +3645,19 @@ class InstructionNAND{
             return[{
                 value:"NAND",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -3101,43 +3686,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToR1.target,
-                    time:fitToR1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR1.time,
                     anim:fitToR1.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR1.target,
-                    time:infitToR1.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR1.time,
                     anim:infitToR1.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3145,43 +3730,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToR2.target,
-                    time:fitToR2.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR2.time,
                     anim:fitToR2.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR2.target,
-                    time:infitToR2.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR2.time,
                     anim:infitToR2.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3189,43 +3774,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToR3.target,
-                    time:fitToR3.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR3.time,
                     anim:fitToR3.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR3.target,
-                    time:infitToR3.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR3.time,
                     anim:infitToR3.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3233,43 +3818,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToR4.target,
-                    time:fitToR4.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR4.time,
                     anim:fitToR4.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR4.target,
-                    time:infitToR4.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR4.time,
                     anim:infitToR4.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3277,49 +3862,49 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToAcc.target,
-                    time:fitToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                     anim:fitToAcc.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToAcc.target,
-                    time:infitToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                     anim:infitToAcc.anim,
                 },
                 {
                     value:this.value1,
                     target:AccToBus.target,
-                    time:AccToBus.time,
+                  time:1/  useSpeedStore.getState().speed*AccToBus.time,
                     anim:AccToBus.anim,
                 },
                 {
                     value:this.value1,
                     target:AccToMDR.target,
-                    time:AccToMDR.time,
+                  time:1/  useSpeedStore.getState().speed*AccToMDR.time,
                     anim:AccToMDR.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3327,43 +3912,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToBr.target,
-                    time:fitToBr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToBr.time,
                     anim:fitToBr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToBr.target,
-                    time:infitToBr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToBr.time,
                     anim:infitToBr.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3371,43 +3956,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToIdr.target,
-                    time:fitToIdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                     anim:fitToIdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToIdr.target,
-                    time:infitToIdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                     anim:infitToIdr.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3415,43 +4000,43 @@ class InstructionPUSH{
                 return[{
                     value:this.value1,
                     target:fitToSr.target,
-                    time:fitToSr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToSr.time,
                     anim:fitToSr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToSR.target,
-                    time:infitToSR.time,
+                  time:1/  useSpeedStore.getState().speed*infitToSR.time,
                     anim:infitToSR.anim,
                 },
                 {
                     value:this.value1,
                     target:RegToMdr.target,
-                    time:RegToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
                     anim:RegToMdr.anim,
                 },
                 {
                     value:"",
                     target:BusToMdr.target,
-                    time:BusToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
                     anim:BusToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:"PUSH",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
             ];
@@ -3481,43 +4066,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToR1.target,
-                    time:fitToR1.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR1.time,
                     anim:fitToR1.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR1.target,
-                    time:infitToR1.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR1.time,
                     anim:infitToR1.anim,
                 },
             ];
@@ -3525,43 +4110,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToR2.target,
-                    time:fitToR2.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR2.time,
                     anim:fitToR2.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR2.target,
-                    time:infitToR2.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR2.time,
                     anim:infitToR2.anim,
                 },
                 ];
@@ -3569,43 +4154,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToR3.target,
-                    time:fitToR3.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR3.time,
                     anim:fitToR3.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR3.target,
-                    time:infitToR3.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR3.time,
                     anim:infitToR3.anim,
                 },
             ];
@@ -3613,43 +4198,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToR4.target,
-                    time:fitToR4.time,
+                  time:1/  useSpeedStore.getState().speed*fitToR4.time,
                     anim:fitToR4.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToR4.target,
-                    time:infitToR4.time,
+                  time:1/  useSpeedStore.getState().speed*infitToR4.time,
                     anim:infitToR4.anim,
                 },
                 //push animation
@@ -3658,49 +4243,49 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MDRToAcc.target,
-                    time:MDRToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*MDRToAcc.time,
                     anim:MDRToAcc.anim,
                 },
                 {
                     value:"",
                     target:BusToAcc.target,
-                    time:BusToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*BusToAcc.time,
                     anim:BusToAcc.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToAcc.target,
-                    time:fitToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                     anim:fitToAcc.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToAcc.target,
-                    time:infitToAcc.time,
+                  time:1/  useSpeedStore.getState().speed*infitToAcc.time,
                     anim:infitToAcc.anim,
                 },
                 //push animation
@@ -3709,43 +4294,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToBr.target,
-                    time:fitToBr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToBr.time,
                     anim:fitToBr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToBr.target,
-                    time:infitToBr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToBr.time,
                     anim:infitToBr.anim,
                 },
                 //push animation
@@ -3754,43 +4339,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation of pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToIdr.target,
-                    time:fitToIdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToIdr.time,
                     anim:fitToIdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToIdr.target,
-                    time:infitToIdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToIdr.time,
                     anim:infitToIdr.anim,
                 },
                 //push animation
@@ -3799,43 +4384,43 @@ class InstructionPOP{
                 return[{
                     value:"POP",
                     target:MCanim.target,
-                    time:MCanim.time,
+                  time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 },
                 {//////animation pf pop in MC
                     value:this.value1,
                     target:fitToMdr.target,
-                    time:fitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
                     anim:fitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToMdr.target,
-                    time:infitToMdr.time,
+                  time:1/  useSpeedStore.getState().speed*infitToMdr.time,
                     anim:infitToMdr.anim,
                 },
                 {
                     value:this.value1,
                     target:MdrToBus.target,
-                    time:MdrToBus.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                     anim:MdrToBus.anim,
                 },
                 {
                     value:"",
                     target:MdrToReg.target,
-                    time:MdrToReg.time,
+                  time:1/  useSpeedStore.getState().speed*MdrToReg.time,
                     anim:MdrToReg.anim,
                 },
                 {
                     value:this.value1,
                     target:fitToSr.target,
-                    time:fitToSr.time,
+                  time:1/  useSpeedStore.getState().speed*fitToSr.time,
                     anim:fitToSr.anim,
                 },
                 {
                     value:this.value1,
                     target:infitToSR.target,
-                    time:infitToSR.time,
+                  time:1/  useSpeedStore.getState().speed*infitToSR.time,
                     anim:infitToSR.anim,
                 },
                 //push animation
@@ -4109,19 +4694,19 @@ class InstructionSHL{
             return[{
                 value:"SHL",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4158,19 +4743,19 @@ class InstructionSHR{
             return[{
                 value:"SHR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4207,19 +4792,19 @@ class InstructionROR{
             return[{
                 value:"ROR",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4256,19 +4841,19 @@ class InstructionROL{
             return[{
                 value:"ROL",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4305,19 +4890,19 @@ class InstructionNOT{
             return[{
                 value:"NOT",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4354,19 +4939,19 @@ class InstructionNEG{
             return[{
                 value:"NEG",
                 target:addanim.target,
-                time:addanim.time,
+              time:1/  useSpeedStore.getState().speed*addanim.time,
                 anim:addanim.anim,
             },
             {
                 value:"",
                 target:AluToAcc.target,
-                time:AluToAcc.time,
+              time:1/  useSpeedStore.getState().speed*AluToAcc.time,
                 anim:AluToAcc.anim,
             },
             {
                 value:"res",
                 target:fitToAcc.target,
-                time:fitToAcc.time,
+              time:1/  useSpeedStore.getState().speed*fitToAcc.time,
                 anim:fitToAcc.anim,
             },
         ];
@@ -4444,216 +5029,5 @@ class InstructionPOPA{
         this.buildanim=function(){}
     }
 }
-class InstructionREAD {
-    constructor() {
-        this.value1 = 0;
-        this.value2 = 0;
-        this.addresse1 = 0;
-        this.register1 = 0;
-        this.addresse2 = 0;
-        this.register2 = 0;
-        this.taille = 0;
-        this.stepsNum = 1;
-        this.name = "READ";
 
-        this.steps = [
-            async () => {
-                const ioUnit = memory.ioUnit;
-
-                if (!ioUnit.ioController.busy) {
-                    ioUnit.ioController.busy = true;
-
-                    console.log("🟢 InstructionWRITE: Waiting for user input...");
-
-                    // Wait for user input asynchronously before proceeding
-                    const value = await showWritePopup();
-
-                    ioUnit.writeToBuffer1(value);
-                    console.log(`✅ User input received: ${value}. Stored in I/O buffer.`);
-                    ioUnit.displayBuffer();
-                    // Resume execution
-                    this.resume();
-                } else {
-                    console.log("🔴 InstructionWRITE: I/O Unit busy, WRITE delayed");
-                    return false;
-                }
-            }
-        ];
-
-        // Animation sequence
-        this.buildanim=function(){
-            return[{
-                value:"ADD",
-                target:addanim.target,
-                time:addanim.time,
-                anim:addanim.anim,
-            },
-            {
-                value:"",
-                target:AluToAcc.target,
-                time:AluToAcc.time,
-                anim:AluToAcc.anim,
-            },
-            {
-                value:"res",
-                target:fitToAcc.target,
-                time:fitToAcc.time,
-                anim:fitToAcc.anim,
-            },
-        ];
-        }
-    }
-
-    resume() {
-        const ioUnit = memory.ioUnit;
-        let value = ioUnit.readFromBuffer1(); // Could be string or number
-        this.addresse1 = opValue;
-        console.log("this is the value",this.addresse1);
-        let baseAddress = parseInt(opValue, 10); // Starting address
-    
-        if (isNaN(value)) {
-            // STRING CASE
-            for (let i = 0; i < value.length; i++) {
-                let charCode = value.charCodeAt(i); // ASCII code
-                let hex = charCode.toString(16).toUpperCase().padStart(2, '0'); // Hex value
-    
-                memory.setRim(hex);
-                memory.setRam(TwosComplement(baseAddress + i, 16)); // Increment address
-                memory.write();
-    
-                console.log(`📝 Wrote char '${value[i]}' as ${hex} to address ${baseAddress + i}`);
-            }
-        } else {
-            // NUMBER CASE
-            let hexValue = parseInt(value).toString(16).toUpperCase();
-            memory.setRim(hexValue);
-            memory.setRam(TwosComplement(baseAddress, 16));
-            memory.write();
-            console.log("\n\n\n\n louai");
-            memory.setRam(TwosComplement(baseAddress,16));
-            memory.read(false);
-            memory.getRim();
-            console.log("kjkjkkj", String.fromCharCode(parseInt(memory.getRim(), 16)));
-
-            console.log(`📝 Wrote number ${value} as hex ${hexValue} to address ${baseAddress}`);
-        }
-    
-        ioUnit.ioController.busy = false;
-        console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to memory.`);
-    }
-    
-}
-
-class InstructionWRITE {
-    constructor() {
-        this.value1 = 0;
-        this.value2 = 0;
-        this.addresse1 = 0;
-        this.register1 = 0;
-        this.addresse2 = 0;
-        this.register2 = 0;
-        this.taille = 0;
-        this.stepsNum = 1;
-        this.name = "WRITE";
-
-        this.steps = [
-            async () => {
-                const ioUnit = memory.ioUnit;
-                console.log("priviete");
-                console.log(this.value2,this.addresse1); // Access I/O Unit
-                
-                if (!ioUnit.ioController.busy) {
-                    ioUnit.ioController.busy = true;
-                    let value;
-                    let temp;
-                    temp=this.addresse1;
-                    ioUnit.emptyBuffer();
-                    for (let index = 0; index < this.value2; index++) {
-                        memory.setRam(TwosComplement(temp,16));
-                        memory.read(false);
-                        memory.getRim();
-
-                        console.log(memory.getRim());
-                       ioUnit.writeToBuffer( index,String.fromCharCode(parseInt(memory.getRim(), 16)));
-                    //    console.log(ioUnit.buffer[index]);
-                        temp++;
-                        console.log("9iiw")
-                    } // Mark I/O as busy
-
-                    // Read from CPU register (e.g., R1)
-                    // ioUnit.writeToBuffer(value); 
-                    let popup = window.open("", "Buffer Contents", "width=400,height=300");
-                    if (popup) {
-                        popup.document.write(`<h2>Buffer Contents</h2><p>${ioUnit.readFromBuffer()}</p>`);
-                    } else {
-                        alert("Popup was blocked. Please allow popups for this site.");
-                        console.error("Failed to open popup. Possibly blocked by browser.");
-                    }
-                    // alert("Buffer Contents: " + ioUnit.readFromBuffer(0));// Store in I/O buffer register 0
-
-                    console.log(`CPU to IO: Moved data ${value} from CPU register R${this.register1} to I/O buffer.`);
-                    ioUnit.displayValue();
-                    ioUnit.ioController.busy = false;
-                } else {
-                    console.log("I/O Unit busy, READ delayed");
-                    return false; // Delay execution if busy
-                }
-            }
-        ];
-
-        // Animation sequence
-        this.buildanim = function () {
-            const ioUnit = memory.ioUnit;
-            const animSteps = [];
-        
-            for (let i = 0; i < this.value2; i++) {
-                const char = ioUnit.buffer[i];
-                console.log("animation is here",this.value2);
-               
-                
-                animSteps.push(
-                    {
-                        value: `WRITE: ${char}`,
-                        target: addanim.target,
-                        time: addanim.time,
-                        anim: addanim.anim,
-                    },
-                    {
-                        value: char,
-                        target: MdrToBus.target,
-                        time: MdrToBus.time,
-                        anim: MdrToBus.anim,
-                    },
-                    {
-                        value: char,
-                        target: MdrToIO.target,
-                        time: MdrToIO.time,
-                        anim: MdrToIO.anim,
-                    },
-                    {
-                        value: char,
-                        target: BusToIO.target,
-                        time: BusToIO.time,
-                        anim: BusToIO.anim,
-                    }
-                );
-            }
-        
-            return animSteps;
-        };
-    }
-
-    resume() {
-        const ioUnit = memory.ioUnit;
-        
-        let value = ioUnit.readFromBuffer(0);
-        let register = parseInt(this.register1, 2);
-        Registers[register].setvalue(TwosComplement(value, 16));
-
-        ioUnit.ioController.busy = false;
-        console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to CPU register R${register}.`);
-    }
-}
-
-
-export {InstructionADD,InstructionMOV00,InstructionMOV01,InstructionMOV10,InstructionMOV11,InstructionSUB,InstructionMUL,InstructionDIV,InstructionBSE,InstructionBIE,InstructionBI,InstructionBS,InstructionBNE,InstructionBE,InstructionBR,InstructionPOP,InstructionPUSH,InstructionAND,InstructionOR,InstructionNAND,InstructionNOR,InstructionXOR,InstructionNEG,InstructionNOT,InstructionROL,InstructionROR,InstructionSHL,InstructionSHR,InstructionPOPA,InstructionPUSHA,InstructionREAD, InstructionWRITE}
+export {InstructionADD,InstructionMOV00,InstructionMOV01,InstructionMOV10,InstructionMOV11,InstructionSUB,InstructionMUL,InstructionDIV,InstructionBSE,InstructionBIE,InstructionBI,InstructionBS,InstructionBNE,InstructionBE,InstructionBR,InstructionPOP,InstructionPUSH,InstructionAND,InstructionOR,InstructionNAND,InstructionNOR,InstructionXOR,InstructionNEG,InstructionNOT,InstructionROL,InstructionROR,InstructionSHL,InstructionSHR,InstructionPOPA,InstructionPUSHA}

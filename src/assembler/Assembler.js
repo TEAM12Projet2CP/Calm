@@ -1,23 +1,10 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-const-assign */
-/* eslint-disable no-useless-escape */
-/* eslint-disable eqeqeq */
-/* eslint-disable no-unreachable */
-/* eslint-disable no-fallthrough */
-/* eslint-disable default-case */
-/* eslint-disable no-redeclare */
 import { Lexer } from './Lexer.js';
 import {Errorcalm} from './Errorcalm.js'
 import {SemanticAnalysis} from './SemanticAnalysis.js'
-import { element } from 'prop-types';
-import { preprocessing } from './preprocessing.js';
-import MC from '../Emulator/MC.js';
-import { memory } from '../pages/Ide/index.jsx';
-export let opValue;
 export const FuncInterface ={
 
     adrmap : (txt,size,dep)=>{
-        var adr=''
+        var adr='';
         switch(txt){
             case 0:
                 adr = '000';
@@ -215,25 +202,28 @@ while (hexString.length < size) {
 
     Label_To_Num : (labelname,linenumber)=>{
         var labelobj = false ;
-        labelobj = Assembler.Labellist.find(element => { 
-            return element.name === labelname;
+        Assembler.Labellist.forEach(element => { 
+            if(element.name === labelname){
+                labelobj = element
+            }
         });
-        if (!(labelobj == null)){
+        //console.log(labelobj)
         if (labelobj == false)
         {
             //error
             Errorcalm.set_SemanticError(new Errorcalm("Label not found",null,linenumber));
             return {type: 'ERROR', value: null};
         }else{
+            //return the address
             return {type: 'NUMBER', value: labelobj.address} 
-    }}
-},
+    }},
     
 
 
     confirmationfunction : (input) => {
         var errormsg = []
         var err = false ;
+        //console.log(input)
         // check Errorcalm.SemanticError first else do the thing you where doing
         if (Errorcalm.SemanticError.length > 0) {
             Errorcalm.printError();
@@ -253,6 +243,7 @@ while (hexString.length < size) {
 
     addrmod : (listofpar,line) => {
 
+        console.log(listofpar);
     // go through the list of instructions if listofpar[index].value is different then , then add this element.value to the list 1
     // go throught an if there is an element.type='TEXT' you use Labeltonum to make it a number
     listofpar.forEach((element,index) => {
@@ -267,6 +258,7 @@ while (hexString.length < size) {
     var lastindex ;
     
     var index = 0;
+    
     while (index < listofpar.length && listofpar[index].value !== ',') {
         list1.push(listofpar[index]);
         lastindex = index;
@@ -425,6 +417,8 @@ while (hexString.length < size) {
 
 }
     }
+
+
 export class Assembler{
 
     static MAXNUM = 65535;
@@ -443,11 +437,14 @@ export class Assembler{
         if (Errorcalm.LexicalError.length > 0) {
             Errorcalm.printError();
         }else{
-            console.log("lexicalList fjlsjdflsjflsjfs",lexicalList)
         this.input = lexicalList;
+        console.log("\nLexicalList:\n",lexicalList)
         this.toAssemble = new SemanticAnalysis(this.input);
-        // let ret= functinterface.cofirmationfunction(this.input);
-       }
+        let ret = FuncInterface.confirmationfunction(this.toAssemble.Semanticlist);
+        if (!ret.status) {
+            console.log("\nThere are errors in your code cannot assemble:\n");
+            console.log(ret.errors);
+        }}
     }
 
     static assemble(input){
@@ -505,9 +502,6 @@ export class Assembler{
                             opcode = `0001100${size}`;
 
                         break;
-                        case 'WRITE':
-                                opcode = `0001001${size}`;
-                                break;
                         default:
                             opcode = 'error';
                             break;
@@ -520,10 +514,15 @@ export class Assembler{
                        ind = '00';
                             regmod1 = FuncInterface.regmap(input[1].value);
                             regmod2 = FuncInterface.regmap(input[2].value);
+
                             code = opcode + ind + regmod1 + regmod2
+
+
                             //return {codehex:FuncInterface.binaryToHex(code,code.length/4),codebin:code};              
                             return FuncInterface.binaryToHex(code,code.length/4)  
-                            break;       
+  
+                            break;
+                            
                         break;
                         case 'REGISTER,NUMBER':
                                ind = '01';
@@ -630,6 +629,7 @@ export class Assembler{
                                 case '111':
                                     dep1 = FuncInterface.decimalTobinByte(input[1].depl, input[1].depl > 255 ? 16 : 8  );
                                     op1 = FuncInterface.decimalTobinByte(input[1].value,16);
+                                    console.log("dep1 here",FuncInterface.binaryToHex(dep1,4))
                                     break;
                                 case '011':
                                 case '100':
@@ -656,11 +656,13 @@ export class Assembler{
                                 case '110':      
                                     dep2 = FuncInterface.decimalTobinByte(input[2].depl, input[2].depl > 255 ? 16 : 8 );
                                     op2 = FuncInterface.decimalTobinByte(input[2].value,16);
+                                    console.log("dep2 here size 0-----------",dep2)
 
                                 break;                      
                                 case '111':
                                     dep2 = FuncInterface.decimalTobinByte(input[2].depl , input[2].depl > 255 ? 16 : 8 );
                                     op2 = FuncInterface.decimalTobinByte(input[2].value, 16 );
+                                    console.log("dep2 here size 2",FuncInterface.binaryToHex(dep2,4))
 
                                 case '011':
                                 case '100':
@@ -707,162 +709,176 @@ export class Assembler{
                             
                     }
                 case 'INST1':
-                if (['NEG', 'NOT', 'SHL', 'SHR', 'PUSH', 'POP', 'ROR', 'ROL'].includes(element.value)) {
-                    var reg;
-                    var size;
-                    var oppcode;
-            
+                    if (['NEG', 'NOT', 'SHL', 'SHR', 'READ', 'WRITE', 'PUSH', 'POP', 'ROR', 'ROL'].includes(element.value)) {
+                        var reg ;
+                        var size  ;
+                        var oppcode;
+                        //console.log(element);
+                        switch(element.value){
+                            case 'NEG':
+                                oppcode = '0100';
+                                break;
+                            case 'NOT':
+                                oppcode = '0101';
+                                break;
+                            case 'SHL':
+                                oppcode = '0110';
+                                break;
+                            case 'SHR':
+                                oppcode = '0111';
+                                break;
+                            case 'READ':
+                                oppcode = '1000';
+                                break;
+                            case 'WRITE':
+                                oppcode = '1001';
+                                break;
+                            case 'PUSH':
+                                oppcode = '1010';
+                                break;
+                            case 'POP':
+                                oppcode = '1011';
+                                break;
+                            case 'ROR':
+                                oppcode = '1100';
+                                break;
+                            case 'ROL':
+                                oppcode = '1101';
+                                break;
+                            default:
+                                break;
+                        }
+
+                        if (element.adrmode === 0 && input[1].type === 'REGISTER') {
+                            switch(input[1].value){
+                                case 'R1':
+                                    reg = '000';
+                                    size = '1';
+                                    break;
+                                case 'R2':
+                                    reg = '001';
+                                    size = '1';
+                                    break;
+                                case 'R3':
+                                    reg = '010';
+                                    size = '1';
+                                    break;
+                                case 'R4':
+                                    reg = '011';
+                                    size = '1';
+                                    break;
+                                case 'ACC':
+                                    reg = '100';
+                                    size = '1';
+                                    break;
+                                case 'BR':
+                                    reg = '101';
+                                    size = '1';
+                                    break;
+                                case 'IDR':
+                                    reg = '110';
+                                    size = '1';
+                                    break;
+                                case 'SR':
+                                    reg = '111';
+                                    size = '1';
+                                    break;
+                                case 'R1R':
+                                    reg = '000';
+                                    size = '0';
+                                    break;
+                                case 'R2R':
+                                    reg = '001';
+                                    size = '0';
+                                    break;
+                                case 'R3R':
+                                    reg = '010';
+                                    size = '0';
+                                    break;
+                                case 'ACCR':
+                                    reg = '011';
+                                    size = '0';
+                                    break;
+                                case 'R1L':
+                                    reg = '100';
+                                    size = '0';
+                                    break;
+                                case 'R2L':
+                                    reg = '101';
+                                    size = '0';
+                                    break;
+                                case 'R3L':
+                                    reg = '110';
+                                    size = '0';
+                                    break;
+                                case 'ACCL':
+                                    reg = '111';
+                                    size = '0';
+                                    break;
+                                
+                                default:
+                                    break;
+                            }
+                            
+                            let instcode=oppcode+reg+size;
+                            return FuncInterface.binaryToHexoneByte(instcode) ;
+                        }
+
+                    }else{
+                    var oppcode = "";
+                    var adr= FuncInterface.decimalToHex(input[1].value,4);
                     switch(element.value){
-                        case 'NEG':
-                            oppcode = '0100';
+                        case 'CALL':
+                            oppcode = '33';
                             break;
-                        case 'NOT':
-                            oppcode = '0101';
+                        case 'BE':
+                            oppcode = '25';
                             break;
-                        case 'SHL':
-                            oppcode = '0110';
+                        case 'BNE':
+                            oppcode = '27';
                             break;
-                        case 'SHR':
-                            oppcode = '0111';
+                        case 'BS':
+                            oppcode = '29';
                             break;
-                     
-                        case 'PUSH':
-                            oppcode = '1010';
+                        case 'BI':
+                            oppcode = '2B';
                             break;
-                        case 'POP':
-                            oppcode = '1011';
+                        case 'BIE':
+                            oppcode = '2D';
                             break;
-                        case 'ROR':
-                            oppcode = '1100';
+                        case 'BSE':
+                            oppcode = '2F';
                             break;
-                        case 'ROL':
-                            oppcode = '1101';
+                        case 'BRI':
+                            oppcode = '31';
                             break;
+
                         default:
                             break;
                     }
-            
-                    if (element.adrmode === 0 && input[1].type === 'REGISTER') {
-                        switch(input[1].value){
-                            case 'R1': reg = '000'; size = '1'; break;
-                            case 'R2': reg = '001'; size = '1'; break;
-                            case 'R3': reg = '010'; size = '1'; break;
-                            case 'R4': reg = '011'; size = '1'; break;
-                            case 'ACC': reg = '100'; size = '1'; break;
-                            case 'BR': reg = '101'; size = '1'; break;
-                            case 'IDR': reg = '110'; size = '1'; break;
-                            case 'SR': reg = '111'; size = '1'; break;
-                            case 'R1R': reg = '000'; size = '0'; break;
-                            case 'R2R': reg = '001'; size = '0'; break;
-                            case 'R3R': reg = '010'; size = '0'; break;
-                            case 'ACCR': reg = '011'; size = '0'; break;
-                            case 'R1L': reg = '100'; size = '0'; break;
-                            case 'R2L': reg = '101'; size = '0'; break;
-                            case 'R3L': reg = '110'; size = '0'; break;
-                            case 'ACCL': reg = '111'; size = '0'; break;
-                            default:
-                                break;
-                        }
-                        let instcode = oppcode + reg + size;
-                        return FuncInterface.binaryToHexoneByte(instcode);
-                    }
-                } else {
-                    var oppcode = "";
-                    var regmod;
-                    var op;
-                    var dep;
-                    let instcode = "";
-                    if (element.value === 'READ') {
-                        regmod = FuncInterface.adrmap(input[1].adrmode, size, typeof input[1].depl == 'undefined' ? 0 : input[1].depl > 255 ? '1' : '0');
-                        switch (regmod) {
-                            case '000':
-                                let long = size == 0 ? 8 : 16;
-                                op = FuncInterface.decimalTobinByte(input[1].value, long);
-                                break;
-                            case '001':
-                            case '010':
-                                op = FuncInterface.decimalTobinByte(input[1].value, 16);
-                                break;
-                            case '110':
-                                dep = FuncInterface.decimalTobinByte(input[1].depl, input[1].depl > 255 ? 16 : 8);
-                                op = FuncInterface.decimalTobinByte(input[1].value, 16);
-                                break;
-                            case '111':
-                                dep = FuncInterface.decimalTobinByte(input[1].depl, input[1].depl > 255 ? 16 : 8);
-                                op = FuncInterface.decimalTobinByte(input[1].value, 16);
-                                break;
-                            case '011':
-                            case '100':
-                            case '101':
-                                op = FuncInterface.decimalTobinByte(input[1].value, 16);
-                                break;
-                            default:
-                                op = 'error';
-                                dep = 'error';
-                                break;
-                        }
-                            // Convert 'op' from binary to decimal
-                            const opDecimal = parseInt(op, 2);
-                    
-                            // Store the decimal value in the exported variable
-                            opValue = opDecimal;
-                            oppcode = '80';
-                            instcode = oppcode + FuncInterface.binaryToHex(op, 4) + (dep ? FuncInterface.binaryToHex(dep, 4) : "");
-                            console.log("instcode",instcode)
-                        } else {
-                        switch(element.value){
-                            case 'CALL': oppcode = '33'; break;
-                            case 'BE': oppcode = '25'; break;
-                            case 'BNE': oppcode = '27'; break;
-                            case 'BS': oppcode = '29'; break;
-                            case 'BI': oppcode = '2B'; break;
-                            case 'BIE': oppcode = '2D'; break;
-                            case 'BSE': oppcode = '2F'; break;
-                            case 'BRI': oppcode = '31'; break;
-                            default: return "error";
-                        }
-                        instcode = oppcode+FuncInterface.decimalToHex(input[1].value,4);
-                    }
+                    let instcode=oppcode+adr;
                     return instcode;
+                   
                 }
-            
 
             }
             
 
         }   
-        static assemblecode(input){     
-            let input2 = preprocessing.preprocessor(input)
-            MC.data = Array(100).fill().map((_, i) => FuncInterface.binaryToHexoneByte(input2.data[i] ?? "00000000"))
-            Assembler.Labellist.push(...input2.varList)
-            let output = new Assembler(input2.code);
-            var assembledcode = [];            
-            var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined"; 
-            var ipTrack = 0;
-            var i=0;
-            var lines=(Assembler.Labellist.length === 0 )?toassmb.length:Assembler.Labellist[i].linedeclared;
-            // deux pass first pass stays as it is with adding a delimater at each label and then re apply the semantic analysis for the labels and then reassemble the code
-              if ( Errorcalm.SemanticError.length === 0 ) { 
+        static assemblecode(input){
+            let output = new Assembler(input) ;
+            var assembledcode = [];
+            var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
+            console.log("\nSemantic list: \n",toassmb)
+            if ( Errorcalm.SemanticError.length ===0 ) {
+
                 for (let index = 0; index < toassmb.length; index++) {
-                    if (index >= lines) {
-                        Assembler.Labellist[i].address = ipTrack;
-                        i++;
-                        if (i < Assembler.Labellist.length) {
-                            lines=Assembler.Labellist[i].linedeclared-Assembler.Labellist[i-1].linedeclared-1+index;
-                        }else{
-                            lines=toassmb.length;
-                        }
-                    }
-                    ipTrack = ipTrack+(Assembler.assemble(toassmb[index]).length/2)     
+         
+                    assembledcode.push(Assembler.assemble(toassmb[index])) 
+                
                 }
-                SemanticAnalysis.labeling = false;
-                output = new Assembler(input2.code) 
-                toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
-                console.log("toassmb",toassmb)
-                for (let index = 0; index < toassmb.length; index++) {
-                    assembledcode.push(Assembler.assemble(toassmb[index]))
-                }
-               return {code: assembledcode, memory: memory.data};
+                console.log("\nAssembled code: \n",assembledcode)
+                return assembledcode;
                 // here put the return in case of success
                 
             }else{
@@ -871,7 +887,11 @@ export class Assembler{
 
             }
         }
+
+
   }
+
+
 
 
 
