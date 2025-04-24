@@ -3,14 +3,14 @@ import { TwosComplement } from "./ALU.js";
 import { gsap } from "gsap";
 import IOUnit from "./IO_Unit.js";
 import { Register } from "./Register.js";
-import { opValue } from "../assembler/Assembler.js";
+import { opValue } from "./Sequencer.js";
 // import { 
 // Register } from "./Register.js";
 ////////////////////////////////////////////////
 function Dec2bin(dec){
     return ("00000000" + (parseInt(dec, 10)).toString(2)).substr(-8);
 }
-function binaryToDecimalNumber(binaryStr) {
+export function binaryToDecimalNumber(binaryStr) {
     return parseInt(binaryStr, 2);
 }
 function sleep(ms) {

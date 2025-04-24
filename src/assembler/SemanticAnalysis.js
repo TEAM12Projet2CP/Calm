@@ -119,7 +119,6 @@ export class SemanticAnalysis {
                             case 'NUMBER' :
                                     //check addressing
                                     if (firstparam.value < Assembler.MAXNUM) {
-                                    
                                     switch (lexicalList[i].length) {
                                         case 2:
                                             this.Semanticlist.push([{type:lexicalList[i][0].type, value: lexicalList[i][0].value, adrmode:0 },lexicalList[i][1]]);
@@ -128,8 +127,8 @@ export class SemanticAnalysis {
                                         case 3:
                                             var list1;
                                             list1 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list1 ;
-                                            console.log("list1",list1)
-                                            console.log("\nlist1hh",FuncInterface.defadrmod(list1))
+                                            console.log("list1 the fuck is here",list1)
+                                            console.log("\nlist1hh what do u mean ",FuncInterface.defadrmod(list1))
                                             let asize =   ( FuncInterface.defadrmod(list1,i).size == 1 )? 1 : 0;
                                              //console.log(asize);
                                             console.log("l3ziz : " +asize)
@@ -157,12 +156,13 @@ export class SemanticAnalysis {
                                     // add addressing modes direct and indirect for labels
 
                                     //check if it's present in label list
-                                    
+                                    console.log("should find the label ",lexicalList[i])
                                     switch (lexicalList[i].length) {
 
                                         case 2:
-                                            this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value, adrmode:0 },{type:FuncInterface.Label_To_Num(firstparam.value,i).type, value:FuncInterface.Label_To_Num(firstparam.value,i).value}]);
                                             console.log("here baby")
+                                            this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value, adrmode:0 },{type:FuncInterface.Label_To_Num(firstparam.value,i).type, value:FuncInterface.Label_To_Num(firstparam.value,i).value}]);
+                                            
                                             break;
 
 

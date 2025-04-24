@@ -13,7 +13,6 @@ import { element } from 'prop-types';
 import { preprocessing } from './preprocessing.js';
 import MC from '../Emulator/MC.js';
 import { memory } from '../pages/Ide/index.jsx';
-export let opValue;
 export const FuncInterface ={
 
     adrmap : (txt,size,dep)=>{
@@ -225,6 +224,8 @@ while (hexString.length < size) {
             Errorcalm.set_SemanticError(new Errorcalm("Label not found",null,linenumber));
             return {type: 'ERROR', value: null};
         }else{
+            console.log("Label list :  ",Assembler.Labellist)
+            console.log("labelobj",labelobj)
             return {type: 'NUMBER', value: labelobj.address} 
     }}
 },
@@ -805,10 +806,8 @@ export class Assembler{
                             const opDecimal = parseInt(op, 2);
                     
                             // Store the decimal value in the exported variable
-                            opValue = opDecimal;
                             oppcode = '80';
                             instcode = oppcode + FuncInterface.binaryToHex(op, 4) + (dep ? FuncInterface.binaryToHex(dep, 4) : "");
-                            console.log("instcode",instcode)
                         } else {
                         switch(element.value){
                             case 'CALL': oppcode = '33'; break;
@@ -845,7 +844,10 @@ export class Assembler{
               if ( Errorcalm.SemanticError.length === 0 ) { 
                 for (let index = 0; index < toassmb.length; index++) {
                     if (index >= lines) {
+                        if (Assembler.Labellist[i].label) {
+                            console.log("Assembler.Labellist[i].label",Assembler.Labellist[i].label)
                         Assembler.Labellist[i].address = ipTrack;
+                        }
                         i++;
                         if (i < Assembler.Labellist.length) {
                             lines=Assembler.Labellist[i].linedeclared-Assembler.Labellist[i-1].linedeclared-1+index;

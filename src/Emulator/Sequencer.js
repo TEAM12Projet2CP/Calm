@@ -3,6 +3,9 @@ import { queue, Registers, addressingModes, memory } from "../pages/Ide/index.js
 import { hash, hashmap } from "./Opcodes.js";
 import { gsap } from "gsap";
 import {MC} from "./MC.js"
+import { FuncInterface} from "../assembler/Assembler.js";
+import { binaryToDecimalNumber } from "./Instruction.js";
+export let opValue;
 // import Console from "../Console.jsx";____conflict!!!!!!!!!!
 const fitToR2={
     value:"",
@@ -1001,8 +1004,10 @@ class Sequenceur{
                 })
             }}
             if(key ==='1000'){
+                this.getinstrbyte(animations,false,Contextarray); 
                 this.getinstrbyte(animations,false,Contextarray);
-                this.getinstrbyte(animations,false,Contextarray);
+                // opValue=FuncInterface.binaryToHex(this.RI.getvalue());
+                opValue = binaryToDecimalNumber(this.RI.getvalue());
             }
         }else{
             if(key>='0010' & key<='0011'){
@@ -2472,7 +2477,6 @@ class Sequenceur{
                 
             }
         }
-        console.log(instrObject);
         return instrObject;
         }
     }
