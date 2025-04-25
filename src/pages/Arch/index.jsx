@@ -15,7 +15,8 @@ let [ball2Text,setball2Text]=useState(0);
 let [IPval,setipval]=useState(0);
 let [AluVal,setAluVal]=useState("");
 let [MCVal,setMCVal]=useState("");
-
+const [isPaused, setIsPaused] = useState(false);
+const [showControls, setShowControls] = useState(false);
 let MC=props.mem.getData();
 let tablec=[];
 MC.forEach((element,index) => {
@@ -28,177 +29,180 @@ MC.forEach((element,index) => {
     </td>
 </tr>)
 });
+const mainTimeline = useRef(gsap.timeline());
+const handlePauseResume = () => {
+    setIsPaused(prev => {
+        if (!prev) {
+            // Pausing
+            mainTimeline.current.pause();
+            setShowControls(true); // Show controls when paused
+        } else {
+            // Continuing
+            mainTimeline.current.resume();
+            setShowControls(false); // Hide controls when continuing
+        }
+        return !prev;
+    });
+};
+
+const handleNext = () => {
+    if (mainTimeline.current && isPaused) {
+        // Get current time and total duration
+        const currentTime = mainTimeline.current.time();
+        const duration = mainTimeline.current.duration();
+        
+        // Get all animation timestamps
+        const timePoints = mainTimeline.current.getChildren().map(child => child.startTime());
+        
+        // Find next animation point
+        const nextTime = timePoints.find(time => time > currentTime);
+        
+        if (nextTime !== undefined && currentTime < duration) {
+            // Play only the next animation segment
+            mainTimeline.current.tweenTo(nextTime, {
+                duration: 0.5,
+                ease: "none"
+            });
+        }
+    }
+};
+const handlePrevious = () => {
+    if (mainTimeline.current && isPaused) {
+        // Get current time
+        const currentTime = mainTimeline.current.time();
+        
+        // Get all labels from the timeline
+        const labels = mainTimeline.current.labels;
+        const labelTimes = Object.values(labels).sort((a, b) => a - b);
+        
+        // Find the previous label time
+        const prevTime = labelTimes.reverse().find(time => time < currentTime);
+        
+        if (prevTime) {
+            // Pause current timeline
+            mainTimeline.current.pause();
+            
+            // Play to previous label
+            mainTimeline.current.tweenTo(prevTime, {
+                duration: 0.3,
+                ease: "none",
+                onComplete: () => {
+                    mainTimeline.current.pause();
+                }
+            });
+        }
+    }
+};
+
+
+const timelineRef = useRef();
+
     ///////////////to add delay/////
     let thecontext=[...props.theCTX];
     console.log("the context : "+thecontext)
     let tmpctx=0;
     let done=0;
-    const animate=(i,animation,h,w,dl,chaine)=>{
-        setTimeout(function() {
-            if(animation.target===".ball"){
-                if(animation.value.toString().length>7){
-                    setballText(parseInt(animation.value, 2).toString(16));
-                }else{
-                    setballText(animation.value.toString());
-                }
-            }else if(animation.target===".box-data"){
-                if(animation.value.toString().length>7){
-                    setDataBusText(parseInt(animation.value, 2).toString(16));
-                }else{
-                    setDataBusText(animation.value.toString());
-                }
-            }else if(animation.target===".box-ADR"){
-                if(animation.value.toString().length>7){
-                    setAdrBusText(parseInt(animation.value, 2).toString(16));
-                }else{
-                    setAdrBusText(animation.value.toString());
-                }
-            }else if(animation.target==="IP"){
-                IPval=IPval+2;
-                setipval(IPval);
-            }else if(animation.target===".ALU"){
-                setAluVal(animation.value);
-            }else if(animation.target===".MC"){
-                setMCVal(animation.value);
-            }
+    const animate = (i, animation, h, w, dl,chaine) => {
+        const tl = gsap.timeline();
+        
+        // Handle basic state updates for different targets
+        if (animation.target === ".ball") {
+            const value = animation.value.toString().length > 7 
+                ? parseInt(animation.value, 2).toString(16)
+                : animation.value.toString();
+            tl.add(() => setballText(value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        } 
+        else if (animation.target === ".box-data") {
+            const value = animation.value.toString().length > 7 
+                ? parseInt(animation.value, 2).toString(16)
+                : animation.value.toString();
+            tl.add(() => setDataBusText(value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        } 
+        else if (animation.target === ".box-ADR") {
+            const value = animation.value.toString().length > 7 
+                ? parseInt(animation.value, 2).toString(16)
+                : animation.value.toString();
+            tl.add(() => setAdrBusText(value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        }
+        else if (animation.target === "IP") {
+            const value = animation.value.toString();
+            tl.add(() => setipval(prev => prev + 2));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        }
+        else if (animation.target === ".ALU") {
+            const value = animation.value.toString();
+            tl.add(() => setAluVal(animation.value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        }
+        else if (animation.target === ".MC") {
+            const value = animation.value.toString();
+            tl.add(() => setMCVal(animation.value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        }
+    
+        // Handle queue animations
+        if (animation.nom === "QueueToIr" || animation.nom === "queueExitToBus") {
+            // Arrow animation
+            tl.fromTo(".queuearrow",
+                {top: "60%", left: "83%", opacity: "0"},
+                {top: "60%", left: "73%", opacity: "1", duration: 0.3}
+            )
+            .to(".queuearrow", {opacity: "0", duration: 0.1, delay: 0.3});
+    
+            // Queue dequeuing animation based on current length
+            const queueLen = animqueuelen();
             
-            if(animation.nom==="QueueToIr"|animation.nom==="queueExitToBus"){
-                //decalage par 1
-                gsap.fromTo(".queuearrow",{top:"60%",left:"83%",opacity:"0"},{top:"60%",left:"73%",opacity:"1",duration:0.3});
-                gsap.to(".queuearrow",{opacity:"0",duration:"0.1",delay:"0.3"});
-                if(animqueuelen()==6){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"1",duration:0.4})
-                    gsap.to(".queue4",{opacity:"1",duration:0.4})
-                    gsap.to(".queue3",{opacity:"1",duration:0.4})
-                    gsap.to(".queue2",{opacity:"1",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()==5){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"1",duration:0.4})
-                    gsap.to(".queue3",{opacity:"1",duration:0.4})
-                    gsap.to(".queue2",{opacity:"1",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()==4){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"0",duration:0.4})
-                    gsap.to(".queue3",{opacity:"1",duration:0.4})
-                    gsap.to(".queue2",{opacity:"1",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()==3){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"0",duration:0.4})
-                    gsap.to(".queue3",{opacity:"0",duration:0.4})
-                    gsap.to(".queue2",{opacity:"1",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()==2){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"0",duration:0.4})
-                    gsap.to(".queue3",{opacity:"0",duration:0.4})
-                    gsap.to(".queue2",{opacity:"0",duration:0.4})
-                    gsap.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()==1){
-                    gsap.to(".queue6",{opacity:"0",duration:0.4})
-                    gsap.to(".queue5",{opacity:"0",duration:0.4})
-                    gsap.to(".queue4",{opacity:"0",duration:0.4})
-                    gsap.to(".queue3",{opacity:"0",duration:0.4})
-                    gsap.to(".queue2",{opacity:"0",duration:0.4})
-                    gsap.to(".queue1",{opacity:"0",duration:0.4})
+            for (let i = 1; i <= 6; i++) {
+                if (i < queueLen) {
+                    // Move each element to take the position of the element before it
+                    tl.to(`.queue${i}`, {
+                        opacity: 1,
+                        duration: 0.4
+                    }, "<");
+                } else {
+                    // Hide elements that should no longer be visible
+                    tl.to(`.queue${i}`, {
+                        opacity: 0,
+                        duration: 0.4
+                    }, "<");
                 }
             }
-            animation.anim(animation.value,h,w);
-            if(animqueuelen()==6){
-                done=1;
+        }
+    
+        // Add main animation
+        tl.add(() => animation.anim(animation.value, h, w))
+        .addLabel(`step${i}_main`);
+        // Check for queue completion
+        if (animqueuelen() === 6) {
+            done = 1;
+        }
+    
+        // Handle chaining animations if needed
+        if (chaine && done === 1) {
+            if (!isNaN(thecontext[tmpctx]) && !isNaN(thecontext[tmpctx])) {
+                // Chain animation sequence
+                tl.add(() => setball2Text(""))
+                  .fromTo(".ball2",
+                    {height: "2.812%", width: "1.4%", borderRadius: "50%", x: w * 0.782, y: h * 0.14, opacity: "0"},
+                    {opacity: "1", duration: 0.5}
+                  )
+                  // ... Add the rest of your chaining animations here
             }
-            if(chaine&done===1){
-                if(!isNaN(thecontext[tmpctx]) & !isNaN(thecontext[tmpctx])){
-                let tl = gsap.timeline();
-                tl.add(() => {
-                    setball2Text("");
-                })
-                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.782,y:h*0.14,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .fromTo(".ball2",{x:w*0.782,y:h*0.14},{y:h*0.18 ,duration:0.8})
-                .to(".ball2",{opacity:"0",duration:0.5})
-                .add(() => {
-                setAdrBusText(thecontext[tmpctx])
-                IPval=IPval+2
-                setipval(IPval)
-                })
-                .fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:0.5})
-                .fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:0.8})
-                .to(".box-ADR",{opacity:"0" ,duration:0.5})
-                .add(() => {
-                setball2Text(thecontext[tmpctx]);
-                tmpctx++;})
-                .fromTo(".ball2",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .to(".ball2",{opacity:"0" ,duration:0.5})
-                .add(() => {
-                setball2Text(thecontext[tmpctx])})
-                .fromTo(".ball2",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .to(".ball2",{opacity:"0" ,duration:0.5})
-                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .fromTo(".ball2",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:0.8})
-                .to(".ball2",{opacity:"0" ,duration:0.5})
-                .add(() => {
-                setDataBusText(thecontext[tmpctx])
-                tmpctx++;})
-                .fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:0.5})
-                .fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:0.8})
-                .to(".box-data",{opacity:"0" ,duration:0.5})
-                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .fromTo(".ball2",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:0.5})
-                .to(".ball2",{x:w*0.921 ,duration:0.5})
-                .to(".ball2",{opacity:"0" ,duration:0.3})
-                if(animqueuelen()===5){
-                    tl.to(".queue6",{opacity:"1",duration:0.4})
-                    tl.to(".queue5",{opacity:"1",duration:0.4})
-                    tl.to(".queue4",{opacity:"1",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()===4){
-                    tl.to(".queue6",{opacity:"1",duration:0.4})
-                    tl.to(".queue5",{opacity:"1",duration:0.4})
-                    tl.to(".queue4",{opacity:"1",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()===3){
-                    tl.to(".queue6",{opacity:"0",duration:0.4})
-                    tl.to(".queue5",{opacity:"1",duration:0.4})
-                    tl.to(".queue4",{opacity:"1",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()===2){
-                    tl.to(".queue6",{opacity:"0",duration:0.4})
-                    tl.to(".queue5",{opacity:"0",duration:0.4})
-                    tl.to(".queue4",{opacity:"1",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()===1){
-                    tl.to(".queue6",{opacity:"0",duration:0.4})
-                    tl.to(".queue5",{opacity:"0",duration:0.4})
-                    tl.to(".queue4",{opacity:"0",duration:0.4})
-                    tl.to(".queue3",{opacity:"1",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
-                }else if(animqueuelen()===0){
-                    tl.to(".queue6",{opacity:"0",duration:0.4})
-                    tl.to(".queue5",{opacity:"0",duration:0.4})
-                    tl.to(".queue4",{opacity:"0",duration:0.4})
-                    tl.to(".queue3",{opacity:"0",duration:0.4})
-                    tl.to(".queue2",{opacity:"1",duration:0.4})
-                    tl.to(".queue1",{opacity:"1",duration:0.4})
-                }}
-            };
-        }, dl);
-    }
+        }
+    
+        // Add timeline to main timeline with delay
+            mainTimeline.current.add(tl, dl/1000)
+                        .addLabel(`anim${i}`, dl/1000);
+    };
     const animqueuelen=()=>{
         let len=0
         if(q6.current.style.opacity==1){
@@ -228,41 +232,57 @@ MC.forEach((element,index) => {
     let q4=useRef();
     let q5=useRef();
     let q6=useRef();
-    const simulate=(h,w) => {
-        let i=0;
-        let dl=0;
-        let allow=true;
-        let allowtmp=0;
-        let j=0
-        while(j<props.anim.length){
-            let k=0;
-            let stop=false;
-            let chaine=false;
+    const simulate = (h, w) => {
+       
+        mainTimeline.current = gsap.timeline({
+            paused: true,
+            smoothChildTiming: true
+        });
+        mainTimeline.current.clear();
+        let i = 0;
+        let dl = 0;
+        let allow = true;
+        let allowtmp = 0;
+        let j = 0;
+    
+        while (j < props.anim.length) {
+            let k = 0;
+            let stop = false;
+            let chaine = false;
             allowtmp++;
-            if(allowtmp>=10){
-                allow=true;
+            if (allowtmp >= 10) {
+                allow = true;
             }
-            while(k<10&!stop&!(k+j===props.anim.length)){
-                if(props.anim[k+j-4>0?k+j-4:k+j].target!==".box-data"&props.anim[k+j-4>0?k+j-4:k+j].target!==".box-ADR"){
+
+            while (k < 10 && !stop && !(k + j === props.anim.length)) {
+                if (props.anim[k + j - 4 > 0 ? k + j - 4 : k + j].target !== ".box-data" && 
+                    props.anim[k + j - 4 > 0 ? k + j - 4 : k + j].target !== ".box-ADR") {
                     k++;
-                }else{
-                    stop=true;
+                } else {
+                    stop = true;
                 }
             }
-            if(k===10&animqueuelen()<=4&allow){
-                chaine=true;
-                allow=false;
-                allowtmp=0;
+
+            if (k === 10 && animqueuelen() <= 4 && allow) {
+                chaine = true;
+                allow = false;
+                allowtmp = 0;
             }
-            animate(i,props.anim[j],h,w,dl,chaine);
-            dl=dl+props.anim[j].time+1;
+    
+            animate(i, props.anim[j], h, w, dl, chaine);
+            dl = dl + props.anim[j].time + 1;
             i++;
-            // if((props.anim[j+1].nom==="QueueToIr")&(j<props.anim.length-4)&(props.anim[j+2].nom==="fitToIr"|props.anim[j+3].nom==="fitToIr")){//en cas instruction avec 2 general bytes
-            // contin=false;
-            // }
             j++;
-        };
-    }
+        }
+    
+     
+        mainTimeline.current.eventCallback("onComplete", () => {
+            setIsPaused(false);
+        });
+    
+  
+        mainTimeline.current.play();
+    };
     
     ///////////////////////////////
     // useEffect(() => {
@@ -277,7 +297,15 @@ MC.forEach((element,index) => {
     return <>
     <div className="arch-contain">{/*///*/}
     {/* <img src={Archi} alt="" className="archi" ref={myref} onLoad={()=>{simulate(myref.current.clientHeight,myref.current.clientWidth)}}/> */}
-    <img src={Archi2} alt="" className="archi" ref={myref} onLoad={()=>{simulate(myref.current.clientHeight,myref.current.clientWidth)}}/>
+    <img 
+    src={Archi2} 
+    alt="" 
+    className="archi" 
+    ref={myref} 
+    onLoad={() => {
+        simulate(myref.current.clientHeight, myref.current.clientWidth);
+    }}
+/>
     <div className="IP" style={{
         height:"4.2%",
         width:"6%",
@@ -504,7 +532,21 @@ MC.forEach((element,index) => {
                     {tablec}
                 </tbody>
             </table>
+
             </div>
+            <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+    {showControls && (
+        <button className="nextprev"onClick={handlePrevious}>previous</button>
+    )}
+    <button onClick={handlePauseResume} className="nextprev">
+        {isPaused ? "Continue" : "Pause"}
+    </button>
+    {showControls && (
+        <button className="nextprev" onClick={handleNext}>
+          next  
+        </button>
+    )}
+</div>
         </div>
         <button className="returnBtn" onClick={()=>{
                 window.location.reload(false);

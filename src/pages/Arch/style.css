@@ -57,6 +57,15 @@
     margin-top: 1rem;
 }
 
+.nextprev{
+    border-radius: 0.6rem;
+    background-color: #1BE985;
+    font-family: "JetBrains Mono", system-ui;
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
 .contentTableMC{
     width:17rem;
     margin: auto;
