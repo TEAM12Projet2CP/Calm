@@ -55,40 +55,38 @@ class MC {
     if (cacheResult.hit) {
       this.cacheHits++;
       this.rim = this.cache.blocks[cacheResult.index].data;
-      console.log(`the content ${this.cache.MC.data[address]}`);
-      console.log(`the content ${this.cache.blocks[cacheResult.index].address}`);
-
+      
      
     } else {
       this.cacheMisses++;
       this.rim = iscode ? this.code[address] : this.data[address];
-      console.log(`Cache miss. Loading from memory: ${this.rim}`);
+      
       if (this.rim !== undefined) {
         const replacedIndex = this.cache.getLeastPriorityBlockIndex();
-        console.log(`Replacing cache block at index: ${replacedIndex}`);
+       
         if(!iscode)
         this.cache.replaceLRU(address, this.rim);
       }
     }
 
   
-    this.getPerformanceMetrics();
-    this.displayPerformance();
+   // this.getPerformanceMetrics();
+    //this.displayPerformance();
   }
 
   write() {
     let address = parseInt(this.ram, 2);
     let value = this.rim;
    
-    console.log(`Writing value: ${value} to address: ${address}`);
+    
     let cacheResult = this.cache.checkCache(address, false);
-    console.log(`Cache check result:`, cacheResult);
+    
     
     if (cacheResult.hit) {
      
       this.cache.blocks[cacheResult.index].data = value;
       this.cache.blocks[cacheResult.index].priority++; // Increase priority
-      console.log(`Cache hit. Updated cache block.`);
+      
     } else {
      
      // const replacedIndex = this.cache.getLeastPriorityBlockIndex();

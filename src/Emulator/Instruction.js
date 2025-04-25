@@ -2129,8 +2129,8 @@ class InstructionMOV01{
                     },
                 ];
                 }else{
-                  console.log(`${this.addresse1}`);
-                  if(memory.cache.checkCache(this.addresse1, 0).hit){
+                  console.log(`${this.addresse2}`);
+                  if(memory.cache.checkCache(this.addresse2, 0).hit){
   
                   return[{
               
@@ -2626,20 +2626,20 @@ class InstructionMOV10{
                     anim:MCanim.anim,
                 },
                 {
-                  value:"value2",
+                  value:"",
                   target:MdrToBus.target,
                 time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                   anim:MdrToBus.anim,
               },
             
             {
-              value:"",
+              value:"value2",
               target:RegToCache.target,
             time:1/  useSpeedStore.getState().speed*RegToCache.time,
               anim:RegToCache.anim,
           },
           {
-            value:"value2",
+            value:"",
             target:BusToCache.target,
           time:1/  useSpeedStore.getState().speed*BusToCache.time,
             anim:BusToCache.anim,
@@ -2685,20 +2685,20 @@ class InstructionMOV10{
                     anim:MCanim.anim,
                 }  ,
                 {
-                  value:"value2",
+                  value:"",
                   target:MdrToBus.target,
                 time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                   anim:MdrToBus.anim,
               },
             
             {
-              value:"",
+              value:"value2",
               target:RegToCache.target,
             time:1/  useSpeedStore.getState().speed*RegToCache.time,
               anim:RegToCache.anim,
           },
           {
-            value:"value2",
+            value:"",
             target:BusToCache.target,
           time:1/  useSpeedStore.getState().speed*BusToCache.time,
             anim:BusToCache.anim,
@@ -2744,20 +2744,20 @@ class InstructionMOV10{
                 }
                 ,
                 {
-                  value:"value2",
+                  value:"",
                   target:MdrToBus.target,
                 time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                   anim:MdrToBus.anim,
               },
             
             {
-              value:"",
+              value:"value2",
               target:RegToCache.target,
             time:1/  useSpeedStore.getState().speed*RegToCache.time,
               anim:RegToCache.anim,
           },
           {
-            value:"value2",
+            value:"",
             target:BusToCache.target,
           time:1/  useSpeedStore.getState().speed*BusToCache.time,
             anim:BusToCache.anim,
@@ -2803,20 +2803,20 @@ class InstructionMOV10{
                 }
                 ,
                 {
-                  value:"value2",
+                  value:"",
                   target:MdrToBus.target,
                 time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                   anim:MdrToBus.anim,
               },
             
             {
-              value:"",
+              value:"value2",
               target:RegToCache.target,
             time:1/  useSpeedStore.getState().speed*RegToCache.time,
               anim:RegToCache.anim,
           },
           {
-            value:"value2",
+            value:"",
             target:BusToCache.target,
           time:1/  useSpeedStore.getState().speed*BusToCache.time,
             anim:BusToCache.anim,
@@ -2862,20 +2862,20 @@ class InstructionMOV10{
                 }
                 ,
                 {
-                  value:"value2",
+                  value:"",
                   target:MdrToBus.target,
                 time:1/  useSpeedStore.getState().speed*MdrToBus.time,
                   anim:MdrToBus.anim,
               },
             
             {
-              value:"",
+              value:"value2",
               target:RegToCache.target,
             time:1/  useSpeedStore.getState().speed*RegToCache.time,
               anim:RegToCache.anim,
           },
           {
-            value:"value2",
+            value:"",
             target:BusToCache.target,
           time:1/  useSpeedStore.getState().speed*BusToCache.time,
             anim:BusToCache.anim,
@@ -2919,26 +2919,6 @@ class InstructionMOV10{
                   time:1/  useSpeedStore.getState().speed*MCanim.time,
                     anim:MCanim.anim,
                 }
-                ,
-                {
-                  value:"value2",
-                  target:MdrToBus.target,
-                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-                  anim:MdrToBus.anim,
-              },
-            
-            {
-              value:"",
-              target:RegToCache.target,
-            time:1/  useSpeedStore.getState().speed*RegToCache.time,
-              anim:RegToCache.anim,
-          },
-          {
-            value:"value2",
-            target:BusToCache.target,
-          time:1/  useSpeedStore.getState().speed*BusToCache.time,
-            anim:BusToCache.anim,
-        },
             ];
             }else if (this.register1=="6") {
                 return[{
@@ -2978,26 +2958,7 @@ class InstructionMOV10{
                     anim:MCanim.anim,
                 }
                 ,
-                {
-                  value:"value2",
-                  target:MdrToBus.target,
-                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-                  anim:MdrToBus.anim,
-              },
-            
-            {
-              value:"",
-              target:RegToCache.target,
-            time:1/  useSpeedStore.getState().speed*RegToCache.time,
-              anim:RegToCache.anim,
-          },
-          {
-            value:"value2",
-            target:BusToCache.target,
-          time:1/  useSpeedStore.getState().speed*BusToCache.time,
-            anim:BusToCache.anim,
-        },
-            ];
+                ];
             }else if (this.register1=="7") {
                 return[{
                     value:"value2",

@@ -540,6 +540,7 @@ class Sequenceur{
         let Inshex=queue.shift();
         let Ins=hex2bin(Inshex);
         this.RI.setvalue(Ins);
+        console.log("check Inshex: ",Inshex)
         console.log(`this is RI here${this.RI.getvalue()}`)
         //the animation for this instruction goes here
         /////those 2 animations must be at the same time___________________
@@ -1061,6 +1062,8 @@ class Sequenceur{
                         this.getinstrbyte(animations,false,Contextarray);
                         adresse=adresse+this.RI.getvalue()
                         adresse=parseInt(adresse,2);//hexa to decimal
+                        
+                        instrObject.addresse2=adresse;
                         let depl=0;
                         if(regMod2=='110'){
                             this.getinstrbyte(animations,false,Contextarray);
@@ -1146,7 +1149,10 @@ class Sequenceur{
                         let valimm=parseInt(adresseop2,2);
                         if(regMod2!="000" | taille!='0'){
                         this.getinstrbyte(animations,false,Contextarray);
-                        adresseop2=adresseop2+this.RI.getvalue()
+                        adresseop2=adresseop2+this.RI.getvalue();
+                        console.log("address op 2: ",adresseop2)
+                        adresseop2=parseInt(adresseop2,2)
+                        instrObject.addresse2=adresseop2
                         }
                         adresseop2=parseInt(adresseop2,2);
                         let depl1=0;
@@ -2441,6 +2447,7 @@ class Sequenceur{
                 
             }
         }
+        console.log("yacine",instrObject);
         return instrObject;}
     }
     execute(instrObject,is_animated,animations){
