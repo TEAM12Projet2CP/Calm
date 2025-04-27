@@ -215,7 +215,7 @@ export class SemanticAnalysis {
                                 //console.log(asize);
                                 this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value,size:asize},FuncInterface.defadrmod(list1,i),FuncInterface.defadrmod(list2,i)]);
                             }
-                            if( list1[0]?.type=='NUMBER'&& lexicalList[i][0]?.value == 'MOV' &&list1[1]?.value=='*' && list2[0]?.type=='NUMBER'&&list2[1]?.value=='*'){
+                            if( lexicalList[i][0]?.value == 'MOV' &&list1[1]?.value=='*' && list2[1]?.value=='*'){
                                 console.log("here------------------------")    
                                 this.Semanticlist.push(new Errorcalm("Operands can't be both a memory address",null,i))
                                     Errorcalm.SemanticError.push(new Errorcalm("Operands can't be both a memory address",null,i))

@@ -1396,6 +1396,7 @@ class AddressingModes{
             }
             },
             function indirectVal(adresse,animated,size,depl,animations,is_anim,target){
+                console.log("here-------------------------------------------------------")
                 adresse=TwosComplement(adresse,16);///replace tostring with twoscompliement
                 memory.setRam(adresse);
                 memory.read(0);
