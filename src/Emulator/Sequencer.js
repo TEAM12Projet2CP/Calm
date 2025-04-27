@@ -713,23 +713,26 @@ class Sequenceur{
             }else{
                 if(numreg=='000'){
                     value = parseInt(Registers[0].getright(),2);
-                }else if(numreg=='001'){
+                    console.log("redoune");
+                }else if(numreg=='100'){
                     value = parseInt(Registers[0].getleft(),2);
+                    console.log("redoune");
                 }
-                if(numreg=='010'){
+                else if(numreg=='001'){
                     value = parseInt(Registers[1].getright(),2);
-                }else if(numreg=='011'){
+                }else if(numreg=='101'){
                     value = parseInt(Registers[1].getleft(),2);
                 }
-                if(numreg=='100'){
+                else if(numreg==='010'){
                     value = parseInt(Registers[2].getright(),2);
-                }else if(numreg=='101'){
+                }else if(numreg==='110'){
                     value = parseInt(Registers[2].getleft(),2);
                 }
-                if(numreg=='110'){
-                    value = parseInt(Registers[3].getright(),2);
-                }else if(numreg=='111'){
-                    value = parseInt(Registers[3].getleft(),2);
+                else if(numreg=='011'){
+                    value = parseInt(Registers[4].getright(),2);
+                    console.log("the value og ACCR=",value);
+                }else if(numreg==='111'){
+                    value = parseInt(Registers[4].getleft(),2);
                 }
             }
             instrObject.value1=value;
@@ -1035,27 +1038,30 @@ class Sequenceur{
                             //reading reg2 content
                             if(regMod2=='000'){
                                 value2 = parseInt(Registers[0].getright(),2);
-                            }else if(regMod2=='001'){
+                                console.log("redoune");
+                            }else if(regMod2=='100'){
                                 value2 = parseInt(Registers[0].getleft(),2);
+                                console.log("redoune");
                             }
-                            else if(regMod2=='010'){
+                            else if(regMod2=='001'){
                                 value2 = parseInt(Registers[1].getright(),2);
-                            }else if(regMod2=='011'){
+                            }else if(regMod2=='101'){
                                 value2 = parseInt(Registers[1].getleft(),2);
                             }
-                            else if(regMod2=='100'){
+                            else if(regMod2=='010'){
                                 value2 = parseInt(Registers[2].getright(),2);
-                            }else if(regMod2=='101'){
+                            }else if(regMod2=='110'){
                                 value2 = parseInt(Registers[2].getleft(),2);
                             }
-                            else if(regMod2=='110'){
-                                value2 = parseInt(Registers[3].getright(),2);
+                            else if(regMod2=='011'){
+                                value2 = parseInt(Registers[4].getright(),2);
+                                console.log("the value og ACCR=",value2);
                             }else if(regMod2=='111'){
-                                value2 = parseInt(Registers[3].getleft(),2);
+                                value2 = parseInt(Registers[4].getleft(),2);
                             }
                         }
                         instrObject.value2=value2;
-                        instrObject.register1=parseInt(regMod2,2);
+                        instrObject.register2=parseInt(regMod2,2);
                         instrObject.register1=parseInt(regMod1,2);//decimal
                     }else if(key=='000110001'){
                         this.getinstrbyte(animations,false,Contextarray);
@@ -1216,43 +1222,49 @@ class Sequenceur{
                         }else{
                             if(regMod1=='000'){
                                 value1 = parseInt(Registers[0].getright(),2);
-                            }else if(regMod1=='001'){
+                                console.log("redoune");
+                            }else if(regMod1=='100'){
                                 value1 = parseInt(Registers[0].getleft(),2);
+                                console.log("redoune");
                             }
-                            else if(regMod1=='010'){
+                            else if(regMod1=='001'){
                                 value1 = parseInt(Registers[1].getright(),2);
-                            }else if(regMod1=='011'){
+                            }else if(regMod1=='101'){
                                 value1 = parseInt(Registers[1].getleft(),2);
                             }
-                            else if(regMod1=='100'){
+                            else if(regMod1=='010'){
                                 value1 = parseInt(Registers[2].getright(),2);
-                            }else if(regMod1=='101'){
+                            }else if(regMod1=='110'){
                                 value1 = parseInt(Registers[2].getleft(),2);
                             }
-                            else if(regMod1=='110'){
-                                value1 = parseInt(Registers[3].getright(),2);
+                            else if(regMod1=='011'){
+                                value1 = parseInt(Registers[4].getright(),2);
+                                console.log("the value og ACCR=",value2);
                             }else if(regMod1=='111'){
-                                value1 = parseInt(Registers[3].getleft(),2);
+                                value1 = parseInt(Registers[4].getleft(),2);
                             }
                             if(regMod2=='000'){
                                 value2 = parseInt(Registers[0].getright(),2);
-                            }else if(regMod2=='001'){
+                                console.log("redoune");
+                            }else if(regMod2=='100'){
                                 value2 = parseInt(Registers[0].getleft(),2);
+                                console.log("redoune");
                             }
-                            else if(regMod2=='010'){
+                            else if(regMod2=='001'){
                                 value2 = parseInt(Registers[1].getright(),2);
-                            }else if(regMod2=='011'){
+                            }else if(regMod2=='101'){
                                 value2 = parseInt(Registers[1].getleft(),2);
                             }
-                            else if(regMod2=='100'){
+                            else if(regMod2=='010'){
                                 value2 = parseInt(Registers[2].getright(),2);
-                            }else if(regMod2=='101'){
+                            }else if(regMod2=='110'){
                                 value2 = parseInt(Registers[2].getleft(),2);
                             }
-                            else if(regMod2=='110'){
-                                value2 = parseInt(Registers[3].getright(),2);
+                            else if(regMod2=='011'){
+                                value2 = parseInt(Registers[4].getright(),2);
+                                console.log("the value og ACCR=",value2);
                             }else if(regMod2=='111'){
-                                value2 = parseInt(Registers[3].getleft(),2);
+                                value2 = parseInt(Registers[4].getleft(),2);
                             }
                         }
 

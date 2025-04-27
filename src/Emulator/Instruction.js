@@ -1043,8 +1043,32 @@ class InstructionMOV00{
         this.stepsNum=1;
         this.name="MOV-RR";
         this.steps=[()=>{
-            Registers[this.register1].setvalue(TwosComplement(this.value2,16));
-        }
+            if (this.taille == 1) {
+              Registers[this.register1].setvalue(TwosComplement(this.value2,16));  
+            }else{
+              if(this.register1==0){
+                Registers[0].setright(TwosComplement(this.value2,8));
+                console.log("redoune");
+            }else if(this.register1==4){
+                Registers[0].setleft(TwosComplement(this.value2,8));
+                console.log("redoune");
+            }
+            else if(this.register1==1){
+                Registers[1].setright(TwosComplement(this.value2,8));
+            }else if(this.register1==5){
+                Registers[1].setleft(TwosComplement(this.value2,8));
+            }
+            else if(this.register1==2){
+                Registers[2].setright(TwosComplement(this.value2,8));
+            }else if(this.register1==6){
+                Registers[2].setleft(TwosComplement(this.value2,8));
+            }
+            else if(this.register1==3){
+                Registers[4].setright(TwosComplement(this.value2,8));
+            }else if(this.register1==7){
+                Registers[4].setleft(TwosComplement(this.value2,8));
+            }
+        }}
         ];
         this.buildanim=function(){
             if(this.register1=="000"){
