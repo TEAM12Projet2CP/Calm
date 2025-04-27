@@ -67,7 +67,7 @@ const handleRefresh = () => {
 function convertStrings(arr) {
   const result = [] ;
   for (let i = 0; i < arr.length; i++) {
-    for (let j = 0; j < arr[i].length; j += 2) {
+    for (let j = 0; j < arr[i]?.length || 0; j += 2) {
       result.push(arr[i][j] + arr[i][j+1]);
     }
   }
@@ -90,7 +90,7 @@ const Ide = ({currentUser})=>{
 
   ///////////////////////////////executions function////////////////////////////////////////
 
-  const traitement= (codeArray)=>{
+  const traitement= async(codeArray)=>{
     for(let i=0;i<50;i++){//initializing first 50 bytes in memory to 0 (data memory)
       memory.setRam(TwosComplement(i,8));
       memory.setRim("00000000");
@@ -100,31 +100,40 @@ const Ide = ({currentUser})=>{
     memory.setcode(codeArray)
     queue.instructionset([]);
 
-    let numtmp=0;
-    
-    queue.fetchInstruction(animations,0,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
-    queue.fetchInstruction(animations,1,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
-    queue.fetchInstruction(animations,2,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
+    let numtmp = 0;
 
+    queue.fetchInstruction(animations, 0, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
+    queue.fetchInstruction(animations, 1, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
+    queue.fetchInstruction(animations, 2, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
 
+    let instrobject = {};
+    let save = {};
+    // probelm with consecutive reads it will put both read data in the same address corresponding to the address of the last read (ig problem with opvalues)
+    while (instrobject.name !== "stop") {
+        sequenceur.getinstrbyte(animations, true, Contextarray);
+        instrobject = { ...sequenceur.decode(animations, Contextarray) };
+        if (instrobject.name !== "stop") {
+            if (instrobject.name === "READ" && typeof instrobject.steps?.[0] === "function") {
+              for (let i = 0; i < 7; i++) {
+                save[i] = Registers[i].getvalue();
+              }
+                const result = await instrobject.steps[0](); // ✅ Now await works
+                for (let i = 0; i < 7; i++) {
+                  Registers[i].setvalue(save[i]);
+                }
+                if (result === false) {
+                    continue;
+                }
 
-    console.log(queue.getinstwithoutshift())
-    
-    let instrobject={};
-    while(instrobject.name!=="stop"){
-      sequenceur.getinstrbyte(animations,true,Contextarray);
-      instrobject={...sequenceur.decode(animations,Contextarray)};
-      if(instrobject.name!=="stop"){
-        console.log(instrobject);
-        sequenceur.execute(instrobject,1,animations);
-      }
+            } else {
+                sequenceur.execute(instrobject, 1, animations);
+            }
+        }
     }
-
-  }
-
+}
   let [checktest,setChecktest]=useState(false);
 
   /////////////////////returning the component//////////////////
@@ -161,7 +170,6 @@ const Ide = ({currentUser})=>{
   const [editMode, setEditMode] = useState({isEditMode: false, programName: null, programId: -1});
 
   const {state} = useLocation()
-  console.log("ide state:",state);
   useEffect(()=>{
     if(state){
       setEditMode(state.editMode);
@@ -201,7 +209,7 @@ const Ide = ({currentUser})=>{
 
       if (lineWithoutComment !== '') {
         // If the line without comments is not empty, store it in codeArray
-        codeArray.push(lineWithoutComment.toUpperCase());
+        codeArray.push(lineWithoutComment);
       }
     });
 
@@ -244,9 +252,7 @@ const Ide = ({currentUser})=>{
 
   useEffect(()=>{
       let storedArray = JSON.parse(localStorage.getItem('arr'));  
-      console.log(storedArray)         
       if(storedArray!=null){
-        console.log("stored_array",storedArray);
         storedArray=storedArray.join('\n');
         localStorage.removeItem('arr');
         setCode(storedArray);
@@ -346,7 +352,19 @@ const Ide = ({currentUser})=>{
                   }else{
                     inputouter=handleStoreCode();
                   }
-                  let input=convertStrings(inputouter);
+                  console.log("inputouter",inputouter);
+                  console.log(inputouter.error)
+                  //here I must check for errors, if there are any, we must quit, but quitting is causing an undefined return from somewhere!!
+                  // we shall figure out a solution and put this block back once again
+                  if(inputouter.error !== ''){
+                    setresult(inputouter.error);
+                    seterr(true);
+                    return 
+                  } 
+
+                  let input=convertStrings(inputouter.code);
+                  // not checked yet
+                  memory.data = inputouter.memory;
                   input.push("ff");
                   
                   try {
@@ -367,7 +385,7 @@ const Ide = ({currentUser})=>{
                     setresult("this is not hexa code");
                     
                   }
-                  
+
                 }}>
                   execute
                 </button>

@@ -5,6 +5,11 @@ import { gsap } from "gsap";
 import { useSpeedStore } from './speedStore.jsx';
 
 //const speed = useSpeedStore.getState().speed;
+import {MC} from "./MC.js"
+import { FuncInterface} from "../assembler/Assembler.js";
+import { binaryToDecimalNumber } from "./Instruction.js";
+export let opValue;
+// import Console from "../Console.jsx";____conflict!!!!!!!!!!
 const fitToR2={
     value:"",
     target:".ball",
@@ -998,6 +1003,12 @@ class Sequenceur{
                     anim:fitToRual1.anim,
                 })
             }}
+            if(key ==='1000'){
+                this.getinstrbyte(animations,false,Contextarray); 
+                this.getinstrbyte(animations,false,Contextarray);
+                // opValue=FuncInterface.binaryToHex(this.RI.getvalue());
+                opValue = binaryToDecimalNumber(this.RI.getvalue());
+            }
         }else{
             if(key>='0010' & key<='0011'){
                 key=instruction.substring(0,7);
@@ -1023,13 +1034,22 @@ class Sequenceur{
                 let Ind=secondByte.substring(0,2);
                 let regMod1=secondByte.substring(2,5);
                 let regMod2=secondByte.substring(5,8);
-                if(key=='0001100'){
-                    key=key+Ind;
-                    console.log("this key ",key);
-                    index=hash(key);
-                    instrObject=hashmap[index].instrObject;
-                    animateDecoderSequencer(animations,instrObject.name);
-                    instrObject.taille=taille;
+                if(key=='0001100'||key=='0001001'){
+                   
+                    key=key+Ind;                  
+                    if (key=='000100111') {
+                        key='1001';
+                    }
+                        index=hash(key);
+                        instrObject=hashmap[index].instrObject;
+                        animateDecoderSequencer(animations,instrObject.name);
+                        instrObject.taille=taille;
+                        if (key=='1001') {
+                            key='000110011';
+                        }  
+                        
+                   
+                    
                     let value2=0;
                     if(key=='000110000'){
                         if(taille=='1'){
@@ -1149,7 +1169,7 @@ class Sequenceur{
                         instrObject.value2=value2;
                         instrObject.register2=parseInt(regMod2,2);
                         instrObject.addresse1=addresse1;
-                    }else if(key=='000110011'){
+                    }else if(key=='000110011'||key=='000100111'){
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresseop1=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);

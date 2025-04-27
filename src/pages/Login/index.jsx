@@ -1,9 +1,11 @@
 import React from 'react'
 import {AuthForm} from '../../components/'
 
+import LoginForm from '../../components/loginForm/index.jsx'
 const Login = ({updateCurrentUser}) => {
     return (
-        <AuthForm currentRoute='/login' redirectRoute='/register' updateCurrentUser={updateCurrentUser}/>
+
+        <LoginForm />
     )
 }
 

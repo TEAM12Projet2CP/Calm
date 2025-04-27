@@ -1,3 +1,5 @@
+/* eslint-disable default-case */
+/* eslint-disable no-loop-func */
 import { Lexer } from './Lexer.js';
 import { Errorcalm } from './Errorcalm.js';
 import { Assembler,FuncInterface } from "./Assembler.js";
@@ -5,10 +7,60 @@ import { Assembler,FuncInterface } from "./Assembler.js";
 
 export class SemanticAnalysis {
     Semanticlist = []
-    
+    static labeling = true;
     constructor(input) { 
-
         let lexicalList = input;
+        if(SemanticAnalysis.labeling){
+        for(let i = 0; i < lexicalList.length; i++){
+            let firstword = lexicalList[i][0]
+            let firstwordtype = firstword.type
+            if (firstwordtype == 'LABEL') {
+                if (lexicalList[i].length == 3) {
+                    if (lexicalList[i][2].type == 'NUMBER') {
+                        if( lexicalList[i][2].value < Assembler.MAXNUM){
+                            if(lexicalList[i][1].type == 'TEXT' || lexicalList[i][1].type == 'TEXTT'){
+                                if(Lexer.isValidString(lexicalList[i][1].value)){
+                                //  filters for text standards and validity of the text
+                                // check if label already existing 
+                                    var found = false ;
+                                    var labelname = lexicalList[i][1].value ;
+                                    Assembler.Labellist.forEach(element => { 
+                                        if((element.name === labelname)){
+                                            console.log(element.name + " " + labelname + " " + SemanticAnalysis.labeltype + " " + element.label) 
+                                            found = true
+                                        }
+                                    });
+                                    if (!found) {  
+                                        if (lexicalList[i][1].type === 'TEXTT') {
+                                            Assembler.Labellist.push({ name: labelname, address: parseInt(lexicalList[i][2].value), linedeclared:i, label: true })
+                                }
+                                        else if (lexicalList[i][1].type === 'TEXT') {
+                                            Assembler.Labellist.push({ name: labelname, address: parseInt(lexicalList[i][2].value), linedeclared:i, label: false })
+
+                                    }
+                                    }else{
+                                        this.Semanticlist.push(new Errorcalm("LABEL already declared",null,i))
+                                    }
+                                }else{ this.Semanticlist.push(new Errorcalm("LABEL name is not valid",null,i)) }
+                                }else{
+                                this.Semanticlist.push(new Errorcalm("LABEL name not defined",null,i))
+                                }
+                        }else{
+                         this.Semanticlist.push(new Errorcalm("Number size is bigger then MAXNUM",null,i))
+                        }
+                    }else{ 
+                         this.Semanticlist.push(new Errorcalm("LABEL must be a number",null,i))
+                    }
+                }else{
+                    if (Lexer.isValidString(lexicalList[i][2].value )) {
+                        this.Semanticlist.push(new Errorcalm("LABEL must have only two operands",null,i))
+                    }else
+                    {
+                        this.Semanticlist.push(new Errorcalm("LABEL name is not valid",null,i))
+                    }
+                }
+            }
+        }}
         for(let i = 0; i < lexicalList.length; i++){
             // here operation with each line of code
             // we must check if it is a label or an instruction
@@ -17,54 +69,8 @@ export class SemanticAnalysis {
               let firstword = lexicalList[i][0]
               let firstwordtype = firstword.type
               
-              
-              switch (firstwordtype) {
-                    
-                  case 'LABEL':
-                    const functLABEL = ()=> {
-                        if (lexicalList[i].length == 3) {
-                            if (lexicalList[i][2].type == 'NUMBER') {
-                            if( lexicalList[i][2].value < Assembler.MAXNUM){
-                                if(lexicalList[i][1].type == 'TEXT'){
-                                    if(Lexer.isValidString(lexicalList[i][1].value)){
-                                        //  filters for text standards and validity of the text
-                                        // check if label already existing 
-                                            var found = false ;
-                                            var labelname = firstword.value ;
-                                            Assembler.Labellist.forEach(element => { 
-                                                if(element.name === labelname){
-                                                    found = true
-                                                }
-                                            });
-                                        if (!found) {    
-                                        //this.Semanticlist.push(lexicalList[i]); 
-                                        //stop pushing here because we don't need it
-                                        Assembler.Labellist.push({ name: lexicalList[i][1].value, address: lexicalList[i][2].value, linedeclared:i })
-                                    }else{
-                                        this.Semanticlist.push(new Errorcalm("LABEL already declared",null,i))
-                                    }
-                                }else{ this.Semanticlist.push(new Errorcalm("LABEL name is not valid",null,i)) }
-                                }else{
-                                    this.Semanticlist.push(new Errorcalm("LABEL name not defined",null,i))
-                              }
-                            }else{
-                                 this.Semanticlist.push(new Errorcalm("Number size is bigger then MAXNUM",null,i))
-                            }}else{ 
-                                 this.Semanticlist.push(new Errorcalm("LABEL must be a number",null,i))
-                            }
-                          }else{
-                            if (Lexer.isValidString(lexicalList[i][2].value )) {
-                                this.Semanticlist.push(new Errorcalm("LABEL must have only two operands",null,i))
-                            }else
-                            {
-                                this.Semanticlist.push(new Errorcalm("LABEL name is not valid",null,i))
-                            }
-                            }
-                      }
-                      
-                      functLABEL();
-                      break;
-                      
+            
+              switch (firstwordtype) {                 
                       case 'INST0': 
                           // No params instructions: INST0 ::=    RET, PUSHA, POPA
                           // We must have no op after it 
@@ -142,6 +148,12 @@ export class SemanticAnalysis {
                                     switch (lexicalList[i].length) {
 
                                         case 2:
+                                            const labelType = FuncInterface.Label_To_Num(firstparam.value,i)
+                                            if(labelType.type === 'ERROR'){
+                                                this.Semanticlist.push(new Errorcalm("LABEL not declared",null,i))
+                                                // we shall fix this later if needed
+                                                return 
+                                            }
                                             this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value, adrmode:0 },{type:FuncInterface.Label_To_Num(firstparam.value,i).type, value:FuncInterface.Label_To_Num(firstparam.value,i).value}]);
                                             
                                             break;
@@ -192,6 +204,7 @@ export class SemanticAnalysis {
                             // check also for first operand based ind and second indexed or based or opposite 
                             // check if size of first list == size of second list and assign it to the size of the instruction
                             var list1,list2 =[];
+                            console.log("lexicalList[i]",lexicalList[i])
                             list1 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list1 ;
                             //console.log("list1",list1[0].type)
                             list2 = FuncInterface.addrmod(lexicalList[i].slice(1),i).list2 ;
@@ -217,8 +230,8 @@ export class SemanticAnalysis {
                             }
                             if( lexicalList[i][0]?.value == 'MOV' &&list1[1]?.value=='*' && list2[1]?.value=='*'){
                                 console.log("here------------------------")    
-                                this.Semanticlist.push(new Errorcalm("Operands can't be both a memory address",null,i))
-                                    Errorcalm.SemanticError.push(new Errorcalm("Operands can't be both a memory address",null,i))
+                                this.Semanticlist.push(new Errorcalm("Operands can't be both a memory address\n",null,i))
+                                    Errorcalm.SemanticError.push(new Errorcalm("Operands can't be both a memory address\n",null,i))
                                 
                                 }
                             }}
@@ -238,7 +251,7 @@ export class SemanticAnalysis {
           
         }
          
-    }
+    }}
 
 
 
@@ -273,8 +286,6 @@ export class SemanticAnalysis {
     
 
     // Label instformat LABEL num check this num if it is valid.;
-
-}
 
 
 /*

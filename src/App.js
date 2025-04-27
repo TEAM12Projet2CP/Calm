@@ -47,6 +47,7 @@ function App() {
         </img>
         
         <Routes>
+          <Route exact path='/profile' element={<Profile />}/>
           <Route exact path="/" element={<Hero/>}/>
           <Route exact path="/ide" element={<Ide currentUser={currentUser}/>}/>
           <Route exact path="/archi" element={<Arch/>}/>

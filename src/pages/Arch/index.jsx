@@ -37,7 +37,6 @@ MC.forEach((element,index) => {
 });
     ///////////////to add delay/////
     let thecontext=[...props.theCTX];
-    console.log("the context : "+thecontext)
     let tmpctx=0;
     let done=0;
     const animate=(i,animation,h,w,dl,chaine)=>{

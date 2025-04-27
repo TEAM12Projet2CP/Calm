@@ -1,10 +1,23 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-const-assign */
+/* eslint-disable no-useless-escape */
+/* eslint-disable eqeqeq */
+/* eslint-disable no-unreachable */
+/* eslint-disable no-fallthrough */
+/* eslint-disable default-case */
+/* eslint-disable no-redeclare */
 import { Lexer } from './Lexer.js';
 import {Errorcalm} from './Errorcalm.js'
 import {SemanticAnalysis} from './SemanticAnalysis.js'
+import { element } from 'prop-types';
+import { preprocessing } from './preprocessing.js';
+import MC from '../Emulator/MC.js';
+import { memory } from '../pages/Ide/index.jsx';
+
 export const FuncInterface ={
 
     adrmap : (txt,size,dep)=>{
-        var adr='';
+        var adr=''
         switch(txt){
             case 0:
                 adr = '000';
@@ -189,7 +202,6 @@ while (hexString.length < size) {
 
     //   binaryToHex: (binaryString,size)=>{
     //     // Convert decimal to hexadecimal string
-    //     console.log("____________________________"+binaryString+" "+size)
     //     let hexString = parseInt(binaryString, 2).toString(16);
     //     // Pad the hexadecimal string with leading zeros to 4 bytes (8 characters)
     //     while (hexString.length < size) {
@@ -202,28 +214,25 @@ while (hexString.length < size) {
 
     Label_To_Num : (labelname,linenumber)=>{
         var labelobj = false ;
-        Assembler.Labellist.forEach(element => { 
-            if(element.name === labelname){
-                labelobj = element
-            }
+        labelobj = Assembler.Labellist.find(element => { 
+            return element.name === labelname;
         });
-        //console.log(labelobj)
+        if (!(labelobj == null)){
         if (labelobj == false)
         {
             //error
             Errorcalm.set_SemanticError(new Errorcalm("Label not found",null,linenumber));
             return {type: 'ERROR', value: null};
         }else{
-            //return the address
             return {type: 'NUMBER', value: labelobj.address} 
-    }},
+    }}
+},
     
 
 
     confirmationfunction : (input) => {
         var errormsg = []
         var err = false ;
-        //console.log(input)
         // check Errorcalm.SemanticError first else do the thing you where doing
         if (Errorcalm.SemanticError.length > 0) {
             Errorcalm.printError();
@@ -243,7 +252,6 @@ while (hexString.length < size) {
 
     addrmod : (listofpar,line) => {
 
-        console.log(listofpar);
     // go through the list of instructions if listofpar[index].value is different then , then add this element.value to the list 1
     // go throught an if there is an element.type='TEXT' you use Labeltonum to make it a number
     listofpar.forEach((element,index) => {
@@ -258,7 +266,8 @@ while (hexString.length < size) {
     var lastindex ;
     
     var index = 0;
-    
+    console.log("listlength:",listofpar.length)
+    console.log("listofpar:",listofpar)
     while (index < listofpar.length && listofpar[index].value !== ',') {
         list1.push(listofpar[index]);
         lastindex = index;
@@ -417,8 +426,6 @@ while (hexString.length < size) {
 
 }
     }
-
-
 export class Assembler{
 
     static MAXNUM = 65535;
@@ -433,26 +440,28 @@ export class Assembler{
                       
 
     constructor(input){
+        
         let lexicalList = input.map((t,index)=> {return new Lexer(t,index).LexicalList} )
         if (Errorcalm.LexicalError.length > 0) {
-            Errorcalm.printError();
+            const errorMSG = Errorcalm.printError();
+            this.input = {error: errorMSG}
         }else{
+            console.log("lexicalList fjlsjdflsjflsjfs",lexicalList)
         this.input = lexicalList;
-        console.log("\nLexicalList:\n",lexicalList)
         this.toAssemble = new SemanticAnalysis(this.input);
-        let ret = FuncInterface.confirmationfunction(this.toAssemble.Semanticlist);
-        if (!ret.status) {
-            console.log("\nThere are errors in your code cannot assemble:\n");
-            console.log(ret.errors);
-        }}
+        // let ret= functinterface.cofirmationfunction(this.input);
+       }
     }
 
     static assemble(input){
         //turn instruction object to 8 octet hexa represented as a string
         // input is one line of code
         var index = 0; 
+        console.log("input",input)
+
             const element = input[index];
-            switch(element.type){
+                console.log("input",input[index]) 
+                switch(element.type){
 
                 case 'INST2':
                     var opcode='' ;
@@ -514,22 +523,16 @@ export class Assembler{
                        ind = '00';
                             regmod1 = FuncInterface.regmap(input[1].value);
                             regmod2 = FuncInterface.regmap(input[2].value);
-
                             code = opcode + ind + regmod1 + regmod2
-
-
                             //return {codehex:FuncInterface.binaryToHex(code,code.length/4),codebin:code};              
                             return FuncInterface.binaryToHex(code,code.length/4)  
-  
-                            break;
-                            
+                            break;       
                         break;
                         case 'REGISTER,NUMBER':
                                ind = '01';
                             regmod1 = FuncInterface.regmap(input[1].value);
                             regmod2 = FuncInterface.adrmap(input[2].adrmode,size, typeof input[2].depl =='undefined' ? 0 : input[2].depl>255 ? '1' :'0' );
-                            //console.log(regmod2)
-                                        
+                            //console.log(regmod2)  
                             switch (regmod2) {
                                 case '000':
                                     let long = size == 0 ? 8 : 16;
@@ -629,7 +632,6 @@ export class Assembler{
                                 case '111':
                                     dep1 = FuncInterface.decimalTobinByte(input[1].depl, input[1].depl > 255 ? 16 : 8  );
                                     op1 = FuncInterface.decimalTobinByte(input[1].value,16);
-                                    console.log("dep1 here",FuncInterface.binaryToHex(dep1,4))
                                     break;
                                 case '011':
                                 case '100':
@@ -656,13 +658,11 @@ export class Assembler{
                                 case '110':      
                                     dep2 = FuncInterface.decimalTobinByte(input[2].depl, input[2].depl > 255 ? 16 : 8 );
                                     op2 = FuncInterface.decimalTobinByte(input[2].value,16);
-                                    console.log("dep2 here size 0-----------",dep2)
 
                                 break;                      
                                 case '111':
                                     dep2 = FuncInterface.decimalTobinByte(input[2].depl , input[2].depl > 255 ? 16 : 8 );
                                     op2 = FuncInterface.decimalTobinByte(input[2].value, 16 );
-                                    console.log("dep2 here size 2",FuncInterface.binaryToHex(dep2,4))
 
                                 case '011':
                                 case '100':
@@ -686,9 +686,7 @@ export class Assembler{
                             //console.log(dep1)
                             //console.log(FuncInterface.binaryToHex(dep1,4))
                             //console.log(FuncInterface.binaryToHex(code,code.length/4))
-                            console.log("code here",code)
-                            console.log("code here",FuncInterface.binaryToHex(code,code.length/4))
-                            return FuncInterface.binaryToHex(code,code.length/4)
+                          return FuncInterface.binaryToHex(code,code.length/4)
                             break;
 
                         default:
@@ -857,97 +855,65 @@ export class Assembler{
                             break;
                     }
                     let instcode=oppcode+adr;
-                    return instcode;
-                   
+                    return instcode;  
                 }
-
             }
-            
-
         }   
-        static assemblecode(input){
-            let output = new Assembler(input) ;
+            static assemblecode(input){     
+            let input2 = preprocessing.preprocessor(input)
+            if(input2.error !== ''){
+                return {code: input2.code, memory: input2.data, error: input2.error}
+            }
+            // again, this needs a fix
+                //this is safe
+                MC.data = Array(100).fill().map((_, i) => FuncInterface.binaryToHexoneByte(input2.data[i] ?? "00000000"))
+
+            console.log("MC.data:",MC.data)
+            Assembler.Labellist.push(...input2.varList)
+            let output = new Assembler(input2.code);
+            // if semantic analysis returns any error we return it from here
+            if(output.input?.error){
+                return {code: [], memory: MC.data, error: output.error}
+            }
             var assembledcode = [];
             var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
-            console.log("\nSemantic list: \n",toassmb)
-            if ( Errorcalm.SemanticError.length ===0 ) {
-
+            var ipTrack = 0;
+            var i=0;
+            var lines = (Assembler.Labellist.length === 0 ) ? toassmb.length : Assembler.Labellist[i].linedeclared;
+            // two pass first pass stays as it is with adding a delimater at each label and then re apply the semantic analysis for the labels and then reassemble the code
+              if ( Errorcalm.SemanticError.length === 0 ) { 
                 for (let index = 0; index < toassmb.length; index++) {
-         
-                    assembledcode.push(Assembler.assemble(toassmb[index])) 
-                
+                    if (index >= lines && Assembler.Labellist.labeltype) {
+                        Assembler.Labellist[i].address = ipTrack;
+                        i++;
+                        if (i < Assembler.Labellist.length) {
+                            lines = Assembler.Labellist[i].linedeclared - Assembler.Labellist[i-1].linedeclared-1+index;
+                        }else{
+                            lines = toassmb.length;
+                        }
+                    }
+                    ipTrack = ipTrack+(Assembler.assemble(toassmb[index]).length/2)     
                 }
-                console.log("\nAssembled code: \n",assembledcode)
-                return assembledcode;
+                SemanticAnalysis.labeltype = false;
+                output = new Assembler(input2.code)
+                // if semantic analysis returns any error we return it from here
+                if(output.input?.error){
+                    return {code: [], memory: MC.data, error: output.error}
+                } 
+                toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
+                console.log("toassmb",toassmb)
+                for (let index = 0; index < toassmb.length; index++) {
+                    assembledcode.push(Assembler.assemble(toassmb[index]))
+                }
+               return {code: assembledcode, memory: memory.data, error: input2.error};
                 // here put the return in case of success
                 
             }else{
                 //here put the return in case of error
-                return "error";
+                return {code: assembledcode, memory: memory.data, error: `${Errorcalm.SemanticError[0].message} at line ${Errorcalm.SemanticError[0].line}`};
 
             }
         }
 
 
   }
-
-
-
-
-
-//var input = ["MOV 0,0"]
-
-//console.log("\nInput: \n", Assembler.assemblecode(input))
-
-/*
-let output = new Assembler(input) ;
-
-
-
-
-
-
-console.log("\nLabel list: \n",Assembler.Labellist)
-
-//console.log("\nSemantic list: \n", output?.toAssemble?.Semanticlist ?? "Semanticlist is undefined");
-console.log("\nSemantic list: \n", (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined");
-var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
-var assembledcode = []
-
-for (let index = 0; index < toassmb.length; index++) {
-         
-    assembledcode.push(Assembler.assemble(toassmb[index])) 
-    console.log("\nAssembled code: \n",assembledcode)
-
-}
-
-console.log("\nAssembled code: \n",assembledcode)
-//console.log has to be deleted    03cd11b4000a 
-*/
-/*
-console.log("\ncode:",
-Assembler.assemble(  [
-    { type: 'INST2', value: 'ADD', size: '1' },
-    { type: 'NUMBER', value: '100', adrmode: 4, size: '1' },
-    { type: 'REGISTER', value: 'R1', adrmode: 0, size: '1' }
-  ])
-)
-
-console.log("\ncode:",
-Assembler.assemble(  [
-    { type: 'INST2', value: 'ADD', size: '1' },
-    { type: 'NUMBER', value: '2', adrmode: 4, size: '1' },
-    { type: 'REGISTER', value: 'R1', adrmode: 0, size: '1' }
-  ])
-)
-
-
-console.log("\ncode:",
-Assembler.assemble(  [
-    { type: 'INST2', value: 'ADD', size: '1' }, //8 ----**2
-    { type: 'NUMBER', value: '65535', adrmode: 0, size: '1' },//8 (11 000 101)------**2 + OP1=11B4
-    { type: 'NUMBER', value: '4555', adrmode: 6, size: '1' }// DEP2
-  ]))*/
-
-//10001101101000
-//000000000001010ffff
