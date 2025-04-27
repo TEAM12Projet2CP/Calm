@@ -894,7 +894,7 @@ export class Assembler{
                     }
                     ipTrack = ipTrack+(Assembler.assemble(toassmb[index]).length/2)     
                 }
-                SemanticAnalysis.labeltype = false;
+                SemanticAnalysis.labeling = false;
                 output = new Assembler(input2.code)
                 // if semantic analysis returns any error we return it from here
                 if(output.input?.error){
