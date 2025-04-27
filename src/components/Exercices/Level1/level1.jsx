@@ -173,7 +173,7 @@ function Level1() {
 
     return (
         <>
-            <NavBar/>
+            <NavBar isLoggedIn={JSON.parse(localStorage.getItem('user')).isLoggedIn || false }/>
             <div className="level1">
                 <Questionsswiper/>
                 <Question10></Question10>

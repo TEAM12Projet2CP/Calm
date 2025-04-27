@@ -17,7 +17,7 @@ import Bot from "../../components/ChatBot";
 function LearnPage() {
   return (
     <>
-      <NavBar/>
+      <NavBar />
       <img src={LearnTitle} className="learnTitle" alt="" />
 
       <div className="globalContainerLearn">

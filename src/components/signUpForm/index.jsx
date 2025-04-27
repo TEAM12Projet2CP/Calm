@@ -1,5 +1,5 @@
 import "./signup.css"
-import Navbar from "../NavBar/index.jsx"
+import NavBar from "../NavBar/index.jsx"
 import { useState } from "react"
 import { use } from "react"
 function SignUpForm(){
@@ -78,6 +78,7 @@ function SignUpForm(){
         genData.modified ??= false
     
         localStorage.setItem("user", JSON.stringify(genData))
+        localStorage.setItem("loginState", JSON.stringify(true))
         // verify email
 
         //after verification is done, redirect to profile page
@@ -87,7 +88,7 @@ function SignUpForm(){
 
     return (
         <>
-            <Navbar isLoggedIn = {false} />
+            <NavBar isLoggedIn = {false} />
             <form id="signUpForm" onSubmit={submitInfo}>
                 <h1>Sign Up</h1>
                 <div className="inputs">

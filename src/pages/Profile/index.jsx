@@ -7,7 +7,7 @@ import { red } from "@mui/material/colors"
 function Profile(){
     const user = localStorage.getItem('user')
     const {data} = JSON.parse(user)
-
+    
     const [hoveredOverConfirm,setHoveredOverConfirm] = useState(false)
     const [hoveredOverCancel,setHoveredOverCancel] = useState(false)
     const Hover = (e) => {

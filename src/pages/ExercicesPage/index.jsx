@@ -14,7 +14,7 @@ import Bot from "../../components/ChatBot";
 function ExercicesPage(props) {
     return (
         <>
-            <NavBar/>
+            <NavBar />
             {/* <main id="learn-page-main">
         <Title/>
       </main> */}
