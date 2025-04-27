@@ -1,4 +1,3 @@
-import isEmail from "validator/lib/isEmail"
 import "./signup.css"
 import NavBar from "../NavBar/index.jsx"
 import { useState } from "react"
