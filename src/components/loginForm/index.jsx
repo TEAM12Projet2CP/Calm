@@ -1,4 +1,4 @@
-import Navbar from "../NavBar/index.jsx"
+import NavBar from "../NavBar/index.jsx"
 import "./login.css"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -60,8 +60,8 @@ function LoginForm(){
         //get result, store token in local storage, then redirect to profile
         //then store in local storage
         data.modified ??= false
-        localStorage.setItem("user", JSON.stringify(data))
-
+        localStorage.setItem("user", JSON.stringify({data: data, isLoggedIn: true}))
+        localStorage.setItem("loginState", JSON.stringify(true))
         //navigate to profile page or wherever
         navigate("/profile")
     }
@@ -69,7 +69,7 @@ function LoginForm(){
     
     return(
         <>
-        <Navbar isLoggedIn = {false} />
+        <NavBar isLoggedIn = {false} />
         <form id="loginForm" onSubmit={submitInfo}>
             <h1>Login</h1>
             <div className="infoContainer">

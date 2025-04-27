@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const Hero = () => {
+    console.log(JSON.parse(localStorage.getItem("loginState")) || false)
     const Part1 = () => {
         return (
             <section className="slogan-container">
@@ -222,7 +223,7 @@ const Hero = () => {
     })
     let navigate = useNavigate();
     return < >
-        <NavBar/>
+        <NavBar isLoggedIn={true}/>
 
         <main id="get-started-container" style={{position: "relative", height: "10%"}}>
             <Title/>

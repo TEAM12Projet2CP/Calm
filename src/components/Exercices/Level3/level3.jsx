@@ -116,7 +116,7 @@ function Level3() {
 
   return (
     <div className="level3">
-      <NavBar/>
+      <NavBar isLoggedIn={JSON.parse(localStorage.getItem('user')).isLoggedIn || false }/>
       <Questionsswiper/>
       <button className="submit-btn">Submit</button>
       <Footer></Footer>

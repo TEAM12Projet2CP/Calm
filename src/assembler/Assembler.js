@@ -883,7 +883,7 @@ export class Assembler{
             // two pass first pass stays as it is with adding a delimater at each label and then re apply the semantic analysis for the labels and then reassemble the code
               if ( Errorcalm.SemanticError.length === 0 ) { 
                 for (let index = 0; index < toassmb.length; index++) {
-                    if (index >= lines) {
+                    if (index >= lines && Assembler.Labellist.labeltype) {
                         Assembler.Labellist[i].address = ipTrack;
                         i++;
                         if (i < Assembler.Labellist.length) {

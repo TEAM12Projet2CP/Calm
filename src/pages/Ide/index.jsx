@@ -254,7 +254,7 @@ const Ide = ({currentUser})=>{
     <> 
       {!simul && 
         <>
-          <NavBar/>
+          <NavBar isLoggedIn={true}/>
           <div style={{display:"flex"}} className="ide_container">
         
             <div className='codeContainer' id="cont">

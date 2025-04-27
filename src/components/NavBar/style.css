@@ -43,8 +43,8 @@ body{
   display: flex;
   flex-direction: row;
   list-style-type: none;
-  margin: 5%;
-  padding: 5%;
+  margin: 1%;
+  padding: 1%;
   gap: 20px;
 }
 

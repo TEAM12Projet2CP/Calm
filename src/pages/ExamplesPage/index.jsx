@@ -36,7 +36,7 @@ const ExamplesPage = () => {
 
   return (
     <>
-        <NavBar></NavBar>
+        <NavBar ></NavBar>
 
         <section style={{marginTop: "3em", position: "relative", display: "flex", justifyContent: "center"}}>
             <div id="example-icon">
