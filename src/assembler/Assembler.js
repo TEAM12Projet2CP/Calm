@@ -440,7 +440,8 @@ export class Assembler{
     constructor(input){
         let lexicalList = input.map((t,index)=> {return new Lexer(t,index).LexicalList} )
         if (Errorcalm.LexicalError.length > 0) {
-            Errorcalm.printError();
+            const errorMSG = Errorcalm.printError();
+            this.input = {error: errorMSG}
         }else{
         this.input = lexicalList;
         this.toAssemble = new SemanticAnalysis(this.input);
@@ -827,15 +828,26 @@ export class Assembler{
         }   
         static assemblecode(input){     
             let input2 = preprocessing.preprocessor(input)
-            MC.data = Array(100).fill().map((_, i) => FuncInterface.binaryToHexoneByte(input2.data[i] ?? "00000000"))
+            if(input2.error !== ''){
+                return {code: input2.code, memory: input2.data, error: input2.error}
+            }
+            // again, this needs a fix
+                //this is safe
+                MC.data = Array(100).fill().map((_, i) => FuncInterface.binaryToHexoneByte(input2.data[i] ?? "00000000"))
+
+            console.log("MC.data:",MC.data)
             Assembler.Labellist.push(...input2.varList)
             let output = new Assembler(input2.code);
-            var assembledcode = [];            
-            var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined"; 
+            // if semantic analysis returns any error we return it from here
+            if(output.input?.error){
+                return {code: [], memory: MC.data, error: output.error}
+            }
+            var assembledcode = [];
+            var toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
             var ipTrack = 0;
             var i=0;
-            var lines=(Assembler.Labellist.length === 0 )?toassmb.length:Assembler.Labellist[i].linedeclared;
-            // deux pass first pass stays as it is with adding a delimater at each label and then re apply the semantic analysis for the labels and then reassemble the code
+            var lines = (Assembler.Labellist.length === 0 ) ? toassmb.length : Assembler.Labellist[i].linedeclared;
+            // two pass first pass stays as it is with adding a delimater at each label and then re apply the semantic analysis for the labels and then reassemble the code
               if ( Errorcalm.SemanticError.length === 0 ) { 
                 for (let index = 0; index < toassmb.length; index++) {
                     if (index >= lines) {
@@ -844,25 +856,29 @@ export class Assembler{
                         }
                         i++;
                         if (i < Assembler.Labellist.length) {
-                            lines=Assembler.Labellist[i].linedeclared-Assembler.Labellist[i-1].linedeclared-1+index;
+                            lines = Assembler.Labellist[i].linedeclared - Assembler.Labellist[i-1].linedeclared-1+index;
                         }else{
-                            lines=toassmb.length;
+                            lines = toassmb.length;
                         }
                     }
                     ipTrack = ipTrack+(Assembler.assemble(toassmb[index]).length/2)     
                 }
-                SemanticAnalysis.labeling = false;
-                output = new Assembler(input2.code) 
+                SemanticAnalysis.labeltype = false;
+                output = new Assembler(input2.code)
+                // if semantic analysis returns any error we return it from here
+                if(output.input?.error){
+                    return {code: [], memory: MC.data, error: output.error}
+                } 
                 toassmb = (output && output.toAssemble && output.toAssemble.Semanticlist) ? output.toAssemble.Semanticlist : "Semanticlist is undefined";
                 for (let index = 0; index < toassmb.length; index++) {
                     assembledcode.push(Assembler.assemble(toassmb[index]))
                 }
-               return {code: assembledcode, memory: memory.data};
+               return {code: assembledcode, memory: memory.data, error: input2.error};
                 // here put the return in case of success
                 
             }else{
                 //here put the return in case of error
-                return "error";
+                return {code: assembledcode, memory: memory.data, error: `${Errorcalm.SemanticError[0].message} at line ${Errorcalm.SemanticError[0].line}`};
 
             }
         }
