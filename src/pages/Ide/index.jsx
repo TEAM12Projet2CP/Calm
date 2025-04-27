@@ -60,7 +60,7 @@ const handleRefresh = () => {
 function convertStrings(arr) {
   const result = [] ;
   for (let i = 0; i < arr.length; i++) {
-    for (let j = 0; j < arr[i].length; j += 2) {
+    for (let j = 0; j < arr[i]?.length || 0; j += 2) {
       result.push(arr[i][j] + arr[i][j+1]);
     }
   }
@@ -196,7 +196,7 @@ const Ide = ({currentUser})=>{
 
       if (lineWithoutComment !== '') {
         // If the line without comments is not empty, store it in codeArray
-        codeArray.push(lineWithoutComment.toUpperCase());
+        codeArray.push(lineWithoutComment);
       }
     });
 
@@ -343,6 +343,16 @@ const Ide = ({currentUser})=>{
                   }else{
                     inputouter=handleStoreCode();
                   }
+                  console.log("inputouter",inputouter);
+                  console.log(inputouter.error)
+                  //here I must check for errors, if there are any, we must quit, but quitting is causing an undefined return from somewhere!!
+                  // we shall figure out a solution and put this block back once again
+                  if(inputouter.error !== ''){
+                    setresult(inputouter.error);
+                    seterr(true);
+                    return 
+                  } 
+
                   let input=convertStrings(inputouter.code);
                   // not checked yet
                   memory.data = inputouter.memory;
@@ -368,7 +378,7 @@ const Ide = ({currentUser})=>{
                     setresult("this is not hexa code");
                     
                   }
-                  
+
                 }}>
                   execute
                 </button>

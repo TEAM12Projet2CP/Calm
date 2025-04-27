@@ -1,9 +1,9 @@
 import React from 'react'
 import {AuthForm} from '../../components/'
-
+import SignUpForm from '../../components/signUpForm'
 const Register = ({updateCurrentUser}) => {
     return (
-        <AuthForm currentRoute='/register' redirectRoute='/login' updateCurrentUser={updateCurrentUser}/>
+        <SignUpForm />
     )
 }
 

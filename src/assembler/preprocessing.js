@@ -22,27 +22,29 @@ export class preprocessing{
     getDataSegment(code){
         const n = code.length
         let i = 0
-        while( i < n && code[i] !== 'START'){
-            if(code[i] === 'SDATA'){
+        while( i < n && code[i].toUpperCase() !== 'START'){
+            if(code[i].toUpperCase() === 'SDATA'){
                 i += 1
                 let endOfSeg = false
                 while(!endOfSeg){
-                    if(code[i] === 'ENDS'){
-                        endOfSeg = true
-                        continue
-                    }
+                    
                     if(i === n){
+                        console.log("no end of data segment")
                         //error segment not closed
                         this.errors.push(new Errorcalm("Data segment not closed", "PREPROCESSING", i))
                         return
                     }
+                    if(code[i].toUpperCase() === 'ENDS'){
+                        endOfSeg = true
+                        continue
+                    }
+
                     this.dataSegment.push(code[i++])
                 }
                 break
             }
             i += 1
         }
-        console.log('data: ', this.dataSegment)
     }
 
     // allocate space in memory, to get addresses of variables
@@ -64,7 +66,7 @@ export class preprocessing{
                 this.errors.push(new Errorcalm("Wrong variable declaration", "PREPROCESSING", i))
                 return
             }
-            if(this.varList.includes(line[0])){
+            if(this.varList.includes(line[0].toUpperCase())){
                 // throw error, variable already declared
                 this.errors.push(new Errorcalm("Variable already declared", "PREPROCESSING", i))
                 return
@@ -79,15 +81,15 @@ export class preprocessing{
             // assign the name of the var to the corresponding object
             varHolder.label = false
             varHolder.linedeclared = i
-            varHolder.name = line[0]
+            varHolder.name = line[0].toUpperCase()
             varHolder.address ??= curAddress
             this.varList.push(varHolder)
-            if(!(['DB', 'DW']).includes(line[1])){
+            if(!(['DB', 'DW']).includes(line[1].toUpperCase())){
                 // throw error, wrong variable length declaration
                 this.errors.push(new Errorcalm("Wrong variable type", "PREPROCESSING", i))
                 return
             }
-            let length = line[1] === 'DB' ? 0 : 1 // data on one byte or on two bytes if line[0] === 'DW'
+            let length = line[1].toUpperCase() === 'DB' ? 0 : 1 // data on one byte or on two bytes if line[0] === 'DW'
             varHolder.length = length
             let value = line.filter((_,index) => index >= 2).join(" ").match(/"[^"]*"|[^,]+/g)
 
@@ -107,7 +109,8 @@ export class preprocessing{
                     if(length === 1){
                         if(val <= Math.abs(Math.pow(2,16))){
                             // use 2s complement instead of this expression
-                            val = FuncInterface.decimalTobinByte(val,1)
+                            console.log(val)
+                            val = FuncInterface.decimalTobinByte(val,16)
                             
                             return [String(val).substring(0,Math.floor(val.length / 2)), String(val).substring(Math.floor(val.length / 2))]
                         } else {
@@ -117,7 +120,7 @@ export class preprocessing{
                     } else {
                         if(val <= Math.abs(Math.pow(2,8))){
                             // use 2s complement instead of this expression
-                            return FuncInterface.decimalTobinByte(val,0)
+                            return FuncInterface.decimalTobinByte(val,8)
                         } else {
                             this.errors.push(new Errorcalm("value out of bounds", "PREPROCESSING", index))
                             return null
@@ -136,13 +139,13 @@ export class preprocessing{
                     } 
                     //ascii characters are positive integers between 0 and 255
                     
-                    return val.split('').filter(char => char !== '"').map(char => ['00000000',char.charCodeAt(0).toString(2).padStart(8,'0')]).flat()
+                    return val.split('').filter(char => char !== '"').map(char => ['00000000', char.charCodeAt(0).toString(2).padStart(8,'0')]).flat()
                 }
             }).flat() // flatten to get a 1 dimensional array just in case if we have a string in the object
             //we have to work on this
             this.data.push(...value)
          }
-        console.log(this.varList)
+        console.log(this.data)
         
     }
     // we suppose the code is given to use as 
@@ -217,7 +220,7 @@ export class preprocessing{
                     }
 
                     // making sure no sort of label is declared inside a macro
-                    line = input[curLine++].match(/([a-zA-Z_][a-zA-Z0-9_]*:?|\d+|,)/g)
+                    line = input[curLine++].match(/[a-zA-Z_][a-zA-Z0-9_*]*|[,:+-]|\d+/g)
                     if(line[0] === 'MACRO'){
                         // throw error, no macros allowed inside a macro
                         this.errors.push(new Errorcalm("No macros allowed inside a macro", "PREPROCESSING", curLine))
@@ -252,7 +255,7 @@ export class preprocessing{
             curLine += 1
             if(!input[curLine]){
                 // throw error
-                console.log("No end")
+                this.errors.push(new Errorcalm("no START keyword detected", "PREPROCESSING", curLine))
                 return
             }
         }
@@ -268,7 +271,7 @@ export class preprocessing{
                 endOfCode = true
                 continue
             }
-           let line = input[curLine++].match(/([a-zA-Z_][a-zA-Z0-9_]*:?|\d+|,)/g)
+           let line = input[curLine++].match(/[a-zA-Z_][a-zA-Z0-9_*]*|[,:+-]|\d+/g)
            
             if(line[0][line[0].length - 1] === ':'){
                 if(this.macroKeyWord.has(line[1])){
@@ -311,7 +314,10 @@ export class preprocessing{
             //there is no label, direct matching
             for(let i = newLine.length - 1; i >= 1; i--){
                 
-                body = body.map(inst => inst.replace(expandedMacroTemplate.instruction[i], newLine[i]))
+                const wordToReplace = expandedMacroTemplate.instruction[i];
+                const regex = new RegExp(`\\b${wordToReplace}\\*?\\b`, "g");
+            
+                body = body.map(inst => inst.replace(regex, newLine[i]));
         
             }
         return body
@@ -372,32 +378,37 @@ export class preprocessing{
     static preprocessor(code){
         const preprocessor = new preprocessing();
         let str = code
-        console.log("code 1 here:"+str)
-        preprocessor.getDataSegment(str)
-        //console.log("code 2 here:"+str)
-        if(preprocessor.errors.length > 0){
-            Errorcalm.printError(preprocessor.errors)
-            // force exit
-            return
-        }
-        preprocessor.allocateData()
-
-        if(preprocessor.errors.length > 0){
-            Errorcalm.printError(preprocessor.errors)
-            // force exit
-            return
-        }
-
-        preprocessor.extractMacro(str)
-
-        //console.log("code 2 here:"+str)
-        if(preprocessor.errors.length > 0){
-            Errorcalm.printError(preprocessor.errors)
-            // force exit
-            return
-        }
-
+        try{
+            
+            preprocessor.getDataSegment(str)
+            console.log(preprocessor.errors.length)
+            console.log(preprocessor.errors)
+            if(preprocessor.errors.length > 0){
+                return {code: [], labels: [], data: [], varList: [], error: `Error: ${preprocessor.errors[0].message}\n${preprocessor.errors[0].type}`}
+            }
+            str = str.map(line => line.toUpperCase())
+            preprocessor.allocateData()
+            if(preprocessor.errors.length > 0){
+                return {code: [], labels: [], data: [], varList: [], error: `Error: ${preprocessor.errors[preprocessor.errors.length - 1].message}\n${preprocessor.errors[preprocessor.errors.length - 1].type} in line ${preprocessor.errors[preprocessor.errors.length - 1].linenum} in data segment`}
+            }
+            preprocessor.extractMacro(str)
+            
+            if(preprocessor.errors.length > 0){
+                return {code: [], labels: [], data: [], varList: [], error: `Error: ${preprocessor.errors[preprocessor.errors.length - 1].message}\n${preprocessor.errors[preprocessor.errors.length - 1].type} in line ${preprocessor.errors[preprocessor.errors.length - 1].linenum} in macro declaration`}
+            }
             str = preprocessor.replaceMacro(str)
+            if(preprocessor.errors.length > 0){
+                return {code: [], labels: [], data: [], varList: [], error: `Error: ${preprocessor.errors[preprocessor.errors.length - 1].message}\n${preprocessor.errors[preprocessor.errors.length - 1].type} in line ${preprocessor.errors[preprocessor.errors.length - 1].linenum} in code segment`}
+            }
+            return {code: str || [], labels: preprocessor.labelSymbolList, data: preprocessor.data, varList: preprocessor.varList, error: ''}
+
+        }catch(err){
+            return {code: [], labels: [], data: [], varList: [], error: `Something went wrong, inner issue!`}
+        }
+
+
+
+
 
             console.log("code 2 here:"+str)
             if(preprocessor.errors.length > 0){
@@ -417,7 +428,7 @@ export class preprocessing{
 
         console.log("code 4 here:"+str)
 
-        return {code: str, labels: preprocessor.labelSymbolList, data: preprocessor.data, varList: preprocessor.varList}
+
 
     }
 

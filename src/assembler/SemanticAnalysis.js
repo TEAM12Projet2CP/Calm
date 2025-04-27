@@ -151,6 +151,12 @@ export class SemanticAnalysis {
                                     switch (lexicalList[i].length) {
 
                                         case 2:
+                                            const labelType = FuncInterface.Label_To_Num(firstparam.value,i)
+                                            if(labelType.type === 'ERROR'){
+                                                this.Semanticlist.push(new Errorcalm("LABEL not declared",null,i))
+                                                // we shall fix this later if needed
+                                                return 
+                                            }
                                             this.Semanticlist.push([{type:lexicalList[i][0].type, value:lexicalList[i][0].value, adrmode:0 },{type:FuncInterface.Label_To_Num(firstparam.value,i).type, value:FuncInterface.Label_To_Num(firstparam.value,i).value}]);
                                             
                                             break;
