@@ -48,14 +48,54 @@ const rawIounitToBus = {
     );
   },
 };
+
+const ADRbusToDATABus={
+    value:"",
+    target:".ball",
+    time:1800,
+    anim:(val,h,w)=>{
+    ///depart: ( 69% , 13.7% )
+    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.746,y:h*0.46,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*0.5});
+    gsap.fromTo(".ball",{x:w*0.746,y:h*0.46},{y:h*0.26 ,duration:1/(useSpeedStore.getState().speed)*0.8,delay:1/(useSpeedStore.getState().speed)*0.5});
+    gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*0.5,delay:1/(useSpeedStore.getState().speed)*1.3});
+  },}
+
+  const CacheToADR={
+    value:"",
+    target:".box-data",
+  time:1/useSpeedStore.getState().speed*3000,
+    anim:(val,h,w)=>{
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.705,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },}
+
+const Cacheanim={
+        value:"",
+        target:".Cache",
+        time:3000,
+        anim:(val,h,w)=>{
+            gsap.fromTo(".Cache",{opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+            gsap.fromTo(".Cache",{opacity:"1"},{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+        },}
+
+const fitToCache={
+    value:"",
+    target:".ball",
+    time:1000,
+    anim:(val,h,w)=>{
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.08,height:h*0.06,x:w*0.328,y:h*0.31,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    //gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    //gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
+  },}
+
 const AccToCache={
   value:"",
   target:".box-data",
 time:1/useSpeedStore.getState().speed*3000,
   anim:(val,h,w)=>{
   gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
-gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
-gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
 },}
 
 const CacheToRual1={
@@ -536,7 +576,7 @@ const rawRual1ToBus = {
   time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
-  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.262,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.106,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
   gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
@@ -546,7 +586,7 @@ const rawRual1ToBus = {
   time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
-    gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
     gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
     },}
 
@@ -556,7 +596,7 @@ const MdrToRual2={
   time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
-    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.106,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+    gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.262,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
     gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
     },}
 
@@ -566,7 +606,7 @@ const MdrToRual2={
   time:1/  useSpeedStore.getState().speed*3000,
     anim:(val,h,w)=>{
     gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
   gsap.to(".box-data",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
@@ -653,14 +693,14 @@ const MdrToRual2={
   },}
 
   //////////////// Adresse bus animations ///////////////////////////////
-const IPToMAR={
+  const IPToMAR={
     value:"",
     target:".box-ADR",
-  time:1/  useSpeedStore.getState().speed*3000,
+    time:1/useSpeedStore.getState().speed*1800,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
-    gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
-    gsap.to(".box-ADR",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/useSpeedStore.getState().speed*0.5})
+          gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/useSpeedStore.getState().speed*0.8,delay:1/useSpeedStore.getState().speed*0.5})
+          gsap.to(".box-ADR",{opacity:"0" ,duration:1/useSpeedStore.getState().speed*0.5,delay:1/useSpeedStore.getState().speed*1.3});
   },}
 
 const ADRToMAR={
@@ -2147,6 +2187,13 @@ class InstructionMOV01{
                   anim:CacheToReg.anim,
               },
               {
+          
+                value:"",
+                target:BusToRegisters.target,
+              time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                anim:BusToRegisters.anim,
+            },
+              {
                 value:"value2",
                 target:fitToR1.target,
               time:1/  useSpeedStore.getState().speed*fitToR1.time,
@@ -2154,7 +2201,7 @@ class InstructionMOV01{
             },
 
               ]
-                  }else if(!memory.cache.checkCache(this.addresse1, 0).hit){
+                  }else {
 
                   
                 return[
@@ -2178,6 +2225,13 @@ class InstructionMOV01{
                   anim:MdrToReg.anim,
               },
               {
+          
+                value:"",
+                target:BusToRegisters.target,
+              time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                anim:BusToRegisters.anim,
+            },
+              {
                   value:"value2",
                   target:fitToR1.target,
                 time:1/  useSpeedStore.getState().speed*fitToR1.time,
@@ -2195,27 +2249,75 @@ class InstructionMOV01{
                   anim: fitToR2.anim
               }];
           } else {
-              return [{
-                  value: "value2",
-                  target: infitToMdr.target,
-                  time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
-                  anim: infitToMdr.anim
-              }, {
-                  value: "",
-                  target: MdrToBus.target,
-                  time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
-                  anim: MdrToBus.anim
-              }, {
-                  value: "value2",
-                  target: MdrToReg.target,
-                  time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
-                  anim: MdrToReg.anim
-              }, {
-                  value: "value2",
-                  target: fitToR2.target,
-                  time: 1 / useSpeedStore.getState().speed * fitToR2.time,
-                  anim: fitToR2.anim
-              }];
+            if(memory.cache.checkCache(this.addresse2, 0).hit){
+  
+              return[{
+          
+                value:"",
+                target:CacheToBus.target,
+              time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+                anim:CacheToBus.anim,
+            },
+            {
+          
+              value:"value2",
+              target:CacheToReg.target,
+            time:1/  useSpeedStore.getState().speed*infitToMdr.time,
+              anim:CacheToReg.anim,
+          },
+          {
+          
+            value:"",
+            target:BusToRegisters.target,
+          time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+            anim:BusToRegisters.anim,
+        },
+          {
+            value:"value2",
+            target:fitToR2.target,
+          time:1/  useSpeedStore.getState().speed*fitToR2.time,
+            anim:fitToR2.anim,
+        },
+
+          ]
+              }else {
+
+              
+            return[
+              {
+                value:"value2",
+                target:infitToMdr.target,
+              time:1/  useSpeedStore.getState().speed*infitToMdr.time,
+                anim:infitToMdr.anim,
+            },
+         
+          {
+              value:"",
+              target:MdrToBus.target,
+            time:1/  useSpeedStore.getState().speed*MdrToBus.time,
+              anim:MdrToBus.anim,
+          },
+          {
+              value:"value2",
+              target:MdrToReg.target,
+            time:1/  useSpeedStore.getState().speed*MdrToReg.time,
+              anim:MdrToReg.anim,
+          },
+          {
+          
+            value:"",
+            target:BusToRegisters.target,
+          time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+            anim:BusToRegisters.anim,
+        },
+          {
+              value:"value2",
+              target:fitToR2.target,
+            time:1/  useSpeedStore.getState().speed*fitToR2.time,
+              anim:fitToR2.anim,
+          },
+          
+        ];}
           }
       } else if (this.register1 == "2") {
           if (this.isimmed === 1) {
@@ -2226,9 +2328,9 @@ class InstructionMOV01{
                   anim: fitToR3.anim
               }];
           } else {
-              if (memory.cache.checkCache(this.addresse1, 0).hit) {
+              if (memory.cache.checkCache(this.addresse2, 0).hit) {
                   return [{
-                      value: "value2",
+                      value: "",
                       target: CacheToBus.target,
                       time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
                       anim: CacheToBus.anim
@@ -2237,7 +2339,15 @@ class InstructionMOV01{
                       target: CacheToReg.target,
                       time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
                       anim: CacheToReg.anim
-                  }, {
+                  }, 
+                  {
+          
+                    value:"",
+                    target:BusToRegisters.target,
+                  time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                    anim:BusToRegisters.anim,
+                },
+                  {
                       value: "value2",
                       target: fitToR3.target,
                       time: 1 / useSpeedStore.getState().speed * fitToR3.time,
@@ -2260,6 +2370,13 @@ class InstructionMOV01{
                       time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
                       anim: MdrToReg.anim
                   }, {
+          
+                    value:"",
+                    target:BusToRegisters.target,
+                  time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                    anim:BusToRegisters.anim,
+                },
+                  {
                       value: "value2",
                       target: fitToR3.target,
                       time: 1 / useSpeedStore.getState().speed * fitToR3.time,
@@ -2276,9 +2393,9 @@ class InstructionMOV01{
                   anim: fitToR4.anim
               }];
           } else {
-              if (memory.cache.checkCache(this.addresse1, 0).hit) {
+              if (memory.cache.checkCache(this.addresse2, 0).hit) {
                   return [{
-                      value: "value2",
+                      value: "",
                       target: CacheToBus.target,
                       time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
                       anim: CacheToBus.anim
@@ -2288,6 +2405,13 @@ class InstructionMOV01{
                       time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
                       anim: CacheToReg.anim
                   }, {
+          
+                    value:"",
+                    target:BusToRegisters.target,
+                  time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                    anim:BusToRegisters.anim,
+                },
+                   {
                       value: "value2",
                       target: fitToR4.target,
                       time: 1 / useSpeedStore.getState().speed * fitToR4.time,
@@ -2310,6 +2434,13 @@ class InstructionMOV01{
                       time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
                       anim: MdrToReg.anim
                   }, {
+          
+                    value:"",
+                    target:BusToRegisters.target,
+                  time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                    anim:BusToRegisters.anim,
+                },
+                  {
                       value: "value2",
                       target: fitToR4.target,
                       time: 1 / useSpeedStore.getState().speed * fitToR4.time,
@@ -2336,20 +2467,26 @@ class InstructionMOV01{
                       anim: fitToAcc.anim,
                   },
               ];
-          } else if (memory.cache.checkCache(this.address, 0).hit) {
+          } else if (memory.cache.checkCache(this.addresse2, 0).hit) {
               return [
                   {
-                      value: "value2",
+                      value: "",
                       target: CacheToBus.target,
                       time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
                       anim: CacheToBus.anim,
                   },
                   {
                       value: "value2",
-                      target: CacheToReg.target,
-                      time: 1 / useSpeedStore.getState().speed * CacheToReg.time,
-                      anim: CacheToReg.anim,
+                      target: AccToCache.target,
+                      time: 1 / useSpeedStore.getState().speed * AccToCache.time,
+                      anim: AccToCache.anim,
                   },
+                  {
+                    value: "",
+                    target: BusToAcc.target,
+                    time: 1 / useSpeedStore.getState().speed * BusToAcc.time,
+                    anim: BusToAcc.anim,
+                },
                   {
                       value: "value2",
                       target: fitToAcc.target,
@@ -2378,7 +2515,7 @@ class InstructionMOV01{
                       anim: MDRToAcc.anim,
                   },
                   {
-                      value: "value2",
+                      value: "",
                       target: BusToAcc.target,
                       time: 1 / useSpeedStore.getState().speed * BusToAcc.time,
                       anim: BusToAcc.anim,
@@ -2403,10 +2540,10 @@ class InstructionMOV01{
                   anim: fitToBr.anim,
               },
           ];
-      } else if (memory.cache.checkCache(this.address, 0).hit) {
+      } else if (memory.cache.checkCache(this.addresse2, 0).hit) {
           return [
               {
-                  value: "value2",
+                  value: "",
                   target: CacheToBus.target,
                   time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
                   anim: CacheToBus.anim,
@@ -2417,6 +2554,13 @@ class InstructionMOV01{
                   time: 1 / useSpeedStore.getState().speed * CacheToReg.time,
                   anim: CacheToReg.anim,
               },
+              {
+          
+                value:"",
+                target:BusToRegisters.target,
+              time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                anim:BusToRegisters.anim,
+            },
               {
                   value: "value2",
                   target: fitToBr.target,
@@ -2445,6 +2589,13 @@ class InstructionMOV01{
                   anim: MdrToReg.anim,
               },
               {
+          
+                value:"",
+                target:BusToRegisters.target,
+              time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                anim:BusToRegisters.anim,
+            },
+              {
                   value: "value2",
                   target: fitToBr.target,
                   time: 1 / useSpeedStore.getState().speed * fitToBr.time,
@@ -2463,10 +2614,10 @@ else if (this.register1 == "6") {
               anim: fitToIdr.anim,
           },
       ];
-  } else if (memory.cache.checkCache(this.address, 0).hit) {
+  } else if (memory.cache.checkCache(this.addresse2, 0).hit) {
       return [
           {
-              value: "value2",
+              value: "",
               target: CacheToBus.target,
               time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
               anim: CacheToBus.anim,
@@ -2476,6 +2627,13 @@ else if (this.register1 == "6") {
               target: CacheToReg.target,
               time: 1 / useSpeedStore.getState().speed * CacheToReg.time,
               anim: CacheToReg.anim,
+          },
+          {
+          
+            value:"",
+            target:BusToRegisters.target,
+          time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+            anim:BusToRegisters.anim,
           },
           {
               value: "value2",
@@ -2504,6 +2662,13 @@ else if (this.register1 == "6") {
               time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
               anim: MdrToReg.anim,
           },
+          {
+          
+            value:"",
+            target:BusToRegisters.target,
+          time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+            anim:BusToRegisters.anim,
+        },
           {
               value: "value2",
               target: fitToIdr.target,
@@ -2524,34 +2689,69 @@ else if (this.register1 == "6") {
               anim: fitToSr.anim,
           },
       ];
-  } else {
-      return [
-          {
-              value: "value2",
-              target: infitToMdr.target,
-              time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
-              anim: infitToMdr.anim,
-          },
-          {
-              value: "",
-              target: MdrToBus.target,
-              time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
-              anim: MdrToBus.anim,
-          },
-          {
-              value: "value2",
-              target: MdrToReg.target,
-              time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
-              anim: MdrToReg.anim,
-          },
-          {
-              value: "value2",
-              target: fitToSr.target,
-              time: 1 / useSpeedStore.getState().speed * fitToSr.time,
-              anim: fitToSr.anim,
-          },
-      ];
-  }
+  } else if (memory.cache.checkCache(this.addresse2, 0).hit) {
+    return [
+        {
+            value: "",
+            target: CacheToBus.target,
+            time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
+            anim: CacheToBus.anim,
+        },
+        {
+            value: "value2",
+            target: CacheToReg.target,
+            time: 1 / useSpeedStore.getState().speed * CacheToReg.time,
+            anim: CacheToReg.anim,
+        },
+        {
+          
+          value:"",
+          target:BusToRegisters.target,
+        time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+          anim:BusToRegisters.anim,
+      },
+        {
+            value: "value2",
+            target: fitToSr.target,
+            time: 1 / useSpeedStore.getState().speed * fitToSr.time,
+            anim: fitToSr.anim,
+        },
+    ];
+} else {
+    return [
+        {
+            value: "value2",
+            target: infitToMdr.target,
+            time: 1 / useSpeedStore.getState().speed * infitToMdr.time,
+            anim: infitToMdr.anim,
+        },
+        {
+            value: "",
+            target: MdrToBus.target,
+            time: 1 / useSpeedStore.getState().speed * MdrToBus.time,
+            anim: MdrToBus.anim,
+        },
+        {
+            value: "value2",
+            target: MdrToReg.target,
+            time: 1 / useSpeedStore.getState().speed * MdrToReg.time,
+            anim: MdrToReg.anim,
+        },
+        {
+          
+          value:"",
+          target:BusToRegisters.target,
+        time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+          anim:BusToRegisters.anim,
+        },
+        {
+            value: "value2",
+            target: fitToSr.target,
+            time: 1 / useSpeedStore.getState().speed * fitToSr.time,
+            anim: fitToSr.anim,
+        },
+    ];
+}
 }
         }
       }}
@@ -2587,8 +2787,13 @@ class InstructionMOV10{
         }
         ];
         this.buildanim=function(){
-            if(this.register1=="000"){
+            if(this.register2=="000"){
                 return[{
+                  value:"value2",
+                  target:fitToR1.target,
+                time:1/  useSpeedStore.getState().speed*fitToR1.time,
+                  anim:fitToR1.anim,
+              },{
                     value:"value2",
                     target:infitToR1.target,
                   time:1/  useSpeedStore.getState().speed*infitToR1.time,
@@ -2603,421 +2808,835 @@ class InstructionMOV10{
                 },
                 {
                     value:"value2",
-                    target:RegToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
-                    anim:RegToMdr.anim,
+                    target:RegToCache.target,
+                  time:1/  useSpeedStore.getState().speed*RegToCache.time,
+                    anim:RegToCache.anim,
                 },
                 {
                     value:"",
-                    target:BusToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
-                    anim:BusToMdr.anim,
+                    target:BusToCache.target,
+                  time:1/  useSpeedStore.getState().speed*BusToCache.time,
+                    anim:BusToCache.anim,
                 },
                 {
                     value:"value2",
-                    target:fitToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
-                    anim:fitToMdr.anim,
+                    target:fitToCache.target,
+                  time:1/  useSpeedStore.getState().speed*fitToCache.time,
+                    anim:fitToCache.anim,
                 },
                 {
                     value:"WRITE",
-                    target:MCanim.target,
-                  time:1/  useSpeedStore.getState().speed*MCanim.time,
-                    anim:MCanim.anim,
+                    target:Cacheanim.target,
+                  time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+                    anim:Cacheanim.anim,
+                },
+                {
+                  value: "",
+                  target: CacheToBus.target,
+                  time: 1/  useSpeedStore.getState().speed* CacheToBus.time,
+                  anim: CacheToBus.anim,
+                },
+                {
+                  value: this.addresse1,
+                  target: CacheToADR.target,
+                  time: 1/  useSpeedStore.getState().speed* CacheToADR.time,
+                  anim: CacheToADR.anim,
+                },
+                {
+                  value: "",
+                  target: ADRbusToDATABus.target,
+                  time: 1/  useSpeedStore.getState().speed* ADRbusToDATABus.time,
+                  anim: ADRbusToDATABus.anim,
+                },
+                {
+                  value: this.addresse1,
+                  target: ADRToMAR.target,
+                  time: 1/  useSpeedStore.getState().speed* ADRToMAR.time,
+                  anim: ADRToMAR.anim,
+                },
+                {
+                  value: this.addresse1,
+                  target: fitToMar.target,
+                  time: 1/  useSpeedStore.getState().speed* fitToMar.time,
+                  anim: fitToMar.anim,
                 },
                 {
                   value:"",
-                  target:MdrToBus.target,
-                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-                  anim:MdrToBus.anim,
+                  target:CacheToBus.target,
+                time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+                  anim:CacheToBus.anim,
               },
-            
             {
               value:"value2",
-              target:RegToCache.target,
-            time:1/  useSpeedStore.getState().speed*RegToCache.time,
-              anim:RegToCache.anim,
+              target:CacheToMDR.target,
+            time:1/  useSpeedStore.getState().speed*CacheToMDR.time,
+              anim:CacheToMDR.anim,
           },
           {
             value:"",
-            target:BusToCache.target,
-          time:1/  useSpeedStore.getState().speed*BusToCache.time,
-            anim:BusToCache.anim,
+            target:BusToMdr.target,
+          time:1/  useSpeedStore.getState().speed*BusToMdr.time,
+            anim:BusToMdr.anim,
+        },
+        {
+          value:"value2",
+          target:fitToMdr.target,
+          time:1/  useSpeedStore.getState().speed*fitToMdr.time,
+          anim:fitToMdr.anim,
+        },
+        {
+          value:"WRITE-THROUGH",
+          target:MCanim.target,
+          time:1/  useSpeedStore.getState().speed*MCanim.time,
+          anim:MCanim.anim,
         },
 
                 
             ];
-            }else if (this.register1=="001") {
-                return[{
-                    value:"value2",
-                    target:infitToR2.target,
-                  time:1/  useSpeedStore.getState().speed*infitToR2.time,
-                    anim:infitToR2.anim,
-                },
-                {
-                    value:"",
-                    target:RegistersToBus.target,
-                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
-                    anim:RegistersToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:RegToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
-                    anim:RegToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:BusToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
-                    anim:BusToMdr.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
-                    anim:fitToMdr.anim,
-                },
-                {
-                    value:"WRITE",
-                    target:MCanim.target,
-                  time:1/  useSpeedStore.getState().speed*MCanim.time,
-                    anim:MCanim.anim,
-                }  ,
-                {
-                  value:"",
-                  target:MdrToBus.target,
-                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-                  anim:MdrToBus.anim,
-              },
-            
-            {
-              value:"value2",
-              target:RegToCache.target,
-            time:1/  useSpeedStore.getState().speed*RegToCache.time,
-              anim:RegToCache.anim,
-          },
-          {
-            value:"",
-            target:BusToCache.target,
-          time:1/  useSpeedStore.getState().speed*BusToCache.time,
-            anim:BusToCache.anim,
-        },          
-            ];
-                
-            }else if (this.register1=="2") {
-                return[{
-                    value:"value2",
-                    target:infitToR3.target,
-                  time:1/  useSpeedStore.getState().speed*infitToR3.time,
-                    anim:infitToR3.anim,
-                },
-                {
-                    value:"",
-                    target:RegistersToBus.target,
-                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
-                    anim:RegistersToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:RegToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
-                    anim:RegToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:BusToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
-                    anim:BusToMdr.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
-                    anim:fitToMdr.anim,
-                },
-                {
-                    value:"WRITE",
-                    target:MCanim.target,
-                  time:1/  useSpeedStore.getState().speed*MCanim.time,
-                    anim:MCanim.anim,
-                }
-                ,
-                {
-                  value:"",
-                  target:MdrToBus.target,
-                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-                  anim:MdrToBus.anim,
-              },
-            
-            {
-              value:"value2",
-              target:RegToCache.target,
-            time:1/  useSpeedStore.getState().speed*RegToCache.time,
-              anim:RegToCache.anim,
-          },
-          {
-            value:"",
-            target:BusToCache.target,
-          time:1/  useSpeedStore.getState().speed*BusToCache.time,
-            anim:BusToCache.anim,
-        },
-                
-            ];
-            }else if (this.register1=="3") {
-                return[{
-                    value:"value2",
-                    target:infitToR4.target,
-                  time:1/  useSpeedStore.getState().speed*infitToR4.time,
-                    anim:infitToR4.anim,
-                },
-                {
-                    value:"",
-                    target:RegistersToBus.target,
-                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
-                    anim:RegistersToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:RegToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
-                    anim:RegToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:BusToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
-                    anim:BusToMdr.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
-                    anim:fitToMdr.anim,
-                },
-                {
-                    value:"WRITE",
-                    target:MCanim.target,
-                  time:1/  useSpeedStore.getState().speed*MCanim.time,
-                    anim:MCanim.anim,
-                }
-                ,
-                {
-                  value:"",
-                  target:MdrToBus.target,
-                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-                  anim:MdrToBus.anim,
-              },
-            
-            {
-              value:"value2",
-              target:RegToCache.target,
-            time:1/  useSpeedStore.getState().speed*RegToCache.time,
-              anim:RegToCache.anim,
-          },
-          {
-            value:"",
-            target:BusToCache.target,
-          time:1/  useSpeedStore.getState().speed*BusToCache.time,
-            anim:BusToCache.anim,
-        },
-                
-            ];
-            }else if (this.register1=="4") {
-                return[{
-                    value:"value2",
-                    target:infitToAcc.target,
-                  time:1/  useSpeedStore.getState().speed*infitToAcc.time,
-                    anim:infitToAcc.anim,//we have to change animations here___________________________________
-                },
-                {
-                    value:"",
-                    target:AccToBus.target,
-                  time:1/  useSpeedStore.getState().speed*AccToBus.time,
-                    anim:AccToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:AccToMDR.target,
-                  time:1/  useSpeedStore.getState().speed*AccToMDR.time,
-                    anim:AccToMDR.anim,
-                },
-                {
-                    value:"",
-                    target:BusToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
-                    anim:BusToMdr.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
-                    anim:fitToMdr.anim,
-                },
-                {
-                    value:"WRITE",
-                    target:MCanim.target,
-                  time:1/  useSpeedStore.getState().speed*MCanim.time,
-                 anim:MCanim.anim,
-                }
-                ,
-                {
-                  value:"",
-                  target:MdrToBus.target,
-                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-                  anim:MdrToBus.anim,
-              },
-            
-            {
-              value:"value2",
-              target:RegToCache.target,
-            time:1/  useSpeedStore.getState().speed*RegToCache.time,
-              anim:RegToCache.anim,
-          },
-          {
-            value:"",
-            target:BusToCache.target,
-          time:1/  useSpeedStore.getState().speed*BusToCache.time,
-            anim:BusToCache.anim,
-        },
-                
-            ];
-            }else if (this.register1=="5") {
-                return[{
-                    value:"value2",
-                    target:infitToBr.target,
-                  time:1/  useSpeedStore.getState().speed*infitToBr.time,
-                    anim:infitToBr.anim,
-                },
-                {
-                    value:"",
-                    target:RegistersToBus.target,
-                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
-                    anim:RegistersToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:RegToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
-                    anim:RegToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:BusToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
-                    anim:BusToMdr.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
-                    anim:fitToMdr.anim,
-                },
-                {
-                    value:"WRITE",
-                    target:MCanim.target,
-                  time:1/  useSpeedStore.getState().speed*MCanim.time,
-                    anim:MCanim.anim,
-                }
-            ];
-            }else if (this.register1=="6") {
-                return[{
-                    value:"value2",
-                    target:infitToIdr.target,
-                  time:1/  useSpeedStore.getState().speed*infitToIdr.time,
-                    anim:infitToIdr.anim,
-                },
-                {
-                    value:"",
-                    target:RegistersToBus.target,
-                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
-                    anim:RegistersToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:RegToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
-                    anim:RegToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:BusToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
-                    anim:BusToMdr.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
-                    anim:fitToMdr.anim,
-                },
-                {
-                    value:"WRITE",
-                    target:MCanim.target,
-                  time:1/  useSpeedStore.getState().speed*MCanim.time,
-                    anim:MCanim.anim,
-                }
-                ,
-                ];
-            }else if (this.register1=="7") {
-                return[{
-                    value:"value2",
-                    target:infitToSR.target,
-                  time:1/  useSpeedStore.getState().speed*infitToSR.time,
-                    anim:infitToSR.anim,
-                },
-                {
-                    value:"",
-                    target:RegistersToBus.target,
-                  time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
-                    anim:RegistersToBus.anim,
-                },
-                {
-                    value:"value2",
-                    target:RegToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*RegToMdr.time,
-                    anim:RegToMdr.anim,
-                },
-                {
-                    value:"",
-                    target:BusToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
-                    anim:BusToMdr.anim,
-                },
-                {
-                    value:"value2",
-                    target:fitToMdr.target,
-                  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
-                    anim:fitToMdr.anim,
-                },
-                {
-                    value:"WRITE",
-                    target:MCanim.target,
-                  time:1/  useSpeedStore.getState().speed*MCanim.time,
-                    anim:MCanim.anim,
-                }
-                ,
-                {
+            }else if (this.register2=="001") {
+              return[{
+                value:"value2",
+                target:fitToR2.target,
+              time:1/  useSpeedStore.getState().speed*fitToR2.time,
+                anim:fitToR2.anim,
+            },{
                   value:"value2",
-                  target:MdrToBus.target,
-                time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-                  anim:MdrToBus.anim,
+                  target:infitToR2.target,
+                time:1/  useSpeedStore.getState().speed*infitToR2.time,
+                  anim:infitToR2.anim,
               },
-            
-            {
-              value:"",
-              target:RegToCache.target,
-            time:1/  useSpeedStore.getState().speed*RegToCache.time,
-              anim:RegToCache.anim,
-          },
+
+              {
+                  value:"",
+                  target:RegistersToBus.target,
+                time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                  anim:RegistersToBus.anim,
+              },
+              {
+                  value:"value2",
+                  target:RegToCache.target,
+                time:1/  useSpeedStore.getState().speed*RegToCache.time,
+                  anim:RegToCache.anim,
+              },
+              {
+                  value:"",
+                  target:BusToCache.target,
+                time:1/  useSpeedStore.getState().speed*BusToCache.time,
+                  anim:BusToCache.anim,
+              },
+              {
+                  value:"value2",
+                  target:fitToCache.target,
+                time:1/  useSpeedStore.getState().speed*fitToCache.time,
+                  anim:fitToCache.anim,
+              },
+              {
+                  value:"WRITE",
+                  target:Cacheanim.target,
+                time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+                  anim:Cacheanim.anim,
+              },
+              {
+                value: "",
+                target: CacheToBus.target,
+                time: 1/  useSpeedStore.getState().speed* CacheToBus.time,
+                anim: CacheToBus.anim,
+              },
+              {
+                value: this.addresse1,
+                target: CacheToADR.target,
+                time: 1/  useSpeedStore.getState().speed* CacheToADR.time,
+                anim: CacheToADR.anim,
+              },
+              {
+                value: "",
+                target: ADRbusToDATABus.target,
+                time: 1/  useSpeedStore.getState().speed* ADRbusToDATABus.time,
+                anim: ADRbusToDATABus.anim,
+              },
+              {
+                value: this.addresse1,
+                target: ADRToMAR.target,
+                time: 1/  useSpeedStore.getState().speed* ADRToMAR.time,
+                anim: ADRToMAR.anim,
+              },
+              {
+                value: this.addresse1,
+                target: fitToMar.target,
+                time: 1/  useSpeedStore.getState().speed* fitToMar.time,
+                anim: fitToMar.anim,
+              },
+              {
+                value:"",
+                target:CacheToBus.target,
+              time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+                anim:CacheToBus.anim,
+            },
           {
             value:"value2",
+            target:CacheToMDR.target,
+          time:1/  useSpeedStore.getState().speed*CacheToMDR.time,
+            anim:CacheToMDR.anim,
+        },
+        {
+          value:"",
+          target:BusToMdr.target,
+        time:1/  useSpeedStore.getState().speed*BusToMdr.time,
+          anim:BusToMdr.anim,
+      },
+      {
+        value:"value2",
+        target:fitToMdr.target,
+        time:1/  useSpeedStore.getState().speed*fitToMdr.time,
+        anim:fitToMdr.anim,
+      },
+      {
+        value:"WRITE-THROUGH",
+        target:MCanim.target,
+        time:1/  useSpeedStore.getState().speed*MCanim.time,
+        anim:MCanim.anim,
+      },
+
+              
+          ];
+          }else if (this.register2=="2") {
+            return[{
+              value:"value2",
+              target:fitToR3.target,
+            time:1/  useSpeedStore.getState().speed*fitToR3.time,
+              anim:fitToR3.anim,
+          },{
+                value:"value2",
+                target:infitToR3.target,
+              time:1/  useSpeedStore.getState().speed*infitToR3.time,
+                anim:infitToR3.anim,
+            },
+
+            {
+                value:"",
+                target:RegistersToBus.target,
+              time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                anim:RegistersToBus.anim,
+            },
+            {
+                value:"value2",
+                target:RegToCache.target,
+              time:1/  useSpeedStore.getState().speed*RegToCache.time,
+                anim:RegToCache.anim,
+            },
+            {
+                value:"",
+                target:BusToCache.target,
+              time:1/  useSpeedStore.getState().speed*BusToCache.time,
+                anim:BusToCache.anim,
+            },
+            {
+                value:"value2",
+                target:fitToCache.target,
+              time:1/  useSpeedStore.getState().speed*fitToCache.time,
+                anim:fitToCache.anim,
+            },
+            {
+                value:"WRITE",
+                target:Cacheanim.target,
+              time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+                anim:Cacheanim.anim,
+            },
+            {
+              value: "",
+              target: CacheToBus.target,
+              time: 1/  useSpeedStore.getState().speed* CacheToBus.time,
+              anim: CacheToBus.anim,
+            },
+            {
+              value: this.addresse1,
+              target: CacheToADR.target,
+              time: 1/  useSpeedStore.getState().speed* CacheToADR.time,
+              anim: CacheToADR.anim,
+            },
+            {
+              value: "",
+              target: ADRbusToDATABus.target,
+              time: 1/  useSpeedStore.getState().speed* ADRbusToDATABus.time,
+              anim: ADRbusToDATABus.anim,
+            },
+            {
+              value: this.addresse1,
+              target: ADRToMAR.target,
+              time: 1/  useSpeedStore.getState().speed* ADRToMAR.time,
+              anim: ADRToMAR.anim,
+            },
+            {
+              value: this.addresse1,
+              target: fitToMar.target,
+              time: 1/  useSpeedStore.getState().speed* fitToMar.time,
+              anim: fitToMar.anim,
+            },
+            {
+              value:"",
+              target:CacheToBus.target,
+            time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+              anim:CacheToBus.anim,
+          },
+        {
+          value:"value2",
+          target:CacheToMDR.target,
+        time:1/  useSpeedStore.getState().speed*CacheToMDR.time,
+          anim:CacheToMDR.anim,
+      },
+      {
+        value:"",
+        target:BusToMdr.target,
+      time:1/  useSpeedStore.getState().speed*BusToMdr.time,
+        anim:BusToMdr.anim,
+    },
+    {
+      value:"value2",
+      target:fitToMdr.target,
+      time:1/  useSpeedStore.getState().speed*fitToMdr.time,
+      anim:fitToMdr.anim,
+    },
+    {
+      value:"WRITE-THROUGH",
+      target:MCanim.target,
+      time:1/  useSpeedStore.getState().speed*MCanim.time,
+      anim:MCanim.anim,
+    },
+
+            
+        ];
+        }else if (this.register2=="3") {
+          return[{
+            value:"value2",
+            target:fitToR4.target,
+          time:1/  useSpeedStore.getState().speed*fitToR4.time,
+            anim:fitToR4.anim,
+        },{
+              value:"value2",
+              target:infitToR4.target,
+            time:1/  useSpeedStore.getState().speed*infitToR4.time,
+              anim:infitToR4.anim,
+          },
+
+          {
+              value:"",
+              target:RegistersToBus.target,
+            time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+              anim:RegistersToBus.anim,
+          },
+          {
+              value:"value2",
+              target:RegToCache.target,
+            time:1/  useSpeedStore.getState().speed*RegToCache.time,
+              anim:RegToCache.anim,
+          },
+          {
+              value:"",
+              target:BusToCache.target,
+            time:1/  useSpeedStore.getState().speed*BusToCache.time,
+              anim:BusToCache.anim,
+          },
+          {
+              value:"value2",
+              target:fitToCache.target,
+            time:1/  useSpeedStore.getState().speed*fitToCache.time,
+              anim:fitToCache.anim,
+          },
+          {
+              value:"WRITE",
+              target:Cacheanim.target,
+            time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+              anim:Cacheanim.anim,
+          },
+          {
+            value: "",
+            target: CacheToBus.target,
+            time: 1/  useSpeedStore.getState().speed* CacheToBus.time,
+            anim: CacheToBus.anim,
+          },
+          {
+            value: this.addresse1,
+            target: CacheToADR.target,
+            time: 1/  useSpeedStore.getState().speed* CacheToADR.time,
+            anim: CacheToADR.anim,
+          },
+          {
+            value: "",
+            target: ADRbusToDATABus.target,
+            time: 1/  useSpeedStore.getState().speed* ADRbusToDATABus.time,
+            anim: ADRbusToDATABus.anim,
+          },
+          {
+            value: this.addresse1,
+            target: ADRToMAR.target,
+            time: 1/  useSpeedStore.getState().speed* ADRToMAR.time,
+            anim: ADRToMAR.anim,
+          },
+          {
+            value: this.addresse1,
+            target: fitToMar.target,
+            time: 1/  useSpeedStore.getState().speed* fitToMar.time,
+            anim: fitToMar.anim,
+          },
+          {
+            value:"",
+            target:CacheToBus.target,
+          time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+            anim:CacheToBus.anim,
+        },
+      {
+        value:"value2",
+        target:CacheToMDR.target,
+      time:1/  useSpeedStore.getState().speed*CacheToMDR.time,
+        anim:CacheToMDR.anim,
+    },
+    {
+      value:"",
+      target:BusToMdr.target,
+    time:1/  useSpeedStore.getState().speed*BusToMdr.time,
+      anim:BusToMdr.anim,
+  },
+  {
+    value:"value2",
+    target:fitToMdr.target,
+    time:1/  useSpeedStore.getState().speed*fitToMdr.time,
+    anim:fitToMdr.anim,
+  },
+  {
+    value:"WRITE-THROUGH",
+    target:MCanim.target,
+    time:1/  useSpeedStore.getState().speed*MCanim.time,
+    anim:MCanim.anim,
+  },
+
+          
+      ];
+      }else if (this.register2=="4") {
+        return[{
+          value:"value2",
+          target:fitToAcc.target,
+        time:1/  useSpeedStore.getState().speed*fitToAcc.time,
+          anim:fitToAcc.anim,
+      },{
+            value:"value2",
+            target:infitToAcc.target,
+          time:1/  useSpeedStore.getState().speed*infitToAcc.time,
+            anim:infitToAcc.anim,
+        },
+
+        {
+            value:"",
+            target:AccToBus.target,
+          time:1/  useSpeedStore.getState().speed*AccToBus.time,
+            anim:AccToBus.anim,
+        },
+        {
+            value:"value2",
+            target:AccToCache.target,
+          time:1/  useSpeedStore.getState().speed*AccToCache.time,
+            anim:AccToCache.anim,
+        },
+        {
+            value:"",
             target:BusToCache.target,
           time:1/  useSpeedStore.getState().speed*BusToCache.time,
             anim:BusToCache.anim,
         },
-            ];
-            }
+        {
+            value:"value2",
+            target:fitToCache.target,
+          time:1/  useSpeedStore.getState().speed*fitToCache.time,
+            anim:fitToCache.anim,
+        },
+        {
+            value:"WRITE",
+            target:Cacheanim.target,
+          time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+            anim:Cacheanim.anim,
+        },
+        {
+          value: "",
+          target: CacheToBus.target,
+          time: 1/  useSpeedStore.getState().speed* CacheToBus.time,
+          anim: CacheToBus.anim,
+        },
+        {
+          value: this.addresse1,
+          target: CacheToADR.target,
+          time: 1/  useSpeedStore.getState().speed* CacheToADR.time,
+          anim: CacheToADR.anim,
+        },
+        {
+          value: "",
+          target: ADRbusToDATABus.target,
+          time: 1/  useSpeedStore.getState().speed* ADRbusToDATABus.time,
+          anim: ADRbusToDATABus.anim,
+        },
+        {
+          value: this.addresse1,
+          target: ADRToMAR.target,
+          time: 1/  useSpeedStore.getState().speed* ADRToMAR.time,
+          anim: ADRToMAR.anim,
+        },
+        {
+          value: this.addresse1,
+          target: fitToMar.target,
+          time: 1/  useSpeedStore.getState().speed* fitToMar.time,
+          anim: fitToMar.anim,
+        },
+        {
+          value:"",
+          target:CacheToBus.target,
+        time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+          anim:CacheToBus.anim,
+      },
+    {
+      value:"value2",
+      target:CacheToMDR.target,
+    time:1/  useSpeedStore.getState().speed*CacheToMDR.time,
+      anim:CacheToMDR.anim,
+  },
+  {
+    value:"",
+    target:BusToMdr.target,
+  time:1/  useSpeedStore.getState().speed*BusToMdr.time,
+    anim:BusToMdr.anim,
+},
+{
+  value:"value2",
+  target:fitToMdr.target,
+  time:1/  useSpeedStore.getState().speed*fitToMdr.time,
+  anim:fitToMdr.anim,
+},
+{
+  value:"WRITE-THROUGH",
+  target:MCanim.target,
+  time:1/  useSpeedStore.getState().speed*MCanim.time,
+  anim:MCanim.anim,
+},
+
+        
+    ];
+    }else if (this.register2=="5"){
+      return[{
+        value:"value2",
+        target:fitToBr.target,
+      time:1/  useSpeedStore.getState().speed*fitToBr.time,
+        anim:fitToBr.anim,
+    },{
+          value:"value2",
+          target:infitToBr.target,
+        time:1/  useSpeedStore.getState().speed*infitToBr.time,
+          anim:infitToBr.anim,
+      },
+
+      {
+          value:"",
+          target:RegistersToBus.target,
+        time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+          anim:RegistersToBus.anim,
+      },
+      {
+          value:"value2",
+          target:RegToCache.target,
+        time:1/  useSpeedStore.getState().speed*RegToCache.time,
+          anim:RegToCache.anim,
+      },
+      {
+          value:"",
+          target:BusToCache.target,
+        time:1/  useSpeedStore.getState().speed*BusToCache.time,
+          anim:BusToCache.anim,
+      },
+      {
+          value:"value2",
+          target:fitToCache.target,
+        time:1/  useSpeedStore.getState().speed*fitToCache.time,
+          anim:fitToCache.anim,
+      },
+      {
+          value:"WRITE",
+          target:Cacheanim.target,
+        time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+          anim:Cacheanim.anim,
+      },
+      {
+        value: "",
+        target: CacheToBus.target,
+        time: 1/  useSpeedStore.getState().speed* CacheToBus.time,
+        anim: CacheToBus.anim,
+      },
+      {
+        value: this.addresse1,
+        target: CacheToADR.target,
+        time: 1/  useSpeedStore.getState().speed* CacheToADR.time,
+        anim: CacheToADR.anim,
+      },
+      {
+        value: "",
+        target: ADRbusToDATABus.target,
+        time: 1/  useSpeedStore.getState().speed* ADRbusToDATABus.time,
+        anim: ADRbusToDATABus.anim,
+      },
+      {
+        value: this.addresse1,
+        target: ADRToMAR.target,
+        time: 1/  useSpeedStore.getState().speed* ADRToMAR.time,
+        anim: ADRToMAR.anim,
+      },
+      {
+        value: this.addresse1,
+        target: fitToMar.target,
+        time: 1/  useSpeedStore.getState().speed* fitToMar.time,
+        anim: fitToMar.anim,
+      },
+      {
+        value:"",
+        target:CacheToBus.target,
+      time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+        anim:CacheToBus.anim,
+    },
+  {
+    value:"value2",
+    target:CacheToMDR.target,
+  time:1/  useSpeedStore.getState().speed*CacheToMDR.time,
+    anim:CacheToMDR.anim,
+},
+{
+  value:"",
+  target:BusToMdr.target,
+time:1/  useSpeedStore.getState().speed*BusToMdr.time,
+  anim:BusToMdr.anim,
+},
+{
+value:"value2",
+target:fitToMdr.target,
+time:1/  useSpeedStore.getState().speed*fitToMdr.time,
+anim:fitToMdr.anim,
+},
+{
+value:"WRITE-THROUGH",
+target:MCanim.target,
+time:1/  useSpeedStore.getState().speed*MCanim.time,
+anim:MCanim.anim,
+},
+
+      
+  ];
+  }else if (this.register2=="6") {
+    return[{
+      value:"value2",
+      target:fitToIdr.target,
+    time:1/  useSpeedStore.getState().speed*fitToIdr.time,
+      anim:fitToIdr.anim,
+  },{
+        value:"value2",
+        target:infitToIdr.target,
+      time:1/  useSpeedStore.getState().speed*infitToIdr.time,
+        anim:infitToIdr.anim,
+    },
+
+    {
+        value:"",
+        target:RegistersToBus.target,
+      time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+        anim:RegistersToBus.anim,
+    },
+    {
+        value:"value2",
+        target:RegToCache.target,
+      time:1/  useSpeedStore.getState().speed*RegToCache.time,
+        anim:RegToCache.anim,
+    },
+    {
+        value:"",
+        target:BusToCache.target,
+      time:1/  useSpeedStore.getState().speed*BusToCache.time,
+        anim:BusToCache.anim,
+    },
+    {
+        value:"value2",
+        target:fitToCache.target,
+      time:1/  useSpeedStore.getState().speed*fitToCache.time,
+        anim:fitToCache.anim,
+    },
+    {
+        value:"WRITE",
+        target:Cacheanim.target,
+      time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+        anim:Cacheanim.anim,
+    },
+    {
+      value: "",
+      target: CacheToBus.target,
+      time: 1/  useSpeedStore.getState().speed* CacheToBus.time,
+      anim: CacheToBus.anim,
+    },
+    {
+      value: this.addresse1,
+      target: CacheToADR.target,
+      time: 1/  useSpeedStore.getState().speed* CacheToADR.time,
+      anim: CacheToADR.anim,
+    },
+    {
+      value: "",
+      target: ADRbusToDATABus.target,
+      time: 1/  useSpeedStore.getState().speed* ADRbusToDATABus.time,
+      anim: ADRbusToDATABus.anim,
+    },
+    {
+      value: this.addresse1,
+      target: ADRToMAR.target,
+      time: 1/  useSpeedStore.getState().speed* ADRToMAR.time,
+      anim: ADRToMAR.anim,
+    },
+    {
+      value: this.addresse1,
+      target: fitToMar.target,
+      time: 1/  useSpeedStore.getState().speed* fitToMar.time,
+      anim: fitToMar.anim,
+    },
+    {
+      value:"",
+      target:CacheToBus.target,
+    time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+      anim:CacheToBus.anim,
+  },
+{
+  value:"value2",
+  target:CacheToMDR.target,
+time:1/  useSpeedStore.getState().speed*CacheToMDR.time,
+  anim:CacheToMDR.anim,
+},
+{
+value:"",
+target:BusToMdr.target,
+time:1/  useSpeedStore.getState().speed*BusToMdr.time,
+anim:BusToMdr.anim,
+},
+{
+value:"value2",
+target:fitToMdr.target,
+time:1/  useSpeedStore.getState().speed*fitToMdr.time,
+anim:fitToMdr.anim,
+},
+{
+value:"WRITE-THROUGH",
+target:MCanim.target,
+time:1/  useSpeedStore.getState().speed*MCanim.time,
+anim:MCanim.anim,
+},
+
+    
+];
+}else if (this.register2=="7") {
+  return[{
+    value:"value2",
+    target:fitToSr.target,
+  time:1/  useSpeedStore.getState().speed*fitToSr.time,
+    anim:fitToSr.anim,
+    },
+    {
+      value:"value2",
+      target:infitToSR.target,
+    time:1/  useSpeedStore.getState().speed*infitToSR.time,
+      anim:infitToSR.anim,
+  },
+
+  {
+      value:"",
+      target:RegistersToBus.target,
+    time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+      anim:RegistersToBus.anim,
+  },
+  {
+      value:"value2",
+      target:RegToCache.target,
+    time:1/  useSpeedStore.getState().speed*RegToCache.time,
+      anim:RegToCache.anim,
+  },
+  {
+      value:"",
+      target:BusToCache.target,
+    time:1/  useSpeedStore.getState().speed*BusToCache.time,
+      anim:BusToCache.anim,
+  },
+  {
+      value:"value2",
+      target:fitToCache.target,
+    time:1/  useSpeedStore.getState().speed*fitToCache.time,
+      anim:fitToCache.anim,
+  },
+  {
+      value:"WRITE",
+      target:Cacheanim.target,
+    time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+      anim:Cacheanim.anim,
+  },
+  {
+    value: "",
+    target: CacheToBus.target,
+    time: 1/  useSpeedStore.getState().speed* CacheToBus.time,
+    anim: CacheToBus.anim,
+  },
+  {
+    value: this.addresse1,
+    target: CacheToADR.target,
+    time: 1/  useSpeedStore.getState().speed* CacheToADR.time,
+    anim: CacheToADR.anim,
+  },
+  {
+    value: "",
+    target: ADRbusToDATABus.target,
+    time: 1/  useSpeedStore.getState().speed* ADRbusToDATABus.time,
+    anim: ADRbusToDATABus.anim,
+  },
+  {
+    value: this.addresse1,
+    target: ADRToMAR.target,
+    time: 1/  useSpeedStore.getState().speed* ADRToMAR.time,
+    anim: ADRToMAR.anim,
+  },
+  {
+    value: this.addresse1,
+    target: fitToMar.target,
+    time: 1/  useSpeedStore.getState().speed* fitToMar.time,
+    anim: fitToMar.anim,
+  },
+  {
+    value:"",
+    target:CacheToBus.target,
+  time:1/  useSpeedStore.getState().speed*CacheToBus.time,
+    anim:CacheToBus.anim,
+},
+{
+value:"value2",
+target:CacheToMDR.target,
+time:1/  useSpeedStore.getState().speed*CacheToMDR.time,
+anim:CacheToMDR.anim,
+},
+{
+value:"",
+target:BusToMdr.target,
+time:1/  useSpeedStore.getState().speed*BusToMdr.time,
+anim:BusToMdr.anim,
+},
+{
+value:"value2",
+target:fitToMdr.target,
+time:1/  useSpeedStore.getState().speed*fitToMdr.time,
+anim:fitToMdr.anim,
+},
+{
+value:"WRITE-THROUGH",
+target:MCanim.target,
+time:1/  useSpeedStore.getState().speed*MCanim.time,
+anim:MCanim.anim,
+},
+
+  
+];
+}
             
         }
     }
@@ -3176,40 +3795,87 @@ class InstructionMOV11{////the difference between them will be in the animation 
             return [
               {
                 value: "value2",
+                target: fitToCache.target,
+                time: speed * fitToCache.time,
+                anim: fitToCache.anim,
+              },
+              {
+                value: "WRITE",
+                target: Cacheanim.target,
+                time: speed * Cacheanim.time,
+                anim: Cacheanim.anim,
+              },
+              {
+                value: "",
+                target: CacheToBus.target,
+                time: speed * CacheToBus.time,
+                anim: CacheToBus.anim,
+              },
+              {
+                value: this.addresse1,
+                target: CacheToADR.target,
+                time: speed * CacheToADR.time,
+                anim: CacheToADR.anim,
+              },
+              {
+                value: "",
+                target: ADRbusToDATABus.target,
+                time: speed * ADRbusToDATABus.time,
+                anim: ADRbusToDATABus.anim,
+              },
+              {
+                value: this.addresse1,
+                target: ADRToMAR.target,
+                time: speed * ADRToMAR.time,
+                anim: ADRToMAR.anim,
+              },
+              {
+                value: this.addresse1,
+                target: fitToMar.target,
+                time: speed * fitToMar.time,
+                anim: fitToMar.anim,
+              },
+              {
+                value: "",
+                target: CacheToBus.target,
+                time: speed * CacheToBus.time,
+                anim: CacheToBus.anim,
+              },
+              {
+                value: "value2",
+                target: CacheToMDR.target,
+                time: speed * CacheToMDR.time,
+                anim: CacheToMDR.anim,
+              },
+              {
+                value: "",
+                target: BusToMdr.target,
+                time: speed * BusToMdr.time,
+                anim: BusToMdr.anim,
+              },
+              {
+                value: "value2",
+                target: fitToMdr.target,
+                time: speed * fitToMdr.time,
+                anim: fitToMdr.anim,
+              },
+              {
+                value: "value2",
                 target: infitToMdr.target,
                 time: speed * infitToMdr.time,
                 anim: infitToMdr.anim,
               },
               {
-                value: "WRITE",
+                value: "WRITE-THROUGH",
                 target: MCanim.target,
                 time: speed * MCanim.time,
                 anim: MCanim.anim,
-              },
-              {
-                value: "value2",
-                target: MdrToBus.target,
-                time: speed * MdrToBus.time,
-                anim: MdrToBus.anim,
-              },
-              {
-                value: "",
-                target: MDRToCache.target,
-                time: speed * MDRToCache.time,
-                anim: MDRToCache.anim,
-              },
-              {
-                value: "value2",
-                target: BusToCache.target,
-                time: speed * BusToCache.time,
-                anim: BusToCache.anim,
               },
             
              /////////////////////////////////////////////////////////////////:aaaaaaaaaaaaaaaaaaaaaaaaaaaa
               
             ];
-            const ind1 =memory.cache.checkCache(this.addresse1,0).index;
-            console.log(` aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa${memory.cache.blocks[ind1]}`);
+            
           }
         }
       }}

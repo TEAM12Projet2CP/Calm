@@ -264,11 +264,11 @@ const IpToAdr={
   const IPToMAR={
     value:"",
     target:".box-ADR",
-  time:1/  useSpeedStore.getState().speed*3000,
+    time:1/useSpeedStore.getState().speed*1800,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/(  useSpeedStore.getState().speed)*1})
-    gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1})
-    gsap.to(".box-ADR",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+    gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/useSpeedStore.getState().speed*0.5})
+          gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/useSpeedStore.getState().speed*0.8,delay:1/useSpeedStore.getState().speed*0.5})
+          gsap.to(".box-ADR",{opacity:"0" ,duration:1/useSpeedStore.getState().speed*0.5,delay:1/useSpeedStore.getState().speed*1.3});
   },}
   const fitToMdr={
     value:"",
@@ -1022,6 +1022,7 @@ class Sequenceur{
                 let regMod2=secondByte.substring(5,8);
                 if(key=='0001100'){
                     key=key+Ind;
+                    console.log("this key ",key);
                     index=hash(key);
                     instrObject=hashmap[index].instrObject;
                     animateDecoderSequencer(animations,instrObject.name);
@@ -1098,28 +1099,32 @@ class Sequenceur{
                         let value2=0;
                         if(taille=='1'){
                             value2 = parseInt(Registers[parseInt(regMod2, 2)].getvalue(),2);
+                            console.log("redoune");
                         }else{
-                            
+                          console.log("redoune");
                             //reading reg2 content
                             if(regMod2=='000'){
                                 value2 = parseInt(Registers[0].getright(),2);
-                            }else if(regMod2=='001'){
+                                console.log("redoune");
+                            }else if(regMod2=='100'){
                                 value2 = parseInt(Registers[0].getleft(),2);
+                                console.log("redoune");
                             }
-                            else if(regMod2=='010'){
+                            else if(regMod2=='001'){
                                 value2 = parseInt(Registers[1].getright(),2);
-                            }else if(regMod2=='011'){
+                            }else if(regMod2=='101'){
                                 value2 = parseInt(Registers[1].getleft(),2);
                             }
-                            else if(regMod2=='100'){
+                            else if(regMod2=='010'){
                                 value2 = parseInt(Registers[2].getright(),2);
-                            }else if(regMod2=='101'){
+                            }else if(regMod2=='110'){
                                 value2 = parseInt(Registers[2].getleft(),2);
                             }
-                            else if(regMod2=='110'){
-                                value2 = parseInt(Registers[3].getright(),2);
+                            else if(regMod2=='011'){
+                                value2 = parseInt(Registers[4].getright(),2);
+                                console.log("the value og ACCR=",value2);
                             }else if(regMod2=='111'){
-                                value2 = parseInt(Registers[3].getleft(),2);
+                                value2 = parseInt(Registers[4].getleft(),2);
                             }
                         }
                         let depl=0;

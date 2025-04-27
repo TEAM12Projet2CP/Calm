@@ -37,15 +37,149 @@ function TwosComplement(num,size) { //a is a string
     } }
     return a;
 }
+
+const fitToCache={
+    value:"",
+    target:".ball",
+    time:1000,
+    anim:(val,h,w)=>{
+    gsap.fromTo(".ball",{borderRadius:"10px",width:w*0.08,height:h*0.06,x:w*0.328,y:h*0.31,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+    //gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.11,height:h*0.06,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
+    //gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:3});
+  },}
+
 const QueueToCache={
     value:"",
     target:".box-data",
-  time:useSpeedStore.getState().speed*3000,
+    time:3000,
     anim:(val,h,w)=>{
-    gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/useSpeedStore.getState().speed*1})
-  gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.321,duration:1/useSpeedStore.getState().speed*1,delay:1/useSpeedStore.getState().speed*1})
-  gsap.to(".box-data",{opacity:"0" ,duration:1/useSpeedStore.getState().speed*1,delay:1/useSpeedStore.getState().speed*2});
+        gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+        gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+        gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+    }}
+
+    const BusToRegisters={
+        value:"",
+        target:".ball",
+      time:1/  useSpeedStore.getState().speed*3000,
+        anim:(val,h,w)=>{
+        ///depart: ( 53.7% , 47.8% )
+        gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.555,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".ball",{x:w*0.481,y:h*0.555},{y:h*0.58 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+      },}
+    
+      const RegistersToBus={
+        value:"",
+        target:".ball",
+      time:1/  useSpeedStore.getState().speed*3000,
+        anim:(val,h,w)=>{
+        ///depart: ( 53.7% , 47.8% )
+        gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.481,y:h*0.58,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+        gsap.fromTo(".ball",{x:w*0.481,y:h*0.58},{y:h*0.555 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+        gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+      },}
+  const AccToCache={
+    value:"",
+    target:".box-data",
+  time:1/useSpeedStore.getState().speed*3000,
+    anim:(val,h,w)=>{
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+    gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
+  
+  const CacheToRual1={
+    value:"",
+    target:".box-data",
+  time:1/useSpeedStore.getState().speed*3000,
+    anim:(val,h,w)=>{
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.106,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },}
+  
+  const CacheToRual2={
+    value:"",
+    target:".box-data",
+  time:1/useSpeedStore.getState().speed*3000,
+    anim:(val,h,w)=>{
+    gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.262,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },}
+  let queueExitToBus={
+  value:"",
+  target:".ball",
+  time:4000,
+  anim:(val,h,w)=>{
+          gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
+          gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.715 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+          gsap.to(".ball",{y:h*0.555 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+          gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*3});
+  }
+  }
+  
+  const MDRToCache={
+  value:"",
+  target:".box-data",
+  time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.497},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },}
+  
+  const CacheToMDR={
+  value:"",
+  target:".box-data",
+  time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.497,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },}
+  
+  const CacheToReg={
+  value:"",
+  target:".box-data",
+  time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.321,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.321},{x:w*0.44,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },}
+  
+  const RegToCache={
+  value:"",
+  target:".box-data",
+  time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },}
+  
+  const CacheToBus={
+  value:"",
+  target:".ball",
+  time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.36,y:h*0.39,opacity:"0"}, {opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
+  gsap.fromTo(".ball", {x:w*0.36,y:h*0.39}, {y:h*0.46 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+  gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },
+  }
+  
+  const BusToCache={
+  value:"",
+  target:".ball",
+  time:1/useSpeedStore.getState().speed*3000,
+  anim:(val,h,w)=>{
+  gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.36,y:h*0.46,opacity:"0"}, {opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
+  gsap.fromTo(".ball", {x:w*0.36,y:h*0.46}, {y:h*0.39 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
+  gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
+  },
+  }
 const addanim={
 
     value:"",
@@ -100,7 +234,7 @@ const RegToRual2={
     time:3000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
     gsap.fromTo(".box-data",{x:w*0.44,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1})
-  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.106,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
+  gsap.fromTo(".box-data",{x:w*0.44},{x:w*0.262,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1})
   gsap.to(".box-data",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
   },}
   const AccToMDR={
@@ -169,17 +303,7 @@ const infitToMar={
     // gsap.fromTo(".ball",{height:"2.812%",width:"1.4%"},{borderRadius:"10px",width:w*0.032,height:h*0.14,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*:1});
     gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1});
   },}
-let queueExitToBus={
-    value:"",
-    target:".ball",
-    time:4000/useSpeedStore.getState().speed,
-    anim:(val,h,w)=>{
-            gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.726,y:h*0.6638,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
-            gsap.fromTo(".ball",{x:w*0.726,y:h*0.6638},{x:w*0.715 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
-            gsap.to(".ball",{y:h*0.555 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
-            gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*3});
-    }
-}
+
 const BusToMdr={
     value:"",
     target:".ball",
@@ -361,7 +485,7 @@ const ADRToMAR={
     target:".ball",
     time:3000,
     anim:(val,h,w)=>{
-    ///depart: ( 54% , 35,2% )
+    ///depart: ( 54% , 24,45% )
     gsap.fromTo(".ball",{x:w*0.299,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
     gsap.fromTo(".ball",{x:w*0.299,y:h*0.56},{y:h*0.625 ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
     gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*2});
@@ -682,15 +806,22 @@ class AddressingModes{
                     //const cacheResult = memory.cache.checkCache(adresse, 0);
                     //if (cacheResult.hit) {
                         // Cache hit: go from bus to cache
-                        // animations.push({
-                        //     value: adresse,
-                        //     target: QueueToCache.target,  // make sure this exists
-                        //     time: QueueToCache.time,
-                        //     anim: QueueToCache.anim,
-                        // });
-                    //} else {
-                        // Cache miss: normal path to MDR
                         animations.push({
+                             value: adresse,
+                             target: QueueToCache.target,  
+                             time: QueueToCache.time,
+                             anim: QueueToCache.anim,
+                         });
+                         animations.push({
+                            value: "",
+                            target:BusToCache.target,  
+                            time: BusToAcc.time,
+                            anim: BusToCache.anim,
+                        });
+
+                   // } else {
+                        // Cache miss: normal path to MDR
+                      /*  animations.push({
                             value: adresse,
                             target: queueExitToMdr.target,
                             time: queueExitToMdr.time,
@@ -707,8 +838,8 @@ class AddressingModes{
                             target: fitToMdr.target,
                             time: fitToMdr.time,
                             anim: fitToMdr.anim,
-                        });
-                    //}
+                        });*/
+                    
                 }
                 else if(target===3){
                     animations.push({
@@ -920,18 +1051,33 @@ class AddressingModes{
                     anim: QueueToCache.anim,
                 });
                 animations.push({
-                    value:"hit",
+                    value: "",
+                    target: BusToCache.target, 
+                    time: BusToCache.time,
+                    anim: BusToCache.anim,
+                });
+                animations.push({
+                    value:"HIT",
                     target:Cacheanim.target, // animation path for cache hit
                     time: Cacheanim.time,
                     anim: Cacheanim.anim,
-                });
-           
-               
-               
+                }); 
             } else {
+                animations.push({
+                    value: adresse,
+                    target: QueueToCache.target, // animation path for cache hit
+                    time: QueueToCache.time,
+                    anim: QueueToCache.anim,
+                });
+                animations.push({
+                    value: "",
+                    target: BusToCache.target, 
+                    time: BusToCache.time,
+                    anim: BusToCache.anim,
+                });
                 console.log("hhhhhhhhhhhhhhhhhhhhhh");
                 animations.push({
-                    value:"miss",
+                    value:"MISS",
                     target:Cacheanim.target, // animation path for cache hit
                     time: Cacheanim.time,
                     anim: Cacheanim.anim,
@@ -978,14 +1124,48 @@ class AddressingModes{
                 memory.setRam(adresse);
                 memory.read(0);
                 let byte2=hex2bin(memory.getRim());
-                /////////::anim
+                if(cacheResult.hit){
+                    animations.push({
+                        value:byte2+byte1,
+                        target:fitToCache.target,
+                        time:fitToCache.time,
+                        anim:fitToCache.anim,
+                    });
+                }else{
                 animations.push({
                     value:byte2+byte1,
                     target:fitToMdr.target,
                     time:fitToMdr.time,
                     anim:fitToMdr.anim,
-                });
+                });}
+                /////////::anim
                 if(target===1){
+                if(cacheResult.hit){
+                    animations.push({
+                        value:"",
+                        target:CacheToBus.target,
+                        time:CacheToBus.time,
+                        anim:CacheToBus.anim,
+                    });
+                    animations.push({
+                        value:byte2+byte1,
+                        target:CacheToRual1.target,
+                        time:CacheToRual1.time,
+                        anim:CacheToRual1.anim,
+                    });
+                    animations.push({
+                        value:"",
+                        target:BusToRual1.target,
+                        time:BusToRual1.time,
+                        anim:BusToRual1.anim,
+                    });
+                    animations.push({
+                        value:byte2+byte1,
+                        target:fitToRual1.target,
+                        time:fitToRual1.time,
+                        anim:fitToRual1.anim,
+                    });
+                }else{
                     animations.push({
                         value:byte2+byte1,
                         target:infitToMdr.target,
@@ -1016,7 +1196,35 @@ class AddressingModes{
                         time:fitToRual1.time,
                         anim:fitToRual1.anim,
                     });
+                }
                 }else if(target===2){
+                    if(cacheResult.hit){
+                        animations.push({
+                            value:"",
+                            target:CacheToBus.target,
+                            time:CacheToBus.time,
+                            anim:CacheToBus.anim,
+                        });
+                        animations.push({
+                            value:byte2+byte1,
+                            target:CacheToRual2.target,
+                            time:CacheToRual2.time,
+                            anim:CacheToRual2.anim,
+                        });
+                        animations.push({
+                            value:"",
+                            target:BusToRual2.target,
+                            time:BusToRual2.time,
+                            anim:BusToRual2.anim,
+                        });
+                        animations.push({
+                            value:byte2+byte1,
+                            target:fitToRual2.target,
+                            time:fitToRual2.time,
+                            anim:fitToRual2.anim,
+                        });
+                    }
+                        else{
                     animations.push({
                         value:byte2+byte1,
                         target:infitToMdr.target,
@@ -1048,15 +1256,51 @@ class AddressingModes{
                         anim:fitToRual2.anim,
                     });
                 }
+            }
                 return parseInt(byte2+byte1,2);
             }else{
+                if(cacheResult.hit){
+                    animations.push({
+                        value:byte1,
+                        target:fitToCache.target,
+                        time:fitToCache.time,
+                        anim:fitToCache.anim,
+                    });
+                }else{
                 animations.push({
                     value:byte1,
                     target:fitToMdr.target,
                     time:fitToMdr.time,
                     anim:fitToMdr.anim,
-                });
+                });}
+                /////////::anim
                 if(target===1){
+                if(cacheResult.hit){
+                    animations.push({
+                        value:"",
+                        target:CacheToBus.target,
+                        time:CacheToBus.time,
+                        anim:CacheToBus.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:CacheToRual1.target,
+                        time:CacheToRual1.time,
+                        anim:CacheToRual1.anim,
+                    });
+                    animations.push({
+                        value:"",
+                        target:BusToRual1.target,
+                        time:BusToRual1.time,
+                        anim:BusToRual1.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:fitToRual1.target,
+                        time:fitToRual1.time,
+                        anim:fitToRual1.anim,
+                    });
+                }else{
                     animations.push({
                         value:byte1,
                         target:infitToMdr.target,
@@ -1087,7 +1331,35 @@ class AddressingModes{
                         time:fitToRual1.time,
                         anim:fitToRual1.anim,
                     });
+                }
                 }else if(target===2){
+                    if(cacheResult.hit){
+                        animations.push({
+                            value:"",
+                            target:CacheToBus.target,
+                            time:CacheToBus.time,
+                            anim:CacheToBus.anim,
+                        });
+                        animations.push({
+                            value:byte1,
+                            target:CacheToRual2.target,
+                            time:CacheToRual2.time,
+                            anim:CacheToRual2.anim,
+                        });
+                        animations.push({
+                            value:"",
+                            target:BusToRual2.target,
+                            time:BusToRual2.time,
+                            anim:BusToRual2.anim,
+                        });
+                        animations.push({
+                            value:byte1,
+                            target:fitToRual2.target,
+                            time:fitToRual2.time,
+                            anim:fitToRual2.anim,
+                        });
+                    }
+                        else{
                     animations.push({
                         value:byte1,
                         target:infitToMdr.target,
@@ -1119,6 +1391,7 @@ class AddressingModes{
                         anim:fitToRual2.anim,
                     });
                 }
+            }
                 return parseInt(byte1,2);//valur returned is in hexa 
             }
             },
@@ -1393,8 +1666,8 @@ class AddressingModes{
                 }
                 },
                 function baseval(adresse,animated,size,depl,animations,is_anim,target){
-                    let adressenv=adresse+parseInt(BR.getvalue(),2)+depl;//no need for dep
-                    adressenv=TwosComplement(adressenv,16);
+                    let adresse1=adresse+parseInt(BR.getvalue(),2);//no need for dep
+                    let adressenv=TwosComplement(adresse1,16);
                     memory.setRam(adressenv);
                     memory.read(0);
                     let byte1=hex2bin(memory.getRim());
@@ -1535,6 +1808,12 @@ class AddressingModes{
                 anim:infitToBr.anim,
             });
             animations.push({
+                value:"",
+                target:RegistersToBus.target,
+                time:RegistersToBus.time,
+                anim:RegistersToBus.anim,
+            });
+            animations.push({
                 value:parseInt(BR.getvalue(),2),
                 target:RegToRual2.target,
                 time:RegToRual2.time,
@@ -1559,6 +1838,113 @@ class AddressingModes{
                 anim:AluToAcc.anim,
             });
             animations.push({
+                value:adressenv,
+                target:fitToAcc.target,
+                time:fitToAcc.time,
+                anim:fitToAcc.anim,
+            });
+            animations.push({
+                value:"",
+                target:AccToBus.target,
+                time:AccToBus.time,
+                anim:AccToBus.anim,
+            });
+            if(memory.cache.checkCache(adresse1,0).hit){
+                animations.push({
+                    value:adressenv,
+                    target:AccToCache.target,
+                    time:AccToCache.time,
+                    anim:AccToCache.anim,
+                }); 
+                animations.push({
+                    value:adressenv,
+                    target:BusToCache.target,
+                    time:BusToCache.time,
+                    anim:BusToCache.anim,
+                }); 
+                animations.push({
+                    value:"HIT",
+                    target:Cacheanim.target,
+                    time:Cacheanim.time,
+                    anim:Cacheanim.anim,
+                });  
+                animations.push({
+                    value:byte1,
+                    target:fitToCache.target,
+                    time:fitToCache.time,
+                    anim:fitToCache.anim,
+                });
+                if(target==1){
+                    animations.push({
+                        value:"",
+                        target:CacheToBus.target,
+                        time:CacheToBus.time,
+                        anim:CacheToBus.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:CacheToRual1.target,
+                        time:CacheToRual1.time,
+                        anim:CacheToRual1.anim,
+                    });
+                    animations.push({
+                        value:"",
+                        target:BusToRual1.target,
+                        time:BusToRual1.time,
+                        anim:BusToRual1.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:fitToRual1.target,
+                        time:fitToRual1.time,
+                        anim:fitToRual1.anim,
+                    });
+                }else if(target==2){
+                    animations.push({
+                        value:"",
+                        target:CacheToBus.target,
+                        time:CacheToBus.time,
+                        anim:CacheToBus.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:CacheToRual2.target,
+                        time:CacheToRual2.time,
+                        anim:CacheToRual2.anim,
+                    });
+                    animations.push({
+                        value:"",
+                        target:BusToRual2.target,
+                        time:BusToRual2.time,
+                        anim:BusToRual2.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:fitToRual2.target,
+                        time:fitToRual2.time,
+                        anim:fitToRual2.anim,
+                    });
+                }
+            }else{
+                animations.push({
+                    value:adressenv,
+                    target:AccToCache.target,
+                    time:AccToCache.time,
+                    anim:AccToCache.anim,
+                }); 
+                animations.push({
+                    value:adressenv,
+                    target:BusToCache.target,
+                    time:BusToCache.time,
+                    anim:BusToCache.anim,
+                }); 
+                animations.push({
+                    value:"MISS",
+                    target:Cacheanim.target,
+                    time:Cacheanim.time,
+                    anim:Cacheanim.anim,
+                });
+                 animations.push({
                 value:adressenv,
                 target:fitToAcc.target,
                 time:fitToAcc.time,
@@ -1646,9 +2032,9 @@ class AddressingModes{
                 });
                 animations.push({
                     value:byte1,
-                    target:MdrToRual1.target,
-                    time:MdrToRual1.time,
-                    anim:MdrToRual1.anim,
+                    target:MdrToRual2.target,
+                    time:MdrToRual2.time,
+                    anim:MdrToRual2.anim,
                 });
                 animations.push({
                     value:"",
@@ -1662,7 +2048,7 @@ class AddressingModes{
                     time:fitToRual2.time,
                     anim:fitToRual2.anim,
                 });
-            }
+            }}
             ///////////////////////////////////////:
                     if(size==1){
                         adressenv=TwosComplement(parseInt(adressenv,2)+1,16);
@@ -1676,8 +2062,8 @@ class AddressingModes{
                     
                 },
                 function indexeval(adresse,animated,size,depl,animations,is_anim,target){
-                    let adressenv=adresse+parseInt(IR.getvalue(),2)+depl;//no need for dep
-                    adressenv=TwosComplement(adressenv,16);
+                    let adresse1=adresse+parseInt(IR.getvalue(),2)+depl;//no need for dep
+                    let adressenv=TwosComplement(adresse1,16);
                     memory.setRam(adressenv);
                     memory.read(0);
                     let byte1=hex2bin(memory.getRim());
@@ -1819,6 +2205,12 @@ class AddressingModes{
                 anim:infitToIdr.anim,
             });
             animations.push({
+                value:"",
+                target:RegistersToBus.target,
+                time:RegistersToBus.time,
+                anim:RegistersToBus.anim,
+            });
+            animations.push({
                 value:parseInt(IR.getvalue(),2),
                 target:RegToRual2.target,
                 time:RegToRual2.time,
@@ -1843,6 +2235,113 @@ class AddressingModes{
                 anim:AluToAcc.anim,
             });
             animations.push({
+                value:adressenv,
+                target:fitToAcc.target,
+                time:fitToAcc.time,
+                anim:fitToAcc.anim,
+            });
+            animations.push({
+                value:"",
+                target:AccToBus.target,
+                time:AccToBus.time,
+                anim:AccToBus.anim,
+            });
+            if(memory.cache.checkCache(adresse1,0).hit){
+                animations.push({
+                    value:adressenv,
+                    target:AccToCache.target,
+                    time:AccToCache.time,
+                    anim:AccToCache.anim,
+                }); 
+                animations.push({
+                    value:adressenv,
+                    target:BusToCache.target,
+                    time:BusToCache.time,
+                    anim:BusToCache.anim,
+                }); 
+                animations.push({
+                    value:"HIT",
+                    target:Cacheanim.target,
+                    time:Cacheanim.time,
+                    anim:Cacheanim.anim,
+                });  
+                animations.push({
+                    value:byte1,
+                    target:fitToCache.target,
+                    time:fitToCache.time,
+                    anim:fitToCache.anim,
+                });
+                if(target==1){
+                    animations.push({
+                        value:"",
+                        target:CacheToBus.target,
+                        time:CacheToBus.time,
+                        anim:CacheToBus.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:CacheToRual1.target,
+                        time:CacheToRual1.time,
+                        anim:CacheToRual1.anim,
+                    });
+                    animations.push({
+                        value:"",
+                        target:BusToRual1.target,
+                        time:BusToRual1.time,
+                        anim:BusToRual1.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:fitToRual1.target,
+                        time:fitToRual1.time,
+                        anim:fitToRual1.anim,
+                    });
+                }else if(target==2){
+                    animations.push({
+                        value:"",
+                        target:CacheToBus.target,
+                        time:CacheToBus.time,
+                        anim:CacheToBus.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:CacheToRual2.target,
+                        time:CacheToRual2.time,
+                        anim:CacheToRual2.anim,
+                    });
+                    animations.push({
+                        value:"",
+                        target:BusToRual2.target,
+                        time:BusToRual2.time,
+                        anim:BusToRual2.anim,
+                    });
+                    animations.push({
+                        value:byte1,
+                        target:fitToRual2.target,
+                        time:fitToRual2.time,
+                        anim:fitToRual2.anim,
+                    });
+                }
+            }else{
+                animations.push({
+                    value:adressenv,
+                    target:AccToCache.target,
+                    time:AccToCache.time,
+                    anim:AccToCache.anim,
+                }); 
+                animations.push({
+                    value:adressenv,
+                    target:BusToCache.target,
+                    time:BusToCache.time,
+                    anim:BusToCache.anim,
+                }); 
+                animations.push({
+                    value:"MISS",
+                    target:Cacheanim.target,
+                    time:Cacheanim.time,
+                    anim:Cacheanim.anim,
+                });
+                 animations.push({
                 value:adressenv,
                 target:fitToAcc.target,
                 time:fitToAcc.time,
@@ -1930,9 +2429,9 @@ class AddressingModes{
                 });
                 animations.push({
                     value:byte1,
-                    target:MdrToRual1.target,
-                    time:MdrToRual1.time,
-                    anim:MdrToRual1.anim,
+                    target:MdrToRual2.target,
+                    time:MdrToRual2.time,
+                    anim:MdrToRual2.anim,
                 });
                 animations.push({
                     value:"",
@@ -1946,7 +2445,7 @@ class AddressingModes{
                     time:fitToRual2.time,
                     anim:fitToRual2.anim,
                 });
-            }
+            }}
             ///////////////////////////////////////:
                     if(size==1){
                         adresse=TwosComplement(parseInt(adresse,2)+1,16);
@@ -2121,33 +2620,21 @@ class AddressingModes{
             if(target===0){
             animations.push({
                 value:adresse,
-                target:queueExitToAdr.target,
-                time:queueExitToAdr.time,
-                anim:queueExitToAdr.anim,
+                target:QueueToCache.target,
+                time:QueueToCache.time,
+                anim:QueueToCache.anim,
             });
             animations.push({
                 value:"",
-                target:ADRbusToDATABus.target,
-                time:ADRbusToDATABus.time,
-                anim:ADRbusToDATABus.anim,
+                target:BusToCache.target,
+                time:BusToCache.time,
+                anim:BusToCache.anim,
             });
             animations.push({
-                value:adresse,
-                target:ADRToMAR.target,
-                time:ADRToMAR.time,
-                anim:ADRToMAR.anim,
-            });
-            animations.push({
-                value:adresse,
-                target:fitToMar.target,
-                time:fitToMar.time,
-                anim:fitToMar.anim,
-            });
-            animations.push({
-                value:adresse,
-                target:infitToMar.target,
-                time:infitToMar.time,
-                anim:infitToMar.anim,
+                value:"SETcache",
+                target:Cacheanim.target,
+                time:Cacheanim.time,
+                anim:Cacheanim.anim,
             });
         }else if(target===1){
             animations.push({

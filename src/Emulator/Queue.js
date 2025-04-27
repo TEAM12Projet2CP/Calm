@@ -18,11 +18,11 @@ time:1/useSpeedStore.getState().speed*1800/useSpeedStore.getState().speed,
 const IPToMAR={
   value:"",
   target:".box-ADR",
-time:1/useSpeedStore.getState().speed*0.1800,
+  time:1/useSpeedStore.getState().speed*1800,
   anim:(val,h,w)=>{
-  gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*0.1800})
-        gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/(useSpeedStore.getState().speed)*0.1800,delay:1/(useSpeedStore.getState().speed)*0.1800})
-        gsap.to(".box-ADR",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*0.1800,delay:1/(useSpeedStore.getState().speed)*0.1800});
+  gsap.fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:1/useSpeedStore.getState().speed*0.5})
+        gsap.fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:1/useSpeedStore.getState().speed*0.8,delay:1/useSpeedStore.getState().speed*0.5})
+        gsap.to(".box-ADR",{opacity:"0" ,duration:1/useSpeedStore.getState().speed*0.5,delay:1/useSpeedStore.getState().speed*1.3});
 },}
 const fitToMdr={
   value:"",
