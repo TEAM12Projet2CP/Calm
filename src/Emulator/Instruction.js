@@ -1116,7 +1116,7 @@ class InstructionMOV00{
                         anim:fitToR1.anim,
                     },
                 ];
-                }else if (this.register2=="3") {
+                }else if (this.register2=="3" && this.taille==1) {
                     return[{
                         value:"value2",
                         target:infitToR4.target,
@@ -1149,6 +1149,12 @@ class InstructionMOV00{
                       time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
+                    {
+                      value:"",
+                      target:BusToRegisters.target,
+                    time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                      anim:BusToRegisters.anim,
+                  },
                     {
                         value:"value2",
                         target:fitToR1.target,
@@ -1243,7 +1249,7 @@ class InstructionMOV00{
                         anim:fitToR2.anim,
                     },
                 ];
-                }else if (this.register2=="3") {
+                }else if (this.register2=="3" && this.taille==1) {
                     return[{
                         value:"value2",
                         target:infitToR4.target,
@@ -1276,6 +1282,12 @@ class InstructionMOV00{
                       time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
+                    {
+                      value:"",
+                      target:BusToRegisters.target,
+                    time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                      anim:BusToRegisters.anim,
+                  },
                     {
                         value:"value2",
                         target:fitToR2.target,
@@ -1370,7 +1382,7 @@ class InstructionMOV00{
                         anim:fitToR3.anim,
                     },
                 ];
-                }else if (this.register2=="3") {
+                }else if (this.register2=="3" && this.taille==1) {
                     return[{
                         value:"value2",
                         target:infitToR4.target,
@@ -1403,6 +1415,12 @@ class InstructionMOV00{
                       time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
+                    {
+                      value:"",
+                      target:BusToRegisters.target,
+                    time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                      anim:BusToRegisters.anim,
+                  },
                     {
                         value:"value2",
                         target:fitToR3.target,
@@ -1453,7 +1471,7 @@ class InstructionMOV00{
                     },
                 ];
                 }
-            }else if (this.register1=="3") {
+            }else if (this.register1=="3" && this.taille==1) {
                 if(this.register2=="000"){
                     return[{
                         value:"value2",
@@ -1531,6 +1549,12 @@ class InstructionMOV00{
                         anim:AccToReg.anim,
                     },
                     {
+                      value:"",
+                      target:BusToRegisters.target,
+                    time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                      anim:BusToRegisters.anim,
+                  },
+                    {
                         value:"value2",
                         target:fitToR4.target,
                       time:1/  useSpeedStore.getState().speed*fitToR4.time,
@@ -1589,6 +1613,12 @@ class InstructionMOV00{
                         anim:infitToR1.anim,
                     },
                     {
+                      value:"",
+                      target:RegistersToBus.target,
+                    time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                      anim:RegistersToBus.anim,
+                  },
+                    {
                         value:"value2",
                         target:RegToAcc.target,
                       time:1/  useSpeedStore.getState().speed*RegToAcc.time,
@@ -1614,6 +1644,12 @@ class InstructionMOV00{
                       time:1/  useSpeedStore.getState().speed*infitToR2.time,
                         anim:infitToR2.anim,
                     },
+                    {
+                      value:"",
+                      target:RegistersToBus.target,
+                    time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                      anim:RegistersToBus.anim,
+                  },
                     {
                         value:"value2",
                         target:RegToAcc.target,
@@ -1642,6 +1678,12 @@ class InstructionMOV00{
                         anim:infitToR3.anim,
                     },
                     {
+                      value:"",
+                      target:RegistersToBus.target,
+                    time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                      anim:RegistersToBus.anim,
+                  },
+                    {
                         value:"value2",
                         target:RegToAcc.target,
                       time:1/  useSpeedStore.getState().speed*RegToAcc.time,
@@ -1660,13 +1702,19 @@ class InstructionMOV00{
                         anim:fitToAcc.anim,
                     },
                 ];
-                }else if (this.register2=="3") {
+                }else if (this.register2=="3" && this.taille==1) {
                     return[{
                         value:"value2",
                         target:infitToR4.target,
                       time:1/  useSpeedStore.getState().speed*infitToR4.time,
                         anim:infitToR4.anim,
                     },
+                    {
+                      value:"",
+                      target:RegistersToBus.target,
+                    time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                      anim:RegistersToBus.anim,
+                  },
                     {
                         value:"value2",
                         target:RegToAcc.target,
@@ -1708,6 +1756,12 @@ class InstructionMOV00{
                         anim:infitToBr.anim,
                     },
                     {
+                      value:"",
+                      target:RegistersToBus.target,
+                    time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                      anim:RegistersToBus.anim,
+                  },
+                    {
                         value:"value2",
                         target:RegToAcc.target,
                       time:1/  useSpeedStore.getState().speed*RegToAcc.time,
@@ -1734,6 +1788,12 @@ class InstructionMOV00{
                         anim:infitToIdr.anim,
                     },
                     {
+                      value:"",
+                      target:RegistersToBus.target,
+                    time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                      anim:RegistersToBus.anim,
+                  },
+                    {
                         value:"value2",
                         target:RegToAcc.target,
                       time:1/  useSpeedStore.getState().speed*RegToAcc.time,
@@ -1759,6 +1819,12 @@ class InstructionMOV00{
                       time:1/  useSpeedStore.getState().speed*infitToSR.time,
                         anim:infitToSR.anim,
                     },
+                    {
+                      value:"",
+                      target:RegistersToBus.target,
+                    time:1/  useSpeedStore.getState().speed*RegistersToBus.time,
+                      anim:RegistersToBus.anim,
+                  },
                     {
                         value:"value2",
                         target:RegToAcc.target,
@@ -1856,6 +1922,12 @@ class InstructionMOV00{
                       time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
+                    {
+                      value:"",
+                      target:BusToRegisters.target,
+                    time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                      anim:BusToRegisters.anim,
+                  },
                     {
                         value:"value2",
                         target:fitToBr.target,
@@ -1984,6 +2056,12 @@ class InstructionMOV00{
                         anim:AccToReg.anim,
                     },
                     {
+                      value:"",
+                      target:BusToRegisters.target,
+                    time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                      anim:BusToRegisters.anim,
+                  },
+                    {
                         value:"value2",
                         target:fitToIdr.target,
                       time:1/  useSpeedStore.getState().speed*fitToIdr.time,
@@ -2110,6 +2188,12 @@ class InstructionMOV00{
                       time:1/  useSpeedStore.getState().speed*AccToReg.time,
                         anim:AccToReg.anim,
                     },
+                    {
+                      value:"",
+                      target:BusToRegisters.target,
+                    time:1/  useSpeedStore.getState().speed*BusToRegisters.time,
+                      anim:BusToRegisters.anim,
+                  },
                     {
                         value:"value2",
                         target:fitToSr.target,
