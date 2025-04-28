@@ -1068,11 +1068,12 @@ class InstructionMOV00{
             }else if(this.register1==7){
                 Registers[4].setleft(TwosComplement(this.value2,8));
             }
-        }}
+        }
+            }
         ];
         this.buildanim=function(){
-            if(this.register1=="000"){
-                if(this.register2=="000"){
+            if(((this.register1=="000") || (this.register1=4 && this.taille==0))){
+              if(((this.register2=="000") || (this.register2=4 && this.taille==0))){
                     return[{
                         value:"value2",
                         target:infitToR1.target,
@@ -1086,7 +1087,7 @@ class InstructionMOV00{
                         anim:fitToR1.anim,
                     },
                 ];
-                }else if (this.register2=="001") {
+                }else if ((this.register2=="001" ||( this.taille==0 && this.register2==5))) {
                     return[{
                         value:"value2",
                         target:infitToR2.target,
@@ -1101,7 +1102,7 @@ class InstructionMOV00{
                     },
                 ];
                     
-                }else if (this.register2=="2") {
+                }else if ((this.register2==2 ||( this.taille==0 && this.register2==6))) {
                     return[{
                         value:"value2",
                         target:infitToR3.target,
@@ -1129,7 +1130,7 @@ class InstructionMOV00{
                         anim:fitToR1.anim,
                     },
                 ];
-                }else if (this.register2=="4") {
+                }else if ((this.register2=="4" && this.taille==1) || ((this.register2==3 || this.register2==7)  && this.taille==0) ) {
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
@@ -1198,8 +1199,8 @@ class InstructionMOV00{
                     },
                 ];
                 }
-            }else if (this.register1=="001") {
-                if(this.register2=="000"){
+            }else if ((this.register1=="001" ||( this.taille==0 && this.register1==5))) {
+              if(((this.register2=="000") || (this.register2=4 && this.taille==0))){
                     return[{
                         value:"value2",
                         target:infitToR1.target,
@@ -1213,7 +1214,7 @@ class InstructionMOV00{
                         anim:fitToR2.anim,
                     },
                 ];
-                }else if (this.register2=="001") {
+                }else if ((this.register2=="001" ||( this.taille==0 && this.register2==5))) {
                     return[{
                         value:"value2",
                         target:infitToR2.target,
@@ -1228,7 +1229,7 @@ class InstructionMOV00{
                     },
                 ];
                     
-                }else if (this.register2=="2") {
+                }else if ((this.register2==2 ||( this.taille==0 && this.register2==6))) {
                     return[{
                         value:"value2",
                         target:infitToR3.target,
@@ -1256,7 +1257,7 @@ class InstructionMOV00{
                         anim:fitToR2.anim,
                     },
                 ];
-                }else if (this.register2=="4") {
+                }else if ((this.register2=="4" && this.taille==1) || ((this.register2==3 || this.register2==7)  && this.taille==0) ) {
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
@@ -1325,8 +1326,8 @@ class InstructionMOV00{
                     },
                 ];
                 }
-            }else if (this.register1=="2") {
-                if(this.register2=="000"){
+            }else if ((this.register1==2 ||( this.taille==0 && this.register1==6))) {
+              if(((this.register2=="000") || (this.register2=4 && this.taille==0))){
                     return[{
                         value:"value2",
                         target:infitToR1.target,
@@ -1340,7 +1341,7 @@ class InstructionMOV00{
                         anim:fitToR3.anim,
                     },
                 ];
-                }else if (this.register2=="001") {
+                }else if ((this.register2=="001" ||( this.taille==0 && this.register2==5))) {
                     return[{
                         value:"value2",
                         target:infitToR2.target,
@@ -1355,7 +1356,7 @@ class InstructionMOV00{
                     },
                 ];
                     
-                }else if (this.register2=="2") {
+                }else if ((this.register2==2 ||( this.taille==0 && this.register2==6))) {
                     return[{
                         value:"value2",
                         target:infitToR3.target,
@@ -1383,7 +1384,7 @@ class InstructionMOV00{
                         anim:fitToR3.anim,
                     },
                 ];
-                }else if (this.register2=="4") {
+                }else if ((this.register2=="4" && this.taille==1) || ((this.register2==3 || this.register2==7)  && this.taille==0) ) {
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
@@ -1579,8 +1580,8 @@ class InstructionMOV00{
                     },
                 ];
                 }
-            }else if (this.register1=="4") {
-                if(this.register2=="000"){
+            }else if ((this.register1=="4" && this.taille==1) || ((this.register1==3 || this.register1==7)  && this.taille==0) ) {
+              if(((this.register2=="000") || (this.register2=4 && this.taille==0))){
                     return[{
                         value:"value2",
                         target:infitToR1.target,
@@ -1606,7 +1607,7 @@ class InstructionMOV00{
                         anim:fitToAcc.anim,
                     },
                 ];
-                }else if (this.register2=="001") {
+                }else if ((this.register2=="001" ||( this.taille==0 && this.register2==5))){
                     return[{
                         value:"value2",
                         target:infitToR2.target,
@@ -1633,7 +1634,7 @@ class InstructionMOV00{
                     },
                 ];
                     
-                }else if (this.register2=="2") {
+                }else if ((this.register2==2 ||( this.taille==0 && this.register2==6))) {
                     return[{
                         value:"value2",
                         target:infitToR3.target,
@@ -1685,7 +1686,7 @@ class InstructionMOV00{
                         anim:fitToAcc.anim,
                     },
                 ];
-                }else if (this.register2=="4") {
+                }else if ((this.register2=="4" && this.taille==1) || ((this.register2==3 || this.register2==7)  && this.taille==0) ){
                     return[{
                         value:"value2",
                         target:infitToAcc.target,
@@ -2178,11 +2179,36 @@ class InstructionMOV01{
         this.isimmed=0;
         this.name="MOV-RM";
         this.steps=[()=>{
-            Registers[this.register1].setvalue(TwosComplement(this.value2,16));
+          if (this.taille == 1) {
+            Registers[this.register1].setvalue(TwosComplement(this.value2,16));  
+         }else if (this.taille== 0){
+            if(this.register1==0){
+              Registers[0].setright(TwosComplement(this.value2,8));
+              console.log("redoune");
+          }else if(this.register1==4){
+              Registers[0].setleft(TwosComplement(this.value2,8));
+              console.log("redoune");
+          }
+          else if(this.register1==1){
+              Registers[1].setright(TwosComplement(this.value2,8));
+          }else if(this.register1==5){
+              Registers[1].setleft(TwosComplement(this.value2,8));
+          }
+          else if(this.register1==2){
+              Registers[2].setright(TwosComplement(this.value2,8));
+          }else if(this.register1==6){
+              Registers[2].setleft(TwosComplement(this.value2,8));
+          }
+          else if(this.register1==3){
+              Registers[4].setright(TwosComplement(this.value2,8));
+          }else if(this.register1==7){
+              Registers[4].setleft(TwosComplement(this.value2,8));
+          }
+      }
         }
         ];
         this.buildanim=function(){
-            if(this.register1=="0"){
+          if(((this.register1=="000") || (this.register1=4 && this.taille==0))){
                 if(this.isimmed===1){
                     return[
                     {
@@ -2264,7 +2290,7 @@ class InstructionMOV01{
               
             ];}
           }
-        } else if (this.register1 == "1") {
+        } else if ((this.register1=="001" || ( this.taille==0 && this.register1==5))) {
           if (this.isimmed === 1) {
               return [{
                   value: "value2",
@@ -2343,7 +2369,7 @@ class InstructionMOV01{
           
         ];}
           }
-      } else if (this.register1 == "2") {
+      } else if ((this.register1==2 ||( this.taille==0 && this.register1==6))){
           if (this.isimmed === 1) {
               return [{
                   value: "value2",
@@ -2475,7 +2501,7 @@ class InstructionMOV01{
       
       
     
-        }else if (this.register1 == "4") {
+        }else if ((this.register1=="4" && this.taille==1) || ((this.register1==3 || this.register1==7)  && this.taille==0) ){
           if (this.isimmed === 1) {
               return [
                   {
