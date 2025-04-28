@@ -1072,8 +1072,8 @@ class InstructionMOV00{
             }
         ];
         this.buildanim=function(){
-            if(((this.register1=="000") || (this.register1=4 && this.taille==0))){
-              if(((this.register2=="000") || (this.register2=4 && this.taille==0))){
+            if(((this.register1=="000") || (this.register1==4 && this.taille==0))){
+              if(((this.register2=="000") || (this.register2==4 && this.taille==0))){
                     return[{
                         value:"value2",
                         target:infitToR1.target,
@@ -1200,7 +1200,7 @@ class InstructionMOV00{
                 ];
                 }
             }else if ((this.register1=="001" ||( this.taille==0 && this.register1==5))) {
-              if(((this.register2=="000") || (this.register2=4 && this.taille==0))){
+              if(((this.register2=="000") || (this.register2==4 && this.taille==0))){
                     return[{
                         value:"value2",
                         target:infitToR1.target,
@@ -1327,7 +1327,7 @@ class InstructionMOV00{
                 ];
                 }
             }else if ((this.register1==2 ||( this.taille==0 && this.register1==6))) {
-              if(((this.register2=="000") || (this.register2=4 && this.taille==0))){
+              if(((this.register2=="000") || (this.register2==4 && this.taille==0))){
                     return[{
                         value:"value2",
                         target:infitToR1.target,
@@ -1581,7 +1581,7 @@ class InstructionMOV00{
                 ];
                 }
             }else if ((this.register1=="4" && this.taille==1) || ((this.register1==3 || this.register1==7)  && this.taille==0) ) {
-              if(((this.register2=="000") || (this.register2=4 && this.taille==0))){
+              if(((this.register2=="000") || (this.register2==4 && this.taille==0))){
                     return[{
                         value:"value2",
                         target:infitToR1.target,
@@ -2208,7 +2208,7 @@ class InstructionMOV01{
         }
         ];
         this.buildanim=function(){
-          if(((this.register1=="000") || (this.register1=4 && this.taille==0))){
+          if(((this.register1=="000") || (this.register1==4 && this.taille==0))){
                 if(this.isimmed===1){
                     return[
                     {
