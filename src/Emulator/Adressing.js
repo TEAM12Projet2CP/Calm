@@ -1042,7 +1042,9 @@ class AddressingModes{
             
             // Check for cache hit before proceeding
             const cacheResult = memory.cache.checkCache(address2,0);
-            
+            console.log("cache content; ",memory.cache)
+            console.log("cacheResult",cacheResult);
+            console.log("Adress2----------------------------------- ",address2);
             if (cacheResult.hit) {
                 animations.push({
                     value: adresse,

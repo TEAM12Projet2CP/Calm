@@ -5,7 +5,7 @@ import UAParser from 'ua-parser-js';
 import "./style.css"
 
 ///// import components //////
-import { NavBar, HelpSection, SaveCodeButton } from "../../components"
+import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
 
 
 ////// import machine components //////
@@ -20,17 +20,16 @@ import Arch from '../Arch/index.jsx';
 import Cache from '../../Emulator/Cache.js';
 
 
-
 ///// import editor styles //////
 import "../../codemirror/lib/codemirror.css"
 import "../../codemirror/theme/material.css";
 import "../../codemirror/mode/myLang/assembly.js"
 
 /////import assembler modules//////////
-import { Assembler } from "../../assembler/Assembler";
-import {helpDescription} from "../../Constants/HelpDescription";
-import {HexaToCode} from "../../HexaToCode/HexaToCode"
-import { Errorcalm } from "../../assembler/Errorcalm";
+import { Assembler } from "../../assembler/Assembler.js";
+import {helpDescription} from "../../Constants/HelpDescription.js";
+import {HexaToCode} from "../../HexaToCode/HexaToCode.js"
+import { Errorcalm } from "../../assembler/Errorcalm.js";
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -39,12 +38,8 @@ let animations=[];
 ////////////////context declarations///////////////////////////////////
 let Contextarray=[];
 
-
-
 ////////////////machine declarations////////////////////////////////
-let memory=new MC();
-
-let cache=new Cache(50,MC);
+let memory = new MC();
 let sequenceur=new Sequenceur();
 let queue = new Queue();
 let addressingModes=new AddressingModes();
@@ -90,41 +85,46 @@ const Ide = ({currentUser})=>{
 
   ///////////////////////////////executions function////////////////////////////////////////
 
-  const traitement= (codeArray)=>{
-    for(let i=0;i<50;i++){//initializing first 50 bytes in memory to 0 (data memory)
-      memory.setRam(TwosComplement(i,8));
-      memory.setRim("00000000");
-      memory.write();
-    }
 
-    memory.setcode(codeArray)
+  const traitement = async (codeArray) => {
+    memory.data = MC.data;
+    memory.setcode(codeArray);
     queue.instructionset([]);
 
-    let numtmp=0;
-    
-    queue.fetchInstruction(animations,0,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
-    queue.fetchInstruction(animations,1,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
-    queue.fetchInstruction(animations,2,1,Contextarray,0);
-    queue.fetchInstruction(animations,numtmp,0,Contextarray,0);
+    let numtmp = 0;
 
+    queue.fetchInstruction(animations, 0, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
+    queue.fetchInstruction(animations, 1, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
+    queue.fetchInstruction(animations, 2, 1, Contextarray, 0);
+    queue.fetchInstruction(animations, numtmp, 0, Contextarray, 0);
 
+    let instrobject = {};
+    let save = {};
+    // probelm with consecutive reads it will put both read data in the same address corresponding to the address of the last read (ig problem with opvalues)
+    while (instrobject.name !== "stop") {
+        sequenceur.getinstrbyte(animations, true, Contextarray);
+        instrobject = { ...sequenceur.decode(animations, Contextarray) };
+        if (instrobject.name !== "stop") {
+            if (instrobject.name === "READ" && typeof instrobject.steps?.[0] === "function") {
+              for (let i = 0; i < 7; i++) {
+                save[i] = Registers[i].getvalue();
+              }
+                const result = await instrobject.steps[0](); // ✅ Now await works
+                for (let i = 0; i < 7; i++) {
+                  Registers[i].setvalue(save[i]);
+                }
+                if (result === false) {
+                    continue;
+                }
 
-    console.log(queue.getinstwithoutshift())
-    
-    let instrobject={};
-    while(instrobject.name!=="stop"){
-      sequenceur.getinstrbyte(animations,true,Contextarray);
-      instrobject={...sequenceur.decode(animations,Contextarray)};
-      if(instrobject.name!=="stop"){
-        console.log(instrobject);
-        sequenceur.execute(instrobject,1,animations);
-      }
+            } else {
+                sequenceur.execute(instrobject, 1, animations);
+            }
+        }
     }
-
-  }
-
+}
   let [checktest,setChecktest]=useState(false);
 
   /////////////////////returning the component//////////////////
@@ -339,24 +339,37 @@ const Ide = ({currentUser})=>{
                 className='ide-exec-button' 
                 onClick={()=>{
                   setdone(true);
-                  let inputouter=[];
+                  let inputouter;
 
                   if(iscode){
                     inputouter=Assembler.assemblecode(handleStoreCode())
+                    
                   }else{
                     inputouter=handleStoreCode();
                   }
-                  let input=convertStrings(inputouter);
+                  console.log("inputouter",inputouter);
+                  console.log(inputouter.error)
+                  //here I must check for errors, if there are any, we must quit, but quitting is causing an undefined return from somewhere!!
+                  // we shall figure out a solution and put this block back once again
+                  if(inputouter.error !== ''){
+                    setresult(inputouter.error);
+                    seterr(true);
+                    return 
+                  } 
+
+                  let input=convertStrings(inputouter.code);
+                  // not checked yet
+                  memory.data = inputouter.memory;
                   input.push("ff");
-                  
                   try {
-    
                     if (Errorcalm.errorr === 0) {
                       traitement(input);
                       
-                      
+                     
                     }else{
                       setresult(Errorcalm.printError());
+                      
+                      
                       seterr(true);
                     }
 
@@ -367,13 +380,14 @@ const Ide = ({currentUser})=>{
                     setresult("this is not hexa code");
                     
                   }
-                  
+
                 }}>
                   execute
                 </button>
 
               </div>
             }
+            
             
             
 

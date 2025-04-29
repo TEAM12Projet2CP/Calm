@@ -1,5 +1,6 @@
 import { Register } from "./Register.js";
 import Cache from "./Cache.js"; // 
+import IOUnit from "./IO_Unit.js";  // 🔥 Import IOUnit
 
 class MC {
   constructor() {
@@ -11,8 +12,7 @@ class MC {
     this.code = new Array(100);
     
     this.cache= new Cache(50, MC); 
-  this.cache.MC=this;
-   // this.cache.initializeCache();
+    this.ioUnit = new IOUnit();  // ✅ Add IOUnit instance
 
     // Performance metrics
     this.cacheHits = 0;
@@ -75,6 +75,7 @@ class MC {
   }
 
   write() {
+    
     let address = parseInt(this.ram, 2);
     let value = this.rim;
    
@@ -115,17 +116,6 @@ class MC {
     };
   }
 
-  displayPerformance() {
-    let metrics = this.getPerformanceMetrics();
-    console.log("Performance Metrics:");
-    console.log(`Cache Hits: ${metrics.cacheHits}`);
-    console.log(`Cache Misses: ${metrics.cacheMisses}`);
-    console.log(`Hit Rate: ${metrics.hitRate}`);
-    console.log(`Miss Rate: ${metrics.missRate}`);
-    console.log("Result Matrix:");
-    console.table(metrics.resultMatrix);
-  }
-
   popval() {
     this.rim = this.stack.pop();
   }
@@ -141,6 +131,13 @@ class MC {
   getstack() {
     return this.stack;
   }
+  getIOUnit() {  // ✅ Helper method to get IOUnit
+    return this.ioUnit;
+}
+readMC(i)
+{
+    return this.data[i];
+}
 }
 
 export default MC;

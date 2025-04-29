@@ -1,4 +1,4 @@
-import { InstructionADD,InstructionMOV00,InstructionMOV01,InstructionMOV10,InstructionMOV11,InstructionSUB,InstructionMUL,InstructionDIV, InstructionPUSH, InstructionBR, InstructionNOR, InstructionNEG, InstructionROR, InstructionROL, InstructionSHL, InstructionSHR, InstructionBE, InstructionBS, InstructionBSE, InstructionBI, InstructionBIE, InstructionBNE, InstructionNOT, InstructionOR, InstructionAND, InstructionNAND, InstructionXOR } from "./Instruction.js";
+import { InstructionADD,InstructionMOV00,InstructionMOV01,InstructionMOV10,InstructionMOV11,InstructionSUB,InstructionMUL,InstructionDIV, InstructionPUSH, InstructionBR, InstructionNOR, InstructionNEG, InstructionROR, InstructionROL, InstructionSHL, InstructionSHR, InstructionBE, InstructionBS, InstructionBSE, InstructionBI, InstructionBIE, InstructionBNE, InstructionNOT, InstructionOR, InstructionAND, InstructionNAND, InstructionXOR, InstructionREAD, InstructionWRITE  } from "./Instruction.js";
 
 function hash(key){
     if(key=="0000000"){
@@ -56,6 +56,11 @@ function hash(key){
     }else if(key=="0000110"){//XOR
         return 26;
     }
+    else if(key=="1000"){  // Opcode for READ
+    return 27;
+    } else if(key=="1001"){  // Opcode for WRITE
+    return 28;
+}
 }
 let ADDinst=new InstructionADD();
 let MOV00inst=new InstructionMOV00();
@@ -84,6 +89,8 @@ let ORinst = new InstructionOR();
 let ANDinst = new InstructionAND();
 let NANDinst = new InstructionNAND();
 let XORinst = new InstructionXOR();
+let READinst = new InstructionREAD();
+let WRITEinst = new InstructionWRITE();
 let hashmap=[{
     key:"00",
     instrObject:ADDinst,
@@ -192,5 +199,13 @@ let hashmap=[{
     key:"0c",
     instrObject:XORinst,
 },
+{ 
+    key:"8", 
+    instrObject:READinst 
+},
+{ 
+    key:"9", 
+    instrObject:WRITEinst
+}  
 ];
 export {hash,hashmap};

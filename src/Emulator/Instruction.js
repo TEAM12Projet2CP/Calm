@@ -1,53 +1,108 @@
-import { useSpeedStore } from "./speedStore.jsx"; 
-import { Registers, memory, Alu1, IP ,queue } from "../pages/Ide";
+import { Registers, memory, Alu1, IP ,queue } from "../pages/Ide/index.jsx";
 import { TwosComplement } from "./ALU.js";
 import { gsap } from "gsap";
+import IOUnit from "./IO_Unit.js";
+import { Register } from "./Register.js";
+import {opValue} from "../assembler/Assembler.js";
+import { useSpeedStore } from "./speedStore.jsx";
 // import { Register } from "./Register.js";
-
-// Helper function to create animations with dynamic speed
-function createAnimation(animationDef) {
-  return {
-    ...animationDef,
-    anim: function(val, h, w) {
-      // Get current speed every time animation runs
-      const currentSpeed = useSpeedStore.getState().speed;
-      const duration = 1 / currentSpeed;
-      
-      // Kill any existing animations for the target
-      gsap.killTweensOf(animationDef.target);
-      
-      // Execute the animation with current speed
-      animationDef.anim(val, h, w, currentSpeed);
-    }
-  };
-}
-
 ////////////////////////////////////////////////
 function Dec2bin(dec){
     return ("00000000" + (parseInt(dec, 10)).toString(2)).substr(-8);
 }
-const rawIounitToBus = {
-  value: "",
-  target: ".ball",
-  time: () => 1000 / useSpeedStore.getState().speed,
-  anim: (val, h, w, speed) => {
-    gsap.fromTo(
-      ".ball",
-      {
-        borderRadius: "10px",
-        width: w * 0.1,
-        height: h * 0.045,
-        x: w * 0.442,
-        y: h * 0.666,
-        opacity: "0",
-      },
-      {
-        opacity: "1",
-        duration: 1 / speed,
-      }
-    );
-  },
+export function binaryToDecimalNumber(binaryStr) {
+    return parseInt(binaryStr, 2);
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+// Ensure receiveWriteValue is globally accessible
+// Ensure receiveWriteValue is globally accessible
+function showWritePopup() {
+    return new Promise((resolve) => {
+        let popup = window.open("", "Write to Register", "width=400,height=300");
+
+        popup.document.write(`
+            <h2>Write to Register</h2>
+            <label>Enter Value (number or string):</label>
+            <input type="text" id="registerValue">
+            <button onclick="submitValue()">Write</button>
+
+            <script>
+                function submitValue() {
+                    let value = document.getElementById('registerValue').value.trim();
+                    if (value !== "") {
+                        window.opener.resolveWriteValue(value);
+                        window.close();
+                    } else {
+                        alert("Please enter a non-empty value.");
+                    }
+                }
+            </script>
+        `);
+
+        // Store resolve function globally so it can return the value to the main window
+        window.resolveWriteValue = (value) => {
+            console.log("🟢 Received input from user:", value);
+            resolve(value); // Pass value as string (can be parsed later if needed)
+        };
+    });
+}
+
+
+
+
+window.receiveWriteValue = function(value) {
+    console.log("✅ Main Window: Received value from pop-up:", value);
+
+    const ioUnit = memory.ioUnit;
+
+    if (!isNaN(value)) {
+        value = parseInt(value, 10);
+        ioUnit.writeToBuffer(0, value);
+        console.log(`✅ Stored ${value} in I/O buffer register 0.`);
+
+        // Resume instruction execution
+        if (typeof window.writeCallback === "function") {
+            console.log("🟢 Resuming instruction after user input...");
+            window.writeCallback();
+            window.writeCallback = null; // Clear the callback after execution
+        }
+    } else {
+        console.log("❌ Invalid input. Please enter a number.");
+    }
 };
+
+
+
+/////////////////animations to test////////////////////
+const IounitToBus={
+    value:"",
+    target:".ball",
+    time:3000,
+    anim:(val,h,w)=>{
+    gsap.fromTo(".ball", {height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.221,y:h*0.39,opacity:"0"}, {opacity:"1",duration:1});
+    gsap.fromTo(".ball", {x:w*0.221,y:h*0.39}, {y:h*0.46 ,duration:1,delay:1});
+    gsap.to(".ball",{opacity:"0" ,duration:1,delay:2});
+    },
+}
+const BusToIO = {
+    value: "",
+    target: ".ball",
+    time: 3000,
+    anim: (val, h, w) => {
+        gsap.fromTo(".ball", 
+            { height: "2.812%", width: "1.4%", borderRadius: "50%", x: w * 0.221, y: h * 0.46, opacity: "0" }, 
+            { opacity: "1", duration: 1 }
+        );
+        gsap.fromTo(".ball", 
+            { x: w * 0.221, y: h * 0.46 }, 
+            { y: h * 0.39, duration: 1, delay: 1 } // Moves upward, opposite of IOTOBUS
+        );
+        gsap.to(".ball", { opacity: "0", duration: 1, delay: 2 });
+    },
+};
+
 
 const ADRbusToDATABus={
     value:"",
@@ -191,108 +246,77 @@ gsap.to(".ball",{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,dela
 },
 }
 
-/////////////////animations to test////////////////////
-const IounitToBus = {
-  value: "",
-  target: ".ball",
-  time: () => 1000 / useSpeedStore.getState().speed,
-  anim: (val, h, w) => {
-    const speed = useSpeedStore.getState().speed;
+// const rawBusToRual1 = {
+//   value: "",
+//   target: ".ball",
+//   time: () => 3000 / useSpeedStore.getState().speed,
+//   anim: (val, h, w, speed) => {
+//     gsap.killTweensOf(".ball");
 
-    // Kill previous animations if speed changed (optional)
-    gsap.killTweensOf(".ball");
+//     gsap.fromTo(".ball", {
+//       height: "2.812%",
+//       width: "1.4%",
+//       borderRadius: "50%",
+//       x: w * 0.143,
+//       y: h * 0.56,
+//       opacity: "0"
+//     }, {
+//       opacity: "1",
+//       duration: 1 / speed
+//     });
 
-    gsap.fromTo(
-      ".ball",
-      {
-        borderRadius: "10px",
-        width: w * 0.1,
-        height: h * 0.045,
-        x: w * 0.442,
-        y: h * 0.666,
-        opacity: "0",
-      },
-      {
-        opacity: "1",
-        duration: 1 / speed,
-      }
-    );
-  },
-};
+//     gsap.fromTo(".ball", {
+//       x: w * 0.143,
+//       y: h * 0.56
+//     }, {
+//       y: h * 0.625,
+//       duration: 1 / speed,
+//       delay: 1 / speed
+//     });
 
+//     gsap.to(".ball", {
+//       opacity: "0",
+//       duration: 1 / speed,
+//       delay: 2 / speed
+//     });
+//   }
+// };
 
+// const rawRual1ToBus = {
+//   value: "",
+//   target: ".ball",
+//   time: () => 3000 / useSpeedStore.getState().speed,
+//   anim: (val, h, w, speed) => {
+//     gsap.killTweensOf(".ball");
 
-const rawBusToRual1 = {
-  value: "",
-  target: ".ball",
-  time: () => 3000 / useSpeedStore.getState().speed,
-  anim: (val, h, w, speed) => {
-    gsap.killTweensOf(".ball");
+//     gsap.fromTo(".ball", {
+//       height: "2.812%",
+//       width: "1.4%",
+//       borderRadius: "50%",
+//       x: w * 0.143,
+//       y: h * 0.625,
+//       opacity: "0"
+//     }, {
+//       opacity: "1",
+//       duration: 1 / speed
+//     });
 
-    gsap.fromTo(".ball", {
-      height: "2.812%",
-      width: "1.4%",
-      borderRadius: "50%",
-      x: w * 0.143,
-      y: h * 0.56,
-      opacity: "0"
-    }, {
-      opacity: "1",
-      duration: 1 / speed
-    });
+//     gsap.fromTo(".ball", {
+//       x: w * 0.143,
+//       y: h * 0.625
+//     }, {
+//       y: h * 0.56,
+//       duration: 1 / speed,
+//       delay: 1 / speed
+//     });
 
-    gsap.fromTo(".ball", {
-      x: w * 0.143,
-      y: h * 0.56
-    }, {
-      y: h * 0.625,
-      duration: 1 / speed,
-      delay: 1 / speed
-    });
-
-    gsap.to(".ball", {
-      opacity: "0",
-      duration: 1 / speed,
-      delay: 2 / speed
-    });
-  }
-};
-
-const rawRual1ToBus = {
-  value: "",
-  target: ".ball",
-  time: () => 3000 / useSpeedStore.getState().speed,
-  anim: (val, h, w, speed) => {
-    gsap.killTweensOf(".ball");
-
-    gsap.fromTo(".ball", {
-      height: "2.812%",
-      width: "1.4%",
-      borderRadius: "50%",
-      x: w * 0.143,
-      y: h * 0.625,
-      opacity: "0"
-    }, {
-      opacity: "1",
-      duration: 1 / speed
-    });
-
-    gsap.fromTo(".ball", {
-      x: w * 0.143,
-      y: h * 0.625
-    }, {
-      y: h * 0.56,
-      duration: 1 / speed,
-      delay: 1 / speed
-    });
-
-    gsap.to(".ball", {
-      opacity: "0",
-      duration: 1 / speed,
-      delay: 2 / speed
-    });
-  }
-};
+//     gsap.to(".ball", {
+//       opacity: "0",
+//       duration: 1 / speed,
+//       delay: 2 / speed
+//     });
+//   }
+// };
 
   
   const BusToRual2={
@@ -328,109 +352,105 @@ const rawRual1ToBus = {
     gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
   },}
 
-  const IrToDecoder={
-    value:"",
-    target:".ball",
-  time:1/  useSpeedStore.getState().speed*3000,
-    anim:(val,h,w)=>{
-    ///depart: ( 59% , 78.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.708,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
-    gsap.fromTo(".ball",{x:w*0.644,y:h*0.708},{y:h*0.725 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
-    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
-  },}
+  // const IrToDecoder={
+  //   value:"",
+  //   target:".ball",
+  // time:1/  useSpeedStore.getState().speed*3000,
+  //   anim:(val,h,w)=>{
+  //   ///depart: ( 59% , 78.2% )
+  //   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.708,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+  //   gsap.fromTo(".ball",{x:w*0.644,y:h*0.708},{y:h*0.725 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+  //   gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+  // },}
   
-  const DecoderToSequencer={
-    value:"",
-    target:".ball",
-  time:1/  useSpeedStore.getState().speed*3000,
-    anim:(val,h,w)=>{
-    ///depart: ( 59% , 78.2% )
-    gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.813,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
-    gsap.fromTo(".ball",{x:w*0.644,y:h*0.813},{y:h*0.827 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
-    gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
-  },}
+  // const DecoderToSequencer={
+  //   value:"",
+  //   target:".ball",
+  // time:1/  useSpeedStore.getState().speed*3000,
+  //   anim:(val,h,w)=>{
+  //   ///depart: ( 59% , 78.2% )
+  //   gsap.fromTo(".ball",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.644,y:h*0.813,opacity:"0"},{opacity:"1" ,duration:1/(  useSpeedStore.getState().speed)*1});
+  //   gsap.fromTo(".ball",{x:w*0.644,y:h*0.813},{y:h*0.827 ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*1});
+  //   gsap.to(".ball",{opacity:"0" ,duration:1/(  useSpeedStore.getState().speed)*1,delay:1/(  useSpeedStore.getState().speed)*2});
+  // },}
   
-  const rawQueueToIr = {
-    value: "",
-    target: ".ball",
-    time: () => 3000 / useSpeedStore.getState().speed,
-    anim: (val, h, w, speed) => {
-      gsap.killTweensOf(".ball");
+  // const rawQueueToIr = {
+  //   value: "",
+  //   target: ".ball",
+  //   time: () => 3000 / useSpeedStore.getState().speed,
+  //   anim: (val, h, w, speed) => {
+  //     gsap.killTweensOf(".ball");
   
-      gsap.fromTo(".ball", {
-        height: "2.812%",
-        width: "1.4%",
-        borderRadius: "50%",
-        x: w * 0.726,
-        y: h * 0.6638,
-        opacity: "0"
-      }, {
-        opacity: "1",
-        duration: 1 / speed
-      });
+  //     gsap.fromTo(".ball", {
+  //       height: "2.812%",
+  //       width: "1.4%",
+  //       borderRadius: "50%",
+  //       x: w * 0.726,
+  //       y: h * 0.6638,
+  //       opacity: "0"
+  //     }, {
+  //       opacity: "1",
+  //       duration: 1 / speed
+  //     });
   
-      gsap.fromTo(".ball", {
-        x: w * 0.726,
-        y: h * 0.6638
-      }, {
-        x: w * 0.711,
-        duration: 1 / speed,
-        delay: 1 / speed
-      });
+  //     gsap.fromTo(".ball", {
+  //       x: w * 0.726,
+  //       y: h * 0.6638
+  //     }, {
+  //       x: w * 0.711,
+  //       duration: 1 / speed,
+  //       delay: 1 / speed
+  //     });
   
-      gsap.to(".ball", {
-        opacity: "0",
-        duration: 1 / speed,
-        delay: 2 / speed
-      });
-    }
-  };
+  //     gsap.to(".ball", {
+  //       opacity: "0",
+  //       duration: 1 / speed,
+  //       delay: 2 / speed
+  //     });
+  //   }
+  // };
   
-  const QueueToIr = createAnimation(rawQueueToIr);
+  // const rawBusToQueue = {
+  //   value: "",
+  //   target: ".ball",
+  //   time: () => 4000 / useSpeedStore.getState().speed,
+  //   anim: (val, h, w, speed) => {
+  //     gsap.killTweensOf(".ball");
   
-  const rawBusToQueue = {
-    value: "",
-    target: ".ball",
-    time: () => 4000 / useSpeedStore.getState().speed,
-    anim: (val, h, w, speed) => {
-      gsap.killTweensOf(".ball");
+  //     gsap.fromTo(".ball", {
+  //       height: "2.812%",
+  //       width: "1.4%",
+  //       borderRadius: "50%",
+  //       x: w * 0.931,
+  //       y: h * 0.56,
+  //       opacity: "0"
+  //     }, {
+  //       opacity: "1",
+  //       duration: 1 / speed
+  //     });
   
-      gsap.fromTo(".ball", {
-        height: "2.812%",
-        width: "1.4%",
-        borderRadius: "50%",
-        x: w * 0.931,
-        y: h * 0.56,
-        opacity: "0"
-      }, {
-        opacity: "1",
-        duration: 1 / speed
-      });
+  //     gsap.fromTo(".ball", {
+  //       x: w * 0.931,
+  //       y: h * 0.56
+  //     }, {
+  //       y: h * 0.6638,
+  //       duration: 1 / speed,
+  //       delay: 1 / speed
+  //     });
   
-      gsap.fromTo(".ball", {
-        x: w * 0.931,
-        y: h * 0.56
-      }, {
-        y: h * 0.6638,
-        duration: 1 / speed,
-        delay: 1 / speed
-      });
+  //     gsap.to(".ball", {
+  //       x: w * 0.921,
+  //       duration: 1 / speed,
+  //       delay: 2 / speed
+  //     });
   
-      gsap.to(".ball", {
-        x: w * 0.921,
-        duration: 1 / speed,
-        delay: 2 / speed
-      });
-  
-      gsap.to(".ball", {
-        opacity: "0",
-        duration: 1 / speed,
-        delay: 3 / speed
-      });
-    }
-  };
-  
-  const BusToQueue = createAnimation(rawBusToQueue);
+  //     gsap.to(".ball", {
+  //       opacity: "0",
+  //       duration: 1 / speed,
+  //       delay: 3 / speed
+  //     });
+  //   }
+  // };
   
   
   const BusToAcc={
@@ -2268,10 +2288,8 @@ class InstructionMOV01{
          }else if (this.taille== 0){
             if(this.register1==0){
               Registers[0].setright(TwosComplement(this.value2,8));
-              console.log("redoune");
           }else if(this.register1==4){
               Registers[0].setleft(TwosComplement(this.value2,8));
-              console.log("redoune");
           }
           else if(this.register1==1){
               Registers[1].setright(TwosComplement(this.value2,8));
@@ -2303,7 +2321,7 @@ class InstructionMOV01{
                     },
                 ];
                 }else{
-                  console.log(`${this.addresse2}`);
+                  console.log(`gjgjgjgjggjgjg ${this.addresse2}`);
                   if(memory.cache.checkCache(this.addresse2, 0).hit){
   
                   return[{
@@ -5789,6 +5807,227 @@ class InstructionPOPA{
         ];
         this.buildanim=function(){}
     }
+    
+}
+class InstructionREAD {
+  constructor() {
+      this.value1 = 0;
+      this.value2 = 0;
+      this.addresse1 = 0;
+      this.register1 = 0;
+      this.addresse2 = 0;
+      this.register2 = 0;
+      this.taille = 0;
+      this.stepsNum = 1;
+      this.name = "READ";
+
+      this.steps = [
+          async () => {
+              const ioUnit = memory.ioUnit;
+
+              if (!ioUnit.ioController.busy) {
+                  ioUnit.ioController.busy = true;
+
+                  console.log("🟢 InstructionWRITE: Waiting for user input...");
+
+                  // Wait for user input asynchronously before proceeding
+                  const value = await showWritePopup();
+
+                  ioUnit.writeToBuffer1(value);
+                  console.log(`✅ User input received: ${value}. Stored in I/O buffer.`);
+                  ioUnit.displayBuffer();
+                  // Resume execution
+                  this.resume();
+              } else {
+                  console.log("🔴 InstructionWRITE: I/O Unit busy, WRITE delayed");
+                  return false;
+              }
+          }
+      ];
+
+      // Animation sequence
+      this.buildanim=function(){
+          return[{
+              value:"ADD",
+              target:addanim.target,
+              time:addanim.time,
+              anim:addanim.anim,
+          },
+          {
+              value:"",
+              target:AluToAcc.target,
+              time:AluToAcc.time,
+              anim:AluToAcc.anim,
+          },
+          {
+              value:"res",
+              target:fitToAcc.target,
+              time:fitToAcc.time,
+              anim:fitToAcc.anim,
+          },
+      ];
+      }
+  }
+
+  resume() {
+      const ioUnit = memory.ioUnit;
+      let value = ioUnit.readFromBuffer1(); // Could be string or number
+      //       console.log("this is the value",this.addresse1);
+      let baseAddress = this.addresse1; // Starting address
+  
+      if (isNaN(value)) {
+          // STRING CASE
+          for (let i = 0; i < value.length; i++) {
+              let charCode = value.charCodeAt(i); // ASCII code
+              let hex = charCode.toString(16).toUpperCase().padStart(2, '0'); // Hex value
+  
+              memory.setRim(hex);
+              memory.setRam(TwosComplement(baseAddress + i, 16)); // Increment address
+              memory.write();
+  
+              console.log(`📝 Wrote char '${value[i]}' as ${hex} to address ${baseAddress + i}`);
+          }
+      } else {
+          // NUMBER CASE
+          let hexValue = parseInt(value).toString(16).toUpperCase();
+          memory.setRim(hexValue);
+          memory.setRam(TwosComplement(baseAddress, 16));
+          memory.write();
+          console.log("\n\n\n\n louai");
+          memory.setRam(TwosComplement(baseAddress,16));
+          memory.read(false);
+          memory.getRim();
+          console.log("kjkjkkj", String.fromCharCode(parseInt(memory.getRim(), 16)));
+
+          console.log(`📝 Wrote number ${value} as hex ${hexValue} to address ${baseAddress}`);
+      }
+  
+      ioUnit.ioController.busy = false;
+      console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to memory.`);
+  }
+  
+}
+class InstructionWRITE {
+  constructor() {
+      this.value1 = 0;
+      this.value2 = 0;
+      this.addresse1 = 0;
+      this.register1 = 0;
+      this.addresse2 = 0;
+      this.register2 = 0;
+      this.taille = 0;
+      this.stepsNum = 1;
+      this.name = "WRITE";
+
+      this.steps = [
+          async () => {
+              const ioUnit = memory.ioUnit;
+              console.log("priviete");
+              console.log(this.value2,this.addresse1); // Access I/O Unit
+              
+              if (!ioUnit.ioController.busy) {
+                  ioUnit.ioController.busy = true;
+                  let value;
+                  let temp;
+                  temp=this.addresse1;
+                  ioUnit.emptyBuffer();
+                  console.log("animation is here", this.value2);
+
+                  for (let index = 0; index < this.value2; index++) {
+                      memory.setRam(TwosComplement(temp, 16));
+                      memory.read(false);
+                      const rawHex = memory.getRim();
+                      const intValue = parseInt(rawHex, 16);
+                  
+                      // Decide what to write: if intValue is a printable character, write char, else write as number
+                      let valueToWrite;
+                      if (intValue >= 32 && intValue <= 126) {
+                          // Printable ASCII range (space to ~)
+                          valueToWrite = String.fromCharCode(intValue);
+                      } else {
+                          // Non-printable or numeric value
+                          valueToWrite = intValue.toString();
+                      }
+                  
+                      ioUnit.writeToBuffer(index, valueToWrite);
+                      temp++;
+                      console.log(`Wrote to buffer:`, valueToWrite);
+                  }
+                  
+
+                  // Read from CPU register (e.g., R1)
+                  // ioUnit.writeToBuffer(value); 
+                  let popup = window.open("", "Buffer Contents", "width=400,height=300");
+                  if (popup) {
+                      popup.document.write(`<h2>Buffer Contents</h2><p>${ioUnit.readFromBuffer()}</p>`);
+                  } else {
+                      alert("Popup was blocked. Please allow popups for this site.");
+                      console.error("Failed to open popup. Possibly blocked by browser.");
+                  }
+                  // alert("Buffer Contents: " + ioUnit.readFromBuffer(0));// Store in I/O buffer register 0
+
+                  console.log(`CPU to IO: Moved data ${value} from CPU register R${this.register1} to I/O buffer.`);
+                  ioUnit.ioController.busy = false;
+              } else {
+                  console.log("I/O Unit busy, READ delayed");
+                  return false; // Delay execution if busy
+              }
+          }
+      ];
+
+      // Animation sequence
+      this.buildanim = function () {
+          const ioUnit = memory.ioUnit;
+          const animSteps = [];
+      
+          for (let i = 0; i < this.value2; i++) {
+              const char = ioUnit.buffer[i];
+              console.log("animation is here",this.value2);
+             
+              
+              animSteps.push(
+                  {
+                      value: `WRITE: ${char}`,
+                      target: addanim.target,
+                      time: addanim.time,
+                      anim: addanim.anim,
+                  },
+                  {
+                      value: char,
+                      target: MdrToBus.target,
+                      time: MdrToBus.time,
+                      anim: MdrToBus.anim,
+                  },
+                  {
+                      value: char,
+                      target: MdrToIO.target,
+                      time: MdrToIO.time,
+                      anim: MdrToIO.anim,
+                  },
+                  {
+                      value: char,
+                      target: BusToIO.target,
+                      time: BusToIO.time,
+                      anim: BusToIO.anim,
+                  }
+              );
+          }
+      
+          return animSteps;
+      };
+      
+  }
+
+  resume() {
+      const ioUnit = memory.ioUnit;
+      
+      let value = ioUnit.readFromBuffer(0);
+      let register = parseInt(this.register1, 2);
+      Registers[register].setvalue(TwosComplement(value, 16));
+
+      ioUnit.ioController.busy = false;
+      console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to CPU register R${register}.`);
+  }
 }
 
-export {InstructionADD,InstructionMOV00,InstructionMOV01,InstructionMOV10,InstructionMOV11,InstructionSUB,InstructionMUL,InstructionDIV,InstructionBSE,InstructionBIE,InstructionBI,InstructionBS,InstructionBNE,InstructionBE,InstructionBR,InstructionPOP,InstructionPUSH,InstructionAND,InstructionOR,InstructionNAND,InstructionNOR,InstructionXOR,InstructionNEG,InstructionNOT,InstructionROL,InstructionROR,InstructionSHL,InstructionSHR,InstructionPOPA,InstructionPUSHA}
+export {InstructionADD,InstructionMOV00,InstructionMOV01,InstructionMOV10,InstructionMOV11,InstructionSUB,InstructionMUL,InstructionDIV,InstructionBSE,InstructionBIE,InstructionBI,InstructionBS,InstructionBNE,InstructionBE,InstructionBR,InstructionPOP,InstructionPUSH,InstructionAND,InstructionOR,InstructionNAND,InstructionNOR,InstructionXOR,InstructionNEG,InstructionNOT,InstructionROL,InstructionROR,InstructionSHL,InstructionSHR,InstructionPOPA,InstructionPUSHA,InstructionREAD,InstructionWRITE}

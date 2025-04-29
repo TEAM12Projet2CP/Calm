@@ -1,9 +1,12 @@
+/* eslint-disable eqeqeq */
 import { Register } from "./Register.js";
 import { queue, Registers, addressingModes} from "../pages/Ide";
 import { hash, hashmap } from "./Opcodes.js";
 import { gsap } from "gsap";
 import { useSpeedStore } from './speedStore.jsx';
-
+import { FuncInterface} from "../assembler/Assembler.js";
+import { binaryToDecimalNumber } from "./Instruction.js";
+export let  opValue ;
 //const speed = useSpeedStore.getState().speed;
 const fitToR2={
     value:"",
@@ -708,6 +711,14 @@ class Sequenceur{
             //}
             //else{
                 let value=0;
+                if(key ==='1000'){
+                    this.getinstrbyte(animations,false,Contextarray); 
+                    this.getinstrbyte(animations,false,Contextarray);
+                    // opValue=FuncInterface.binaryToHex(this.RI.getvalue());
+                    opValue = binaryToDecimalNumber(this.RI.getvalue());
+                    console.log("opValue",opValue);
+                    instrObject.addresse1=opValue;
+                }else{
                 if(taille=='1'){
                 value =parseInt(Registers[parseInt(numreg, 2)].getvalue(), 2);
             }else{
@@ -997,7 +1008,7 @@ class Sequenceur{
                   time:1/  useSpeedStore.getState().speed*fitToRual1.time,
                     anim:fitToRual1.anim,
                 })
-            }}
+            }}}
         }else{
             if(key>='0010' & key<='0011'){
                 key=instruction.substring(0,7);
@@ -1023,13 +1034,25 @@ class Sequenceur{
                 let Ind=secondByte.substring(0,2);
                 let regMod1=secondByte.substring(2,5);
                 let regMod2=secondByte.substring(5,8);
-                if(key=='0001100'){
+                if(key=='0001100'||key=='0001001'){
+                   
                     key=key+Ind;
-                    console.log("this key ",key);
-                    index=hash(key);
-                    instrObject=hashmap[index].instrObject;
-                    animateDecoderSequencer(animations,instrObject.name);
-                    instrObject.taille=taille;
+                    console.log("klkl"+key)
+                  
+                    if (key=='000100111') {
+                        key='1001';
+                    }
+                        index=hash(key);
+                        instrObject=hashmap[index].instrObject;
+                        console.log(instrObject);
+                        animateDecoderSequencer(animations,instrObject.name);
+                        instrObject.taille=taille;
+                        if (key=='1001') {
+                            key='000110011';
+                        }  
+                        
+                   
+                    
                     let value2=0;
                     if(key=='000110000'){
                         if(taille=='1'){
@@ -1149,7 +1172,8 @@ class Sequenceur{
                         instrObject.value2=value2;
                         instrObject.register2=parseInt(regMod2,2);
                         instrObject.addresse1=addresse1;
-                    }else if(key=='000110011'){
+                    }else if(key=='000110011'||key=='000100111'){
+                        console.log("inin");
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresseop1=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -1160,10 +1184,7 @@ class Sequenceur{
                         let valimm=parseInt(adresseop2,2);
                         if(regMod2!="000" | taille!='0'){
                         this.getinstrbyte(animations,false,Contextarray);
-                        adresseop2=adresseop2+this.RI.getvalue();
-                        console.log("address op 2: ",adresseop2)
-                        adresseop2=parseInt(adresseop2,2)
-                        instrObject.addresse2=adresseop2
+                        adresseop2=adresseop2+this.RI.getvalue()
                         }
                         adresseop2=parseInt(adresseop2,2);
                         let depl1=0;
@@ -1207,6 +1228,8 @@ class Sequenceur{
                         }
                         instrObject.value2=value2;
                         instrObject.addresse1=addresse1;
+                        
+                       key='000100111' ; 
                     }
                 }else{
                     index=hash(key);
@@ -2465,7 +2488,7 @@ class Sequenceur{
             }
         }
         console.log("yacine",instrObject);
-        return instrObject;}
+        return instrObject;}   
     }
     execute(instrObject,is_animated,animations){
         let res;
