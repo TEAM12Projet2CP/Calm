@@ -87,3 +87,31 @@
 .aregide{
   width: 3rem;
 }
+.speed-control-container {
+  position: relative;
+  display: inline-block;
+}
+
+.speed-slider-popup {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #263238;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: 10px;
+}
+
+.speed-slider-popup::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent #263238 transparent;
+}

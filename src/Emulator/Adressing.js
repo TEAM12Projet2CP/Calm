@@ -1,7 +1,7 @@
 import { memory, BR, IR } from "../pages/Ide";
 import { gsap } from "gsap";
 import Alu from "./ALU";
-import { useSpeedStore } from './speedStore.jsx';
+import { useSpeedStore } from "../pages/Ide/speedStore.jsx"; 
 
 function hex2bin(hex){
     return ("00000000" + (parseInt(hex, 16)).toString(2)).substr(-8);
@@ -540,7 +540,7 @@ const ADRToMAR={
     const Cacheanim={
         value:"",
         target:".Cache",
-        time:3000,
+        time:1000,
         anim:(val,h,w)=>{
             gsap.fromTo(".Cache",{opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*1});
             gsap.fromTo(".Cache",{opacity:"1"},{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:1/(useSpeedStore.getState().speed)*1});
@@ -1130,7 +1130,7 @@ class AddressingModes{
                 adr=TwosComplement(adr,16);
                 memory.setRam(adr);
                 memory.read(0);
-                let byte1=hex2bin(memory.getRim());
+                let byte1=hex2bin(memory.getRim());/// the  data  ishere  
                 let byte2;
                 if(size==1){
                     adresse=TwosComplement(parseInt(adresse,2)+1,16);
@@ -2010,7 +2010,7 @@ class AddressingModes{
         this.modesAdr=[
             null,//pas d'adresse en mode immediat et pour gareder les index comme le code dans la documentation et pas les decaler
             function directAdr(adresse,animated,size,depl,animations,is_anim,target){//here target=0 ==> target=MAR , target=1 ==>target=Acc //because we can performe an addition to have the addresse (ex basé indexé avec ou sans deplacement)
-                //animation:
+            
             //il faut ajouter d'abord deux shift du queue_____________
             //if(size==0){
             //     animations.push({
@@ -2125,6 +2125,8 @@ class AddressingModes{
                 time:queueExitToAdr.time,
                 anim:queueExitToAdr.anim,
             });
+                //animation:
+             
             animations.push({
                 value:"",
                 target:ADRbusToDATABus.target,
@@ -2168,6 +2170,7 @@ class AddressingModes{
                 time:fitToAcc.time,
                 anim:fitToAcc.anim,
             });
+           
             }
                 return adresse;
             },
@@ -2276,6 +2279,7 @@ class AddressingModes{
             //             anim:fitqueue4_3.anim,
             //         });
             // }
+          
             animations.push({
                 value:"",
                 target:queueExitToBus.target,
@@ -2374,6 +2378,9 @@ class AddressingModes{
                 return parseInt(memory.getRim(), 16);
             },
             function baseAdr(adresse,animated,size,depl,animations,is_anim,target){
+                
+           
+
                 animations.push({
                     value:"",
                     nom:"queueExitToBus",

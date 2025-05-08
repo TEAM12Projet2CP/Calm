@@ -2,7 +2,7 @@ import { Register } from "./Register.js";
 import { queue, Registers, addressingModes} from "../pages/Ide";
 import { hash, hashmap } from "./Opcodes.js";
 import { gsap } from "gsap";
-import { useSpeedStore } from './speedStore.jsx';
+import { useSpeedStore } from "../pages/Ide/speedStore.jsx"; 
 
 //const speed = useSpeedStore.getState().speed;
 const fitToR2={
@@ -1091,6 +1091,7 @@ class Sequenceur{
                         let adresse=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
                         adresse=adresse+this.RI.getvalue()
+                        instrObject.adresse2=adresse
                         adresse=parseInt(adresse,2);
                         let value2=0;
                         if(taille=='1'){

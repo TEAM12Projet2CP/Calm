@@ -1,11 +1,13 @@
 import { memory,IP } from "../pages/Ide";
+
 import { TwosComplement } from "./ALU.js";
 import { gsap } from "gsap";
 
-import { useSpeedStore } from './speedStore.jsx';
-
+import { useSpeedStore } from "../pages/Ide/speedStore.jsx"; 
+// Get current speed
 
 const IpToAdr={
+
   value:"",
   target:".ball",
 time:1/useSpeedStore.getState().speed*1800/useSpeedStore.getState().speed,
@@ -226,6 +228,9 @@ class Queue {
         IP.setvalue(TwosComplement(parseInt(IP.getvalue(),2)+1,16));
         //animation:
         if(is_animated){
+          const speed = useSpeedStore.getState().speed; // Get speed ONCE per animation
+          console.log(`Current speed: ${speed}`); // Debug log
+      // Debug log
           marval=parseInt(marval,2).toString(16);
         animations.push({
             value:"",

@@ -30,10 +30,14 @@ class Cache {
     checkCache(address, iscode) {
         if(iscode)
             return { hit: false, index: -1 };
-        for (let i = 0; i < this.blocks.length; i++) {
-            if (this.blocks[i].address === address) 
-                
-                    return { hit: true, index: i };
+        for (let i = 0; i < this.blockSize; i++) {
+          
+            if (this.blocks[i].address === address) {
+             
+                return { hit: true, index: i };
+
+            }
+              
                 
             
         }

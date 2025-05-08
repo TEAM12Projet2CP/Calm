@@ -3,6 +3,10 @@ import Toggle from 'react-styled-toggle';
 import { Controlled as CodeMirror } from "react-codemirror2";
 import UAParser from 'ua-parser-js';
 import "./style.css"
+import { useSpeedStore } from "./speedStore.jsx";
+
+
+import Speed from "./speed.jsx";
 
 ///// import components //////
 import { NavBar, HelpSection, SaveCodeButton } from "../../components"
@@ -74,10 +78,17 @@ function convertStrings(arr) {
   return result;
 }
 
+
+
+
+
 ///////////////////////////////////the component/////////////////////////
 const Ide = ({currentUser})=>{
+
   ////////////////////hooks///////////////////////////////:
   let [result,setresult]=useState("");
+  const [showSpeedSlider, setShowSpeedSlider] = useState(false);
+  const { speed, setSpeed } = useSpeedStore();
   let [done,setdone]=useState(false);
   let [simul,setsimul]=useState(false)
   let [memo,setmemo]=useState(false);
@@ -333,6 +344,7 @@ const Ide = ({currentUser})=>{
 
 
             </div>
+            
             {!done && 
               <div className="codeContainer console">
                 <button 
@@ -371,6 +383,23 @@ const Ide = ({currentUser})=>{
                 }}>
                   execute
                 </button>
+                <div className="speed-control-container">
+  <button 
+    className="ide-exec-button" 
+    onClick={() => setShowSpeedSlider(!showSpeedSlider)}
+  >
+    Speed 
+  </button>
+  {showSpeedSlider && (
+    <div className="speed-slider-popup">
+      <Speed 
+        onSpeedChange={(newSpeed) => {
+          // Optional: Add any additional logic here
+        }}
+      />
+    </div>
+  )}
+</div>
 
               </div>
             }
@@ -438,6 +467,12 @@ const Ide = ({currentUser})=>{
                     stack
                   </button>
                   }
+                
+
+
+
+
+
                 </div>
                 {reg && 
                   <div className="IdeReg">

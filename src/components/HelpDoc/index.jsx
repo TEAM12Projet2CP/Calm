@@ -266,6 +266,8 @@ const HelpDoc = () => {
                     className="c2 c1">to change the calM&rsquo;s assembly language to hexadecimal code automatically</span>
                 </li>
             </ul>
+         
+          
             <p className="c12"><span className="c1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;You can also write comments while coding by inserting the special character: &ldquo; ; or # or // or /*</span><span
                 className="c1 c22">comment</span><span className="c2 c1">*/ &rdquo;</span></p>
             <p className="c12"><span

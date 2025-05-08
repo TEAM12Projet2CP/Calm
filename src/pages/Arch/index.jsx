@@ -4,8 +4,8 @@ import Archi2 from "../../assets/images/archi.png";
 import gsap from "gsap";
 import queuearrow from "../../assets/images/icons/fleche.png"
 
-import Speed from "../../Emulator/speed.jsx";
-import {  useSpeedStore } from "../../Emulator/speedStore";
+import Speed from "../Ide/speed.jsx";
+import { useSpeedStore } from "../Ide/speedStore.jsx"; 
 
 //////////////////////////////////////
 
@@ -542,7 +542,7 @@ MC.forEach((element,index) => {
             </div>
         </div>
         
-            <Speed setSpeed={setSpeed} />
+           
         
        
          <button className="returnBtn" onClick={()=>{

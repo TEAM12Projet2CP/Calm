@@ -1,4 +1,4 @@
-import { useSpeedStore } from "./speedStore.jsx"; 
+import { useSpeedStore } from "../pages/Ide/speedStore.jsx"; 
 import { Registers, memory, Alu1, IP ,queue } from "../pages/Ide";
 import { TwosComplement } from "./ALU.js";
 import { gsap } from "gsap";
@@ -48,6 +48,14 @@ const rawIounitToBus = {
     );
   },
 };
+const Cacheanim={
+  value:"",
+  target:".Cache",
+  time:2000,
+  anim:(val,h,w)=>{
+      gsap.fromTo(".Cache",{opacity:"0"},{opacity:"1" ,duration:1/(useSpeedStore.getState().speed)*2});
+      gsap.fromTo(".Cache",{opacity:"1"},{opacity:"0" ,duration:1/(useSpeedStore.getState().speed)*1,delay:2/(useSpeedStore.getState().speed)*1});
+  },}
 const AccToCache={
   value:"",
   target:".box-data",
@@ -2105,7 +2113,7 @@ class InstructionMOV01{
     constructor(){
         this.value1=0;
         this.value2=0;
-        this.addresse1=0;
+        this.addresse1=1;
         this.register1=0;
         this.addresse2=0;
         this.register2=0;
@@ -2129,7 +2137,8 @@ class InstructionMOV01{
                     },
                 ];
                 }else{
-                  console.log(`${this.addresse1}`);
+                
+                 
                   if(memory.cache.checkCache(this.addresse1, 0).hit){
   
                   return[{
@@ -2226,8 +2235,14 @@ class InstructionMOV01{
                   anim: fitToR3.anim
               }];
           } else {
+          
+
+          
+
+
               if (memory.cache.checkCache(this.addresse1, 0).hit) {
-                  return [{
+                  return [
+                  {
                       value: "value2",
                       target: CacheToBus.target,
                       time: 1 / useSpeedStore.getState().speed * CacheToBus.time,
@@ -3098,7 +3113,7 @@ class InstructionMOV11{////the difference between them will be in the animation 
         
           if (this.isimmed === false) {
             const anims = [];
-        
+       
             // Step 1: In-fit to Accumulator
             anims.push({
               value: "addresse1",
@@ -3152,7 +3167,9 @@ class InstructionMOV11{////the difference between them will be in the animation 
           target:BusToCache.target,
         time:1/  useSpeedStore.getState().speed*BusToCache.time,
           anim:BusToCache.anim,
-      })
+
+      },
+    )
              
         
             } else {
@@ -3193,18 +3210,22 @@ class InstructionMOV11{////the difference between them will be in the animation 
                 anim:MdrToBus.anim,
             },
           
-          {
-            value:"",
-            target:MdrToBus.target,
-          time:1/  useSpeedStore.getState().speed*MdrToBus.time,
-            anim:MdrToBus.anim,
-        },
+          
         {
           value:"value2",
           target:BusToCache.target,
         time:1/  useSpeedStore.getState().speed*BusToCache.time,
           anim:BusToCache.anim,
-      });
+      },
+      
+      {
+        value:"Write",
+        target:Cacheanim.target,
+      time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+        anim:Cacheanim.anim,
+
+    });
+     
               
             }
         
@@ -3243,6 +3264,13 @@ class InstructionMOV11{////the difference between them will be in the animation 
                 time: speed * BusToCache.time,
                 anim: BusToCache.anim,
               },
+              {
+                value:"Write-Back",
+                target:Cacheanim.target,
+              time:1/  useSpeedStore.getState().speed*Cacheanim.time,
+                anim:Cacheanim.anim,
+        
+            }
             
              /////////////////////////////////////////////////////////////////:aaaaaaaaaaaaaaaaaaaaaaaaaaaa
               
