@@ -4,7 +4,6 @@ import "./style.css"
 
 const AdressingModeListing = ({name, imagePath, open}) => {
 
-    console.log(imagePath);
     return (
         <>
             <motion.div whileHover={{scale: 1.1}}

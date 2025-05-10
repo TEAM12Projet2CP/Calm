@@ -123,9 +123,7 @@ class Alu{
         }
        
         subBinary(size){
-        //get the two's complement of the content of the RUAL2:
-         console.log("RUAL2 Value befor anything "+this.Rual2.value);
-         
+        //get the two's complement of the content of the RUAL2:         
          //than the one's complement of the result :
          let i=this.Rual2.value.length-1;
          let b="0".repeat(size);
@@ -135,19 +133,15 @@ class Alu{
             }else{b=replaceAt(b,i,'0');}
            i--;       
          } 
-         this.Rual2.setvalue(b);
-         console.log("Ones complement of  RUAL2  "+this.Rual2.value);
-         
+         this.Rual2.setvalue(b);         
          //first we add (RAL2)+1
          let x=1;
          let res1=parseInt(this.Rual2.getvalue(),2);
          res1=res1+x;
          this.Rual2.setvalue(fullzero(size,res1.toString(2)));
          b=this.Rual2.getvalue()//very important on overflow detection
-         console.log("Tows complement of RUAL2 "+this.Rual2.value);
          //then the simple binary addition between RUAL1 and RUAL2:
          this.addBinary(size)
-         console.log("The result of subsrtaction "+ this.Acc.getvalue());
          
          //overflow detection:
          if (this.Rual1.getvalue()[0]!=b[0]) {
@@ -165,9 +159,7 @@ class Alu{
        
  
        binaryMultiply(size) {
-         let binaryString1=(this.Rual1.getvalue()).substring(0,size);
-         console.log("string1 :"+binaryString1);
-         
+         let binaryString1=(this.Rual1.getvalue()).substring(0,size);         
          //two's complement  of the abs part of a     
          if(this.Rual1.getvalue()[0]=='1'){
              let i=size;
@@ -207,18 +199,12 @@ class Alu{
          } 
          
          let int1 = parseInt(binaryString1, 2)
-         console.log(int1)
          let int2 = parseInt(binaryString2, 2)
-         console.log(int2)
          let res= (int1 * int2).toString(2);
-         console.log(res);
          if(res.length>=16 ){res=fullzero(32,res)}
          else{ res=fullzero(16,res)}
-         if (this.Rual1.getvalue()[0]==this.Rual2.getvalue()[0]) {
-             console.log("positive result")
-             
+         if (this.Rual1.getvalue()[0]==this.Rual2.getvalue()[0]) {             
          }else{
-             console.log("negative result");
              let find1=false
              for (let i = res.length; i >=0; i--) {
                  if(find1==true){

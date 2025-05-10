@@ -1042,9 +1042,6 @@ class AddressingModes{
             
             // Check for cache hit before proceeding
             const cacheResult = memory.cache.checkCache(address2,0);
-            console.log("cache content; ",memory.cache)
-            console.log("cacheResult",cacheResult);
-            console.log("Adress2----------------------------------- ",address2);
             if (cacheResult.hit) {
                 animations.push({
                     value: adresse,
@@ -1077,7 +1074,6 @@ class AddressingModes{
                     time: BusToCache.time,
                     anim: BusToCache.anim,
                 });
-                console.log("hhhhhhhhhhhhhhhhhhhhhh");
                 animations.push({
                     value:"MISS",
                     target:Cacheanim.target, // animation path for cache hit
@@ -1398,7 +1394,6 @@ class AddressingModes{
             }
             },
             function indirectVal(adresse,animated,size,depl,animations,is_anim,target){
-                console.log("here-------------------------------------------------------")
                 adresse=TwosComplement(adresse,16);///replace tostring with twoscompliement
                 memory.setRam(adresse);
                 memory.read(0);

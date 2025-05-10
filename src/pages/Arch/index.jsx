@@ -541,8 +541,7 @@ MC.forEach((element,index) => {
             </table>
             </div>
         </div>
-        
-            <Speed setSpeed={setSpeed} />
+       
         
        
          <button className="returnBtn" onClick={()=>{

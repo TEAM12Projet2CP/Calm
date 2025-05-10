@@ -28,7 +28,6 @@ class Cache {
     }
 
     checkCache(address, iscode) {
-        console.log(`Checking cache for address: ${address}`);
         for (let i = 0; i < this.blockSize; i++) {  
             if (this.blocks[i].address === address) {
                     return { hit: true, index: i }

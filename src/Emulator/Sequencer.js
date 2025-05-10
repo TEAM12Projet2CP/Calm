@@ -543,13 +543,10 @@ class Sequenceur{
         let Inshex=queue.shift();
         let Ins=hex2bin(Inshex);
         this.RI.setvalue(Ins);
-        console.log("check Inshex: ",Inshex)
-        console.log(`this is RI here${this.RI.getvalue()}`)
         //the animation for this instruction goes here
         /////those 2 animations must be at the same time___________________
         if(is_animated){
             let key=hex2bin(Inshex).substring(0,4);
-            console.log(key);
             if(key>="0010"){//instructions with 1 general byte
                 animations.push({
                     value:"",
@@ -669,6 +666,7 @@ class Sequenceur{
     decode(animations,Contextarray){
         let instruction=this.RI.getvalue();
         let key=instruction.substring(0,4);
+        console.log("here00000",key)
         let index=0;
         let instrObject;
         if(key=="1111"){
@@ -716,7 +714,6 @@ class Sequenceur{
                     this.getinstrbyte(animations,false,Contextarray);
                     // opValue=FuncInterface.binaryToHex(this.RI.getvalue());
                     opValue = binaryToDecimalNumber(this.RI.getvalue());
-                    console.log("opValue",opValue);
                     instrObject.addresse1=opValue;
                 }else{
                 if(taille=='1'){
@@ -724,10 +721,8 @@ class Sequenceur{
             }else{
                 if(numreg=='000'){
                     value = parseInt(Registers[0].getright(),2);
-                    console.log("redoune");
                 }else if(numreg=='100'){
                     value = parseInt(Registers[0].getleft(),2);
-                    console.log("redoune");
                 }
                 else if(numreg=='001'){
                     value = parseInt(Registers[1].getright(),2);
@@ -741,7 +736,6 @@ class Sequenceur{
                 }
                 else if(numreg=='011'){
                     value = parseInt(Registers[4].getright(),2);
-                    console.log("the value og ACCR=",value);
                 }else if(numreg==='111'){
                     value = parseInt(Registers[4].getleft(),2);
                 }
@@ -1011,17 +1005,20 @@ class Sequenceur{
             }}}
         }else{
             if(key>='0010' & key<='0011'){
+              console.log("bne instruction \n\n\n\n\n",key)
                 key=instruction.substring(0,7);
                 let taille=instruction.charAt(7);
                 index=hash(key);
                 instrObject=hashmap[index].instrObject;
                 animateDecoderSequencer(animations,instrObject.name);
+                console.log("bne instruction:2eme \n\n\n\n\n",key)
                 if(!(key=='0011010'| key =='0010000' | key =='0010001')){
                     this.getinstrbyte(animations,false,Contextarray);
                     let adresse=this.RI.getvalue()
                     this.getinstrbyte(animations,false,Contextarray);
                     adresse=adresse+this.RI.getvalue()
                     adresse=parseInt(adresse,2);//hexa to decimal
+                    console.log("bne address to jump:",adresse)
                     instrObject.addresse1=adresse;
                     instrObject.taille=taille;
                 }
@@ -1036,24 +1033,22 @@ class Sequenceur{
                 let regMod2=secondByte.substring(5,8);
                 if(key=='0001100'||key=='0001001'){
                    
-                    key=key+Ind;
-                    console.log("klkl"+key)
-                  
+                    key=key+Ind;                  
                     if (key=='000100111') {
                         key='1001';
                     }
                         index=hash(key);
                         instrObject=hashmap[index].instrObject;
-                        console.log(instrObject);
                         animateDecoderSequencer(animations,instrObject.name);
                         instrObject.taille=taille;
                         if (key=='1001') {
-                            key='000110011';
+                            key='000100111';
                         }  
                         
                    
                     
                     let value2=0;
+
                     if(key=='000110000'){
                         if(taille=='1'){
                             value2 = parseInt(Registers[parseInt(regMod2, 2)].getvalue(),2);
@@ -1061,10 +1056,8 @@ class Sequenceur{
                             //reading reg2 content
                             if(regMod2=='000'){
                                 value2 = parseInt(Registers[0].getright(),2);
-                                console.log("redoune");
                             }else if(regMod2=='100'){
                                 value2 = parseInt(Registers[0].getleft(),2);
-                                console.log("redoune");
                             }
                             else if(regMod2=='001'){
                                 value2 = parseInt(Registers[1].getright(),2);
@@ -1078,7 +1071,6 @@ class Sequenceur{
                             }
                             else if(regMod2=='011'){
                                 value2 = parseInt(Registers[4].getright(),2);
-                                console.log("the value og ACCR=",value2);
                             }else if(regMod2=='111'){
                                 value2 = parseInt(Registers[4].getleft(),2);
                             }
@@ -1120,6 +1112,7 @@ class Sequenceur{
                         instrObject.value2=value2;
                         instrObject.register1=parseInt(regMod1,2);
                     }else if(key=='000110010'){
+                        console.log("here\n\n")
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresse=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -1128,16 +1121,12 @@ class Sequenceur{
                         let value2=0;
                         if(taille=='1'){
                             value2 = parseInt(Registers[parseInt(regMod2, 2)].getvalue(),2);
-                            console.log("redoune");
                         }else{
-                          console.log("redoune");
                             //reading reg2 content
                             if(regMod2=='000'){
                                 value2 = parseInt(Registers[0].getright(),2);
-                                console.log("redoune");
                             }else if(regMod2=='100'){
                                 value2 = parseInt(Registers[0].getleft(),2);
-                                console.log("redoune");
                             }
                             else if(regMod2=='001'){
                                 value2 = parseInt(Registers[1].getright(),2);
@@ -1151,7 +1140,6 @@ class Sequenceur{
                             }
                             else if(regMod2=='011'){
                                 value2 = parseInt(Registers[4].getright(),2);
-                                console.log("the value og ACCR=",value2);
                             }else if(regMod2=='111'){
                                 value2 = parseInt(Registers[4].getleft(),2);
                             }
@@ -1169,11 +1157,12 @@ class Sequenceur{
                             depl=parseInt(depl,2);//hexa to decimal
                         }
                         let addresse1 = addressingModes.modesAdr[parseInt(regMod1,2)](adresse,0,taille,depl,animations,1,0);
+                        console.log("addresse1: ",addresse1,"\n")
                         instrObject.value2=value2;
                         instrObject.register2=parseInt(regMod2,2);
                         instrObject.addresse1=addresse1;
-                    }else if(key=='000110011'||key=='000100111'){
-                        console.log("inin");
+                    }else if(key=='000110011'){
+                      console.log("ok: ",instruction,"\n")
                         this.getinstrbyte(animations,false,Contextarray);
                         let adresseop1=this.RI.getvalue()
                         this.getinstrbyte(animations,false,Contextarray);
@@ -1228,10 +1217,65 @@ class Sequenceur{
                         }
                         instrObject.value2=value2;
                         instrObject.addresse1=addresse1;
-                        
+                    }else if(key=='000100111'){
+                        this.getinstrbyte(animations,false,Contextarray);
+                        let adresseop1=this.RI.getvalue()
+                        this.getinstrbyte(animations,false,Contextarray);
+                        adresseop1=adresseop1+this.RI.getvalue()
+                        adresseop1=parseInt(adresseop1,2);
+                        this.getinstrbyte(animations,false,Contextarray);
+                        let adresseop2=this.RI.getvalue();
+                        let valimm=parseInt(adresseop2,2);
+                        if(regMod2!="000" | taille!='0'){
+                        this.getinstrbyte(animations,false,Contextarray);
+                        adresseop2=adresseop2+this.RI.getvalue()
+                        }
+                        adresseop2=parseInt(adresseop2,2);
+                        let depl1=0;
+                        if(regMod1=='110'){
+                            this.getinstrbyte(animations,false,Contextarray);
+                            depl1=this.RI.getvalue();
+                            depl1=parseInt(depl1,2);
+                        }else if(regMod1=='111'){
+                            this.getinstrbyte(animations,false,Contextarray);
+                            depl1=this.RI.getvalue()
+                            this.getinstrbyte(animations,false,Contextarray);
+                            depl1=depl1+this.RI.getvalue()
+                            depl1=parseInt(depl1,2);//hexa to decimal
+                        }
+                        let depl2=0;
+                        if(regMod2=='110'){
+                            this.getinstrbyte(animations,false,Contextarray);
+                            depl2=this.RI.getvalue();
+                            depl2=parseInt(depl2,2);
+                        }else if(regMod2=='111'){
+                            this.getinstrbyte(animations,false,Contextarray);
+                            depl2=this.RI.getvalue()
+                            this.getinstrbyte(animations,false,Contextarray);
+                            depl2=depl2+this.RI.getvalue()
+                            depl2=parseInt(depl2,2);//hexa to decimal
+                        }
+                        let addresse1 = null
+                        let value2=0;
+                        if(parseInt(regMod2,2)=="000"){
+                            instrObject.isimmed=true;
+                            addresse1 = adresseop1;
+                            if(taille=='0'){
+                                value2 =valimm;
+                            }else if(taille=='1'){
+                                value2 = adresseop2;
+                            }
+                        }else{
+                            instrObject.isimmed=false;
+                            addresse1 = adresseop1;
+                            value2 = adresseop2;
+                        }
+                        instrObject.value2=value2;
+                        instrObject.addresse1=addresse1;
+                        console.log("addresse1: louai==========",addresse1,"\n")                        
                        key='000100111' ; 
-                    }
-                }else{
+                      }  
+                  }else{
                     index=hash(key);
                     instrObject=hashmap[index].instrObject;
                     animateDecoderSequencer(animations,instrObject.name);
@@ -1245,10 +1289,8 @@ class Sequenceur{
                         }else{
                             if(regMod1=='000'){
                                 value1 = parseInt(Registers[0].getright(),2);
-                                console.log("redoune");
                             }else if(regMod1=='100'){
                                 value1 = parseInt(Registers[0].getleft(),2);
-                                console.log("redoune");
                             }
                             else if(regMod1=='001'){
                                 value1 = parseInt(Registers[1].getright(),2);
@@ -1262,16 +1304,13 @@ class Sequenceur{
                             }
                             else if(regMod1=='011'){
                                 value1 = parseInt(Registers[4].getright(),2);
-                                console.log("the value og ACCR=",value2);
                             }else if(regMod1=='111'){
                                 value1 = parseInt(Registers[4].getleft(),2);
                             }
                             if(regMod2=='000'){
                                 value2 = parseInt(Registers[0].getright(),2);
-                                console.log("redoune");
                             }else if(regMod2=='100'){
                                 value2 = parseInt(Registers[0].getleft(),2);
-                                console.log("redoune");
                             }
                             else if(regMod2=='001'){
                                 value2 = parseInt(Registers[1].getright(),2);
@@ -1285,7 +1324,6 @@ class Sequenceur{
                             }
                             else if(regMod2=='011'){
                                 value2 = parseInt(Registers[4].getright(),2);
-                                console.log("the value og ACCR=",value2);
                             }else if(regMod2=='111'){
                                 value2 = parseInt(Registers[4].getleft(),2);
                             }
@@ -2487,7 +2525,7 @@ class Sequenceur{
                 
             }
         }
-        console.log("yacine",instrObject);
+        console.log("ok: ",instruction,"\n object",instrObject)
         return instrObject;}   
     }
     execute(instrObject,is_animated,animations){
@@ -2495,7 +2533,7 @@ class Sequenceur{
         for (let i = 0; i < instrObject.stepsNum ; i++) {
             res = instrObject.steps[i](animations);
         }
-        console.log(instrObject);
+        console.log("instruction: ",instrObject,"etat :",is_animated);
         let animationSteps= instrObject.buildanim();
         if(is_animated===1 & animationSteps.length>0){
             for (let i = 0; i < animationSteps.length; i++) {

@@ -19,7 +19,6 @@ class IOUnit {
   writeASCIIToBuffer(asciiValue, index) {
     if (index >= 0 && index < this.buffer.length) {
       this.buffer[index] = String.fromCharCode(asciiValue);
-      console.log(`Stored character '${this.buffer[index]}' at index ${index} from ASCII ${asciiValue}`);
     } else {
       console.error("Index out of bounds");
     }
@@ -30,7 +29,6 @@ class IOUnit {
     if (index >= 0 && index < this.buffer.length) {
       const char = this.buffer[index];
       const asciiValue = char ? char.charCodeAt(0) : 0;
-      console.log(`Character at index ${index}: ${char}, ASCII: ${asciiValue}`);
       return asciiValue;
     } else {
       console.error("Index out of bounds");
@@ -51,7 +49,6 @@ class IOUnit {
       this.buffer[strVal.length] = this.delimiter;
     }
 
-    console.log(`Stored "${value}" with delimiter in buffer`);
   }
 
   // Write a single character to a specific index
@@ -62,7 +59,6 @@ class IOUnit {
     }
 
     this.buffer[index] = value;
-    console.log(`Value "${value}" written to buffer slot ${index}`);
   }
 
   // Read full buffer until the delimiter or end
@@ -78,10 +74,8 @@ class IOUnit {
 
     if (/^\d+$/.test(extracted)) {
       const num = parseInt(extracted, 10);
-      console.log(`Buffer interpreted as decimal: ${num}`);
       return num;
     } else {
-      console.log(`Buffer interpreted as string: "${extracted}"`);
       return extracted;
     }
   }
@@ -91,12 +85,10 @@ class IOUnit {
     const bufferString = this.buffer
       .filter(char => char !== 0 && char !== null && char !== undefined)
       .join("");
-    console.log(`Buffer content (excluding empty slots): "${bufferString}"`);
     return bufferString;
   }
 
   displayBuffer() {
-    console.log("Buffer Content:", this.buffer.map((char, index) => `[${index}]: ${char}`).join(" | "));
   }
 }
 
