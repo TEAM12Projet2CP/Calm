@@ -55,12 +55,12 @@ function hash(key){
         return 25;
     }else if(key=="0000110"){//XOR
         return 26;
-    } else if(key=="1000"){  // Opcode for READ
-        return 27;
-    } else if(key=="1001"){  // Opcode for WRITE
-        return 28;
     }
-    
+    else if(key=="1000"){  // Opcode for READ
+    return 27;
+    } else if(key=="1001"){  // Opcode for WRITE
+    return 28;
+}
 }
 let ADDinst=new InstructionADD();
 let MOV00inst=new InstructionMOV00();

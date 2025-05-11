@@ -48,6 +48,7 @@ class IOUnit {
     if (strVal.length < this.buffer.length) {
       this.buffer[strVal.length] = this.delimiter;
     }
+
   }
 
   // Write a single character to a specific index
