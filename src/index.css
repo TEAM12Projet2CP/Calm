@@ -99,15 +99,7 @@ body {
   border: 2px solid #1BE985;
   
 }
-.contentTableDivFlags{
-  height:2em;
-  width:17em;
-  background-color: #212529;
-  margin: auto;
-  border-radius: 20px;
-  border: 2px solid #1BE985;
-  display: flex;
-}
+
 .contentTableText{
   color: #ffffff;
   padding: 0%;
@@ -149,21 +141,6 @@ body {
     color: #ffffff;
     font-family: 'JetBrains Mono', monospace;
     border-bottom: 2px solid #1BE985;
-}
-.aflag{
-  margin: 4px;
-  font-size: 15px;
-  color: white;
-  font-family: 'JetBrains Mono', monospace;
-}
-.aflagdiv{
-  height: 25px;
-    width: 30px;
-    border:1px solid #1BE985;
-  background-color: #212529;
-    border-radius: 10px;
-    margin: 0 14px;
-    margin: 3px 5px;
 }
 .aregP{
   display: block;

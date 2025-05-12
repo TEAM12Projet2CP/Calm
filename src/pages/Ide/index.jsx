@@ -76,6 +76,7 @@ const Ide = ({currentUser})=>{
   let [done,setdone]=useState(false);
   let [simul,setsimul]=useState(false)
   let [memo,setmemo]=useState(false);
+  let [cach,setcach]=useState(false);
   let [reg,setreg]=useState(false);
   let [stk,setstk]=useState(false);//for showing stack
   let [isHexa,setIsHexa]=useState(false);
@@ -126,9 +127,11 @@ const Ide = ({currentUser})=>{
     }
 }
   let [checktest,setChecktest]=useState(false);
-
+  let cache=memory.getCache()
   /////////////////////returning the component//////////////////
+  
   let tablec=[];
+  let tablecache=[];
   memory.getData().forEach( (element,index) => {
     tablec.push(
       <tr>
@@ -141,6 +144,16 @@ const Ide = ({currentUser})=>{
       </tr>
     )
   });
+  cache.getData().forEach((element,index) => {
+    tablecache.push( <tr>
+    <td>
+        {element.address}
+    </td>
+    <td>
+        {element.data}
+    </td>
+</tr>)
+});
 
   let tablestk=[];
   memory.getstack().forEach((element,index) => {
@@ -426,6 +439,7 @@ const Ide = ({currentUser})=>{
                       setreg(true)
                       setmemo(false)
                       setstk(false)
+                      setcach(false)
                     }}
                   >
                     registers
@@ -437,6 +451,7 @@ const Ide = ({currentUser})=>{
                     setmemo(true)
                     setstk(false)
                     setreg(false)
+                    setcach(false)
                   }}
                   >
                     memory
@@ -445,9 +460,22 @@ const Ide = ({currentUser})=>{
                   {!iserr &&<button 
                   className='ide-exec-button' 
                   onClick={()=>{
+                    setmemo(false)
+                    setstk(false)
+                    setreg(false)
+                    setcach(true)
+                  }}
+                  >
+                    Cache
+                  </button>
+                  } 
+                  {!iserr &&<button 
+                  className='ide-exec-button' 
+                  onClick={()=>{
                     setstk(true)
                     setreg(false)
                     setmemo(false)
+                    setcach(false)
                   }}>
                     stack
                   </button>
@@ -512,6 +540,23 @@ const Ide = ({currentUser})=>{
                         
                     </tr>
                         {tablec}
+                    </tbody>
+                  </table>
+                }
+                {cach && 
+                  <table className="contentTableMCIde" style={{fontFamily: "JetBrains Mono"}}>
+                    <tbody>
+                    <tr>
+                        <td style={{color:"#1BE985"}}>
+                            adresse
+                        </td>
+                        <td style={{color:"#1BE985"}}>
+                            content
+                      
+                        </td>
+                        
+                    </tr>
+                        {tablecache}
                     </tbody>
                   </table>
                 }

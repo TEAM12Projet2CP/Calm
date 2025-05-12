@@ -12,7 +12,7 @@
 }
 
 .contentTableDiv{
-    height:9rem;
+    height:18rem;
     width:85%;
     margin: auto;
     border-radius: 20px;
@@ -28,18 +28,6 @@
     overflow-y: auto;
     background-color: #212529;
     border: 2px solid #1BE985;
-}
-
-
-.contentTableDivFlags{
-    height:2rem;
-    width:18rem;
-    background-color: #212529;
-    margin: auto;
-    border-radius: 20px;
-    border: 2px solid #1BE985;
-    display: flex;
-    padding: 0.4rem;
 }
 
 .contentTableText{
@@ -128,24 +116,6 @@
       border-bottom: 2px solid #1BE985;
     justify-content: center;
 }
-
-.aflag{
-    margin: 0.1rem;
-    font-size: 15px;
-    color: white;
-    font-family: 'JetBrains Mono', monospace;
-}
-
-.aflagdiv{
-    height: 1.5rem;
-      width: 2.5rem;
-      border:1px solid #1BE985;
-    background-color: #212529;
-      border-radius: 10px;
-      margin: 0 14px;
-      margin: 3px 5px;
-}
-    
 .aregP{
     display: block;
     font-size: 15px;
@@ -209,4 +179,60 @@ width: 50%;
     border-radius: 50%;
     cursor: pointer;
     
-  }  
+  }  .contentTableDivFlags {
+    width: 80%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 17px;
+  }
+  
+  .contentFlags {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .flag-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .flag-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  
+  .flag-label,
+  .flag-value {
+    min-width: 2.5rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    background-color: #2a2d30;
+    border: 1px solid #1BE985;
+    color: #ffffff;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 5px transparent;
+  }
+  
+  .flag-label {
+    background-color: #212529;
+  }
+  
+  .flag-value:hover {
+    background-color: #1BE985;
+    color: #212529;
+    box-shadow: 0 0 10px #1BE985;
+    cursor: pointer;
+  }
+  

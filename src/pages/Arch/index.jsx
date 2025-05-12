@@ -9,7 +9,6 @@ import {  useSpeedStore } from "../../Emulator/speedStore";
 //////////////////////////////////////
 
 const Arch = (props)=>{
-
     const [speed, setSpeed] = useState(1)  
     
 let [dataBusText,setDataBusText]=useState("");
@@ -26,6 +25,16 @@ let cache=props.mem.getCache()
 let tablec=[];
 let tabcache=[]
 const speed1= useSpeedStore((state) => state.speed); 
+const flagData = [
+    { short: "Z", full: "Zero Flag" },
+    { short: "S", full: "Sign Flag" },
+    { short: "C", full: "Carry Flag" },
+    { short: "P", full: "Parity Flag" },
+    { short: "Pr", full: "Impair/Pair Flag" },
+    { short: "O", full: "Overflow Flag" },
+    { short: "I", full: "Interrupt Flag" },
+    { short: "I/O", full: "Input/Output Flag" },
+  ];
 MC.forEach((element,index) => {
     tablec.push( <tr>
     <td>
@@ -49,7 +58,6 @@ cache.getData().forEach((element,index) => {
 
     ///////////////to add delay/////
     let thecontext=[...props.theCTX];
-    console.log("the context : "+thecontext)
     let tmpctx=0;
     let done=0;
     const animate=(i,animation,h,w,dl,chaine)=>{
@@ -479,8 +487,6 @@ cache.getData().forEach((element,index) => {
    
     
 >
-    
-<button className="returnBtn2" >Cache</button> 
         <div> 
             <h2 className="contentTableText">Registers</h2>
             <div className="contentTableDiv">
@@ -521,15 +527,18 @@ cache.getData().forEach((element,index) => {
         <div>
             <h2 className="contentTableText">Flags</h2>
             <div className="contentTableDivFlags">
-                <div className="aflagdiv"><p className="aflag">{props.flags[0]}</p></div>
-                <div className="aflagdiv"><p className="aflag">{props.flags[1]}</p></div>
-                <div className="aflagdiv"><p className="aflag">{props.flags[2]}</p></div>
-                <div className="aflagdiv"><p className="aflag">{props.flags[3]}</p></div>
-                <div className="aflagdiv"><p className="aflag">{props.flags[4]}</p></div>
-                <div className="aflagdiv"><p className="aflag">{props.flags[5]}</p></div>
-                <div className="aflagdiv"><p className="aflag">{props.flags[6]}</p></div>
-                <div className="aflagdiv"><p className="aflag">{props.flags[7]}</p></div>
-            </div>
+  <div className="contentFlags">
+    <div className="flag-row">
+    {flagData.map((flag, idx) => (
+        <div key={idx} className="flag-block" title={flag.full}>
+          <div className="flag-label">{flag.short}</div>
+          <div className="flag-value">{props.flags[idx]}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
         </div>
         <div>
             <h2 className="contentTableText">MC</h2>
@@ -548,6 +557,7 @@ cache.getData().forEach((element,index) => {
                         content
                     </td>
                 </tr>
+                <br></br>
                     {tablec}
                 </tbody>
             </table>
@@ -571,13 +581,16 @@ cache.getData().forEach((element,index) => {
                         content
                     </td>
                 </tr>
+                <br></br>
                     {tabcache}
                 </tbody>
             </table>
             </div>
             
         </div>
-        
+        <br />
+        <br />
+        <br />
        
          <button className="returnBtn" onClick={()=>{
                 window.location.reload(false);
