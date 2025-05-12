@@ -6,7 +6,6 @@ import queuearrow from "../../assets/images/icons/fleche.png"
 
 import Speed from "../../Emulator/speed.jsx";
 import {  useSpeedStore } from "../../Emulator/speedStore";
-
 //////////////////////////////////////
 
 const Arch = (props)=>{
@@ -23,7 +22,9 @@ let [MCVal,setMCVal]=useState("");
 let [CachVal,setCachVal]=useState("");
 
 let MC=props.mem.getData();
+let cache=props.mem.getCache()
 let tablec=[];
+let tabcache=[]
 const speed1= useSpeedStore((state) => state.speed); 
 MC.forEach((element,index) => {
     tablec.push( <tr>
@@ -35,6 +36,17 @@ MC.forEach((element,index) => {
     </td>
 </tr>)
 });
+cache.getData().forEach((element,index) => {
+    tabcache.push( <tr>
+    <td>
+        {element.address}
+    </td>
+    <td>
+        {element.data}
+    </td>
+</tr>)
+});
+
     ///////////////to add delay/////
     let thecontext=[...props.theCTX];
     console.log("the context : "+thecontext)
@@ -540,8 +552,31 @@ MC.forEach((element,index) => {
                 </tbody>
             </table>
             </div>
+            
         </div>
-       
+        <div>
+            <h2 className="contentTableText">Cache</h2>
+            <div className="contentTableDivMC">
+                <div className="MChead">
+                    <p >adresse</p>
+                    <p >content</p>
+                </div>
+            <table className="contentTableMC">
+                <tbody>
+                <tr>
+                    <td>
+                        adresse
+                    </td>
+                    <td>
+                        content
+                    </td>
+                </tr>
+                    {tabcache}
+                </tbody>
+            </table>
+            </div>
+            
+        </div>
         
        
          <button className="returnBtn" onClick={()=>{

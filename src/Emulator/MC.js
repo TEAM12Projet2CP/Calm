@@ -104,6 +104,10 @@ readMC(i)
 {
     return this.data[i];
 }
+getCache()
+{
+    return this.cache;
+}
 }
 
 export default MC;
