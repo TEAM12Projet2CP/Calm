@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import IOUnit from "./IO_Unit.js";
 import { Register } from "./Register.js";
 import { opValue } from "./Sequencer.js";
+import {cacheResult} from "./Adressing.js"
 // import { 
 // Register } from "./Register.js";
 ////////////////////////////////////////////////
