@@ -60,7 +60,7 @@ const fitToCache={
 const QueueToCache={
     value:"",
     target:".box-data",
-    time:1000/useSpeedStore.getState().speed*3000,
+    time:1000/useSpeedStore.getState().speed,
     anim:(val,h,w)=>{
         gsap.fromTo(".box-data",{x:w*0.68,opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*0.9})
         gsap.fromTo(".box-data",{x:w*0.68},{x:w*0.321,duration:1/(useSpeedStore.getState().speed)*0.9,delay:1/(useSpeedStore.getState().speed)*0.9})
@@ -68,6 +68,7 @@ const QueueToCache={
     }}
 
     const BusToRegisters={
+        
         value:"",
         target:".ball",
       time:1/  useSpeedStore.getState().speed*1000,
@@ -573,6 +574,8 @@ const ADRToMAR={
         gsap.fromTo(".queue5",{opacity:"0"},{opacity:"1",duration:1/(useSpeedStore.getState().speed)*1});
   },}
   const fitqueue1={
+
+
     value:"",
     target:".queue6",
     time:1000,

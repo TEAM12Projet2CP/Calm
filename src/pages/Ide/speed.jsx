@@ -1,55 +1,53 @@
-import { useRef, useState } from "react";
-import { useSpeedStore } from "./speedStore.jsx"; 
+import { useRef, useState, useEffect } from "react";
+import { useSpeedStore } from "./speedStore.jsx";
 
-const Speed = (props) => {
-  const speed = useSpeedStore(state => state.speed);
-  const setSpeed = useSpeedStore(state => state.setSpeed);
-
+const Speed = ({ onSpeedChange }) => {
+  const speed = useSpeedStore((state) => state.speed);
+  const setSpeed = useSpeedStore((state) => state.setSpeed);
   const trackRef = useRef(null);
-  const circleRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [circlePosition, setCirclePosition] = useState(22.22); // Adjusted for 1x
+  const [circlePosition, setCirclePosition] = useState(0);
+
+  // Initialize circle position based on speed
+  useEffect(() => {
+    if (trackRef.current) {
+      const trackWidth = trackRef.current.offsetWidth;
+      const initialPosition = ((speed - 0.5) / 1.5) * trackWidth;
+      setCirclePosition(initialPosition);
+    }
+  }, [speed]);
 
   const handleMouseMove = (e) => {
-    if (!trackRef.current) return;
+    if (!isDragging || !trackRef.current) return;
     const trackRect = trackRef.current.getBoundingClientRect();
     let newPosition = e.clientX - trackRect.left;
     newPosition = Math.max(0, Math.min(newPosition, trackRect.width));
     setCirclePosition(newPosition);
 
-   const speedRange = 2 - 0.5; // 1.5
-   const newSpeed = 0.5 + (newPosition / trackRect.width) * speedRange;
-   setSpeed(newSpeed);
-   
-   props.onSpeedChange?.(newSpeed)
+    // Calculate new speed (0.5 to 2)
+    const newSpeed = 0.5 + (newPosition / trackRect.width) * 1.5;
+    setSpeed(newSpeed);
+    onSpeedChange?.(newSpeed);
   };
 
+  const handleMouseDown = () => setIsDragging(true);
+  const handleMouseUp = () => setIsDragging(false);
 
-
-
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleTrackClick = (e) => {
-    handleMouseMove(e);
-    handleMouseDown(e);
-  };
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    }
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <div
-        className="myBar"
         ref={trackRef}
-        onMouseDown={handleTrackClick}
         style={{
           height: "4px",
           width: "200px",
@@ -59,10 +57,14 @@ const Speed = (props) => {
           cursor: "pointer",
           position: "relative",
         }}
+        onClick={(e) => {
+          const trackRect = trackRef.current.getBoundingClientRect();
+          const newPosition = e.clientX - trackRect.left;
+          const newSpeed = 0.5 + (newPosition / trackRect.width) * 1.5;
+          setSpeed(newSpeed);
+        }}
       >
         <div
-          ref={circleRef}
-          className="circle"
           style={{
             position: "absolute",
             left: `${circlePosition}px`,
@@ -73,7 +75,6 @@ const Speed = (props) => {
             backgroundColor: "#1BE985",
             borderRadius: "50%",
             cursor: "grab",
-            userSelect: "none",
           }}
           onMouseDown={handleMouseDown}
         />

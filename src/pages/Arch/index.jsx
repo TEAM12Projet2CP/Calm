@@ -4,12 +4,11 @@ import Archi2 from "../../assets/images/archi.png";
 import gsap from "gsap";
 import queuearrow from "../../assets/images/icons/fleche.png"
 
-import Speed from "../Ide/speed.jsx";
 import {  useSpeedStore } from "../Ide/speedStore.jsx";
 //////////////////////////////////////
 
 const Arch = (props)=>{
-    const [Speed, setSpeed] = useState(1)  
+
     
 let [dataBusText,setDataBusText]=useState("");
 let [AdrBusText,setAdrBusText]=useState("");
@@ -27,8 +26,11 @@ let cache=props.mem.getCache()
 let tablec=[];
 
 let tabcache=[]
-const speed = useSpeedStore((state) => state.speed);
+
 const speed1= useSpeedStore((state) => state.speed); 
+console.log("fjjjjjjjjjjjjjjjjjjjjj")
+console.log(speed1)
+
 const flagData = [
     { short: "Z", full: "Zero Flag" },
     { short: "S", full: "Sign Flag" },
@@ -211,6 +213,7 @@ const timelineRef = useRef();
             
             if(animation.nom==="QueueToIr"|animation.nom==="queueExitToBus"){
                 //decalage par 1
+                
                 gsap.fromTo(".queuearrow",{top:"60%",left:"83%",opacity:"0"},{top:"60%",left:"73%",opacity:"1",duration:0.3/  speed1});
                 gsap.to(".queuearrow",{opacity:"0",duration:(0.1/  speed1).toString(),delay:(0.3/  speed1).toString()});
                 if(animqueuelen()==6){
@@ -344,6 +347,7 @@ const timelineRef = useRef();
                     tl.to(".queue3",{opacity:"0",duration:0.4/  speed1})
                     tl.to(".queue2",{opacity:"1",duration:0.4/  speed1})
                     tl.to(".queue1",{opacity:"1",duration:0.4/  speed1})
+                    
                 }}
             };
         }, dl);
