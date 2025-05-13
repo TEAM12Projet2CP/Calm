@@ -608,7 +608,8 @@ const timelineRef = useRef();
         top:"8%",
         borderRadius:"20px",
         textAlign:"center",
-        border:"1px solid #1BE985"
+        border:"1px solid #1BE985",
+        overflow: "scroll"
         
     }} 
 

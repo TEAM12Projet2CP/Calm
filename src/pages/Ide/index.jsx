@@ -280,58 +280,7 @@ const Ide = ({currentUser})=>{
 
             <div className='codeContainer' id="cont">
               <div style={{display:"flex",gap:"10rem",padding:"0.5rem 0",}}>
-                {iscode && 
-                  <button onClick={()=>{
-                    const editor = codeMirrorRef.current.editor;
-                    editor.setValue('');
-                    editor.setValue(Hexagen(handleStoreCode(),Assembler.assemblecode(handleStoreCode())));
-                    setChecktest(!checktest);
-                    setIsCode(false);
-                    setIsHexa(true);
-                  }} 
-                  className="convert-btn">
-                    To Hexa 
-                  </button>
-                }
-        
-                {isHexa && 
-                  <button onClick={()=>{
-                    const editor = codeMirrorRef.current.editor;
-                    editor.setValue('');
-                    let code="";
-                    for (let m = 0; m < handleStoreCode().length; m++) {
-                      code=code+HexaToCode(handleStoreCode()[m])+"\n";
-                    }
-                    editor.setValue(code);
-                    setChecktest(!checktest);
-                    setIsCode(true);
-                    setIsHexa(false);
-                  }}
-                  className="convert-btn">
-                    To code 
-                  </button>
-                }
-        
-                <div className="togglebutton" style={{position: "relative",top:"0.3rem"}}>
-                  <Toggle 
-                    labelRight="hexa" 
-                    labelLeft="code" 
-                    backgroundColorChecked="#263238"
-                    backgroundColorUnchecked="#263238" 
-                    checked={checktest} 
-                    onChange={()=>{
-                        if(iscode){
-                          setIsCode(false);
-                          setIsHexa(true);
-                          setChecktest(!checktest);
-                        }else{
-                          setIsCode(true);
-                          setIsHexa(false);
-                          setChecktest(!checktest);
-                        }
-                      }} 
-                  />
-                </div>
+                
               </div>
               <CodeMirror
                 value={code}

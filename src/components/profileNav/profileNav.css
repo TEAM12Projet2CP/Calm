@@ -1,0 +1,72 @@
+.vertical-navbar{
+    margin: 3%;
+    position: relative;
+    width: 296px;
+    height: 720px;
+    flex-shrink: 0;
+    border-radius: 24px;
+    border: 2px solid #000;
+    background: #1BE985;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.vertical-navbar .calM-logo img{
+    position: absolute;
+    margin: 20px 10px;
+    width: 80%;
+    height: auto;
+    align-self: center;
+    left: 50%;
+    top: 5%;
+    transform: translate(-50%, -50%);
+}
+
+.vertical-navbar ul{
+    list-style: none;
+    padding: 10% 50%;
+}
+.vertical-navbar ul{
+    margin-top: 30%;
+}
+.vertical-navbar ul li{
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    margin: 40px 0;
+    height: 45px;
+    width: 100%;
+    transform: all 0.5s ease-in-out;
+    border-radius: 8px;
+}
+
+.vertical-navbar ul li a{
+    margin: 50px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+
+ }
+
+ /* change and fix colors here later*/
+
+.vertical-navbar ul li:hover{
+    background: rgba(11, 18, 21, 0.17);
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+
+}
+
+ .vertical-navbar ul li a:active, a::after{
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}

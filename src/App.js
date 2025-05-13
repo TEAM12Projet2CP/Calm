@@ -2,7 +2,10 @@ import './App.css';
 import { BrowserRouter as Router,Route, Routes  } from 'react-router-dom';
 
 //import pages
-import { AddressingModesPage, Arch, CheckYourEmailPage, ComponentsPage, ExamplesPage, Hero, Ide, LearnPage, Login, NotFound, PasswordForgotPage, Profile, Register, ResetEmailSent, ResetPasswordPage } from './pages';
+import { AddressingModesPage, Arch, CheckYourEmailPage, ComponentsPage, ExamplesPage, Hero, Ide, LearnPage, Login, NotFound, PasswordForgotPage, Profile, Register, ResetEmailSent, ResetPasswordPage} from './pages';
+import Stats from './pages/stats';
+import Achievements from './pages/achievements';
+import DashBoard from './pages/dashboard';
 
 //import images
 import asteriks from "./assets/images/decorations/asteriskgray.png"
@@ -47,7 +50,10 @@ function App() {
         </img>
         
         <Routes>
-        <Route exact path='/profile' element={<Profile />}/>
+          <Route exact path="/achievements" element={<Achievements />} />
+          <Route exact path="/dashboard" element={<DashBoard />} />
+          <Route exact path="/stats" element={ <Stats />} />
+          <Route exact path='/profile' element={<Profile />}/>
           <Route exact path="/" element={<Hero/>}/>
           <Route exact path="/ide" element={<Ide currentUser={currentUser}/>}/>
           <Route exact path="/archi" element={<Arch/>}/>
