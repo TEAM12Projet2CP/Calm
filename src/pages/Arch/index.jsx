@@ -716,9 +716,7 @@ const timelineRef = useRef();
             </div>
             
         </div>
-        <br />
-        <br />
-        <br />
+        <br /> 
        
         <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
     {showControls && (
