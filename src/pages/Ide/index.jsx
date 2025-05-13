@@ -400,12 +400,6 @@ const Ide = ({currentUser})=>{
                   execute
                 </button>
                <div className="speed-control-container">
-  <button 
-    className="ide-exec-button" 
-    onClick={() => setShowSpeedSlider(!showSpeedSlider)}
-  >
-    Speed 
-  </button>
   {showSpeedSlider && (
     <div className="speed-slider-popup">
       <Speed 
