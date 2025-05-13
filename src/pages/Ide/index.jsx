@@ -3,7 +3,8 @@ import Toggle from 'react-styled-toggle';
 import { Controlled as CodeMirror } from "react-codemirror2";
 import UAParser from 'ua-parser-js';
 import "./style.css"
-
+import { useSpeedStore } from "./speedStore.jsx";
+import Speed from "./speed.jsx";
 ///// import components //////
 import { NavBar, HelpSection, SaveCodeButton } from "../../components/index.js"
 
@@ -73,6 +74,8 @@ function convertStrings(arr) {
 const Ide = ({currentUser})=>{
   ////////////////////hooks///////////////////////////////:
   let [result,setresult]=useState("");
+    const [showSpeedSlider, setShowSpeedSlider] = useState(false);
+      const { speed, setSpeed } = useSpeedStore();
   let [done,setdone]=useState(false);
   let [simul,setsimul]=useState(false)
   let [memo,setmemo]=useState(false);
@@ -360,8 +363,7 @@ const Ide = ({currentUser})=>{
                   }else{
                     inputouter=handleStoreCode();
                   }
-                  console.log("inputouter",inputouter);
-                  console.log(inputouter.error)
+                 
                   //here I must check for errors, if there are any, we must quit, but quitting is causing an undefined return from somewhere!!
                   // we shall figure out a solution and put this block back once again
                   if(inputouter.error !== ''){
@@ -397,7 +399,23 @@ const Ide = ({currentUser})=>{
                 }}>
                   execute
                 </button>
-
+               <div className="speed-control-container">
+  <button 
+    className="ide-exec-button" 
+    onClick={() => setShowSpeedSlider(!showSpeedSlider)}
+  >
+    Speed 
+  </button>
+  {showSpeedSlider && (
+    <div className="speed-slider-popup">
+      <Speed 
+        onSpeedChange={(newSpeed) => {
+          // Optional: Add any additional logic here
+        }}
+      />
+    </div>
+  )}
+</div>
               </div>
             }
             
@@ -586,7 +604,7 @@ ${result}`}</pre>
         </>
       }
       {simul && 
-        <Arch anim={animations} mem={memory} flags={Alu1.getAllFlags()} reg={Registers} theCTX={Contextarray}/>
+        <Arch anim={animations} mem={memory} flags={Alu1.getAllFlags()} reg={Registers} theCTX={Contextarray} />
       }
     </>
   )

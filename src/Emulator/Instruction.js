@@ -4449,25 +4449,94 @@ class InstructionREAD {
         this.stepsNum = 1;
         this.name = "READ";
 
-        this.steps = [
-            async () => {
-                const ioUnit = memory.ioUnit;
-
-                if (!ioUnit.ioController.busy) {
-                    ioUnit.ioController.busy = true;
-                    // Wait for user input asynchronously before proceeding
-                    const value = await showWritePopup();
-
-                    ioUnit.writeToBuffer1(value);
-                    ioUnit.displayBuffer();
-                    // Resume execution
-                    this.resume();
-                } else {
-                    return false;
-                }
-            }
-        ];
-
+        
+                this.steps = [
+                    async () => {
+                        const ioUnit = memory.ioUnit;
+                        
+                        if (!ioUnit.ioController.busy) {
+                            ioUnit.ioController.busy = true;
+        
+                            // Create modal overlay
+                            const modal = document.createElement('div');
+                            modal.style.cssText = `
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background: rgba(0, 0, 0, 0.5);
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                z-index: 1000;
+                            `;
+        
+                            // Create modal content
+                            const modalContent = document.createElement('div');
+                            modalContent.style.cssText = `
+                                background: white;
+                                padding: 20px;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                                max-width: 400px;
+                                width: 90%;
+                            `;
+        
+                            // Add content
+                            modalContent.innerHTML = `
+                                <h2 style="color: #333; margin-bottom: 16px;">Enter Input Value</h2>
+                                <input type="text" id="inputValue" style="
+                                    width: 100%;
+                                    padding: 8px;
+                                    margin-bottom: 16px;
+                                    border: 1px solid #ddd;
+                                    border-radius: 4px;
+                                    font-size: 14px;
+                                " placeholder="Enter value...">
+                                <button id="submitInput" style="
+                                    background: #4CAF50;
+                                    color: white;
+                                    border: none;
+                                    padding: 8px 16px;
+                                    border-radius: 4px;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    transition: background 0.3s;
+                                ">Submit</button>
+                            `;
+        
+                            modal.appendChild(modalContent);
+                            document.body.appendChild(modal);
+        
+                            // Add hover effect to button
+                            const submitBtn = modalContent.querySelector('#submitInput');
+                            submitBtn.addEventListener('mouseover', () => {
+                                submitBtn.style.background = '#45a049';
+                            });
+                            submitBtn.addEventListener('mouseout', () => {
+                                submitBtn.style.background = '#4CAF50';
+                            });
+        
+                            // Handle input submission
+                            return new Promise((resolve) => {
+                                submitBtn.onclick = () => {
+                                    const inputValue = modalContent.querySelector('#inputValue').value;
+                                    document.body.removeChild(modal);
+                                    ioUnit.writeToBuffer1(inputValue);
+                                    this.resume();
+                                    ioUnit.ioController.busy = false;
+                                    resolve();
+                                };
+                            });
+                        } else {
+                            console.log("I/O Unit busy, READ delayed");
+                            return false;
+                        }
+                    }
+                ];
+        
+                
         // Animation sequence
         this.buildanim=function(){
             return[{
@@ -4496,6 +4565,7 @@ class InstructionREAD {
         const ioUnit = memory.ioUnit;
         let value = ioUnit.readFromBuffer1(); // Could be string or number
         this.addresse1 = opValue;
+        console.log("this is the value",this.addresse1);
         let baseAddress = parseInt(opValue, 10); // Starting address
     
         if (isNaN(value)) {
@@ -4507,19 +4577,26 @@ class InstructionREAD {
                 memory.setRim(hex);
                 memory.setRam(TwosComplement(baseAddress + i, 16)); // Increment address
                 memory.write();
-                }
+    
+                console.log(`📝 Wrote char '${value[i]}' as ${hex} to address ${baseAddress + i}`);
+            }
         } else {
             // NUMBER CASE
             let hexValue = parseInt(value).toString(16).toUpperCase();
             memory.setRim(hexValue);
             memory.setRam(TwosComplement(baseAddress, 16));
             memory.write();
+            console.log("\n\n\n\n louai");
             memory.setRam(TwosComplement(baseAddress,16));
             memory.read(false);
             memory.getRim();
+            console.log("kjkjkkj", String.fromCharCode(parseInt(memory.getRim(), 16)));
+
+            console.log(`📝 Wrote number ${value} as hex ${hexValue} to address ${baseAddress}`);
         }
     
         ioUnit.ioController.busy = false;
+        console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to memory.`);
     }
     
 }
@@ -4535,51 +4612,103 @@ class InstructionWRITE {
         this.taille = 0;
         this.stepsNum = 1;
         this.name = "WRITE";
-
-        this.steps = [
-            async () => {
-                const ioUnit = memory.ioUnit;
-                if (!ioUnit.ioController.busy) {
-                    ioUnit.ioController.busy = true;
-                    let value;
-                    let temp;
-                    temp=this.addresse1;
-                    ioUnit.emptyBuffer();
-                    for (let index = 0; index < this.value2; index++) {
-                        memory.setRam(TwosComplement(temp,16));
-                        memory.read(false);
-                        memory.getRim();
-
-                       ioUnit.writeToBuffer( index,String.fromCharCode(parseInt(memory.getRim(), 16)));
-                    //    console.log(ioUnit.buffer[index]);
-                        temp++;
-                    } // Mark I/O as busy
-
-                    // Read from CPU register (e.g., R1)
-                    // ioUnit.writeToBuffer(value); 
-                    let popup = window.open("", "Buffer Contents", "width=400,height=300");
-                    if (popup) {
-                        popup.document.write(`<h2>Buffer Contents</h2><p>${ioUnit.readFromBuffer()}</p>`);
-                    } else {
-                        alert("Popup was blocked. Please allow popups for this site.");
-                        console.error("Failed to open popup. Possibly blocked by browser.");
+                // ...existing constructor code...
+        
+                this.steps = [
+                    async () => {
+                        const ioUnit = memory.ioUnit;
+                        
+                        if (!ioUnit.ioController.busy) {
+                            ioUnit.ioController.busy = true;
+                            let temp = this.addresse1;
+                            ioUnit.emptyBuffer();
+                            
+                            for (let index = 0; index < this.value2; index++) {
+                                memory.setRam(TwosComplement(temp,16));
+                                memory.read(false);
+                                memory.getRim();
+                                ioUnit.writeToBuffer(index, String.fromCharCode(parseInt(memory.getRim(), 16)));
+                                temp++;
+                            }
+        
+                            // Return a new Promise that resolves when the modal is closed
+                            return new Promise((resolve) => {
+                                // Create modal overlay
+                                const modal = document.createElement('div');
+                                modal.style.cssText = `
+                                    position: fixed;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background: rgba(0, 0, 0, 0.5);
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    z-index: 1000;
+                                `;
+        
+                                // Create modal content
+                                const modalContent = document.createElement('div');
+                                modalContent.style.cssText = `
+                                    background: white;
+                                    padding: 20px;
+                                    border-radius: 8px;
+                                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                                    max-width: 400px;
+                                    width: 90%;
+                                `;
+        
+                                modalContent.innerHTML = `
+                                    <h2 style="color: #333; margin-bottom: 16px;">Buffer Contents</h2>
+                                    <p style="color: #666; margin-bottom: 20px;">${ioUnit.readFromBuffer()}</p>
+                                    <button id="closeModal" style="
+                                        background: #4CAF50;
+                                        color: white;
+                                        border: none;
+                                        padding: 8px 16px;
+                                        border-radius: 4px;
+                                        cursor: pointer;
+                                        font-size: 14px;
+                                        transition: background 0.3s;
+                                    ">Close</button>
+                                `;
+        
+                                modal.appendChild(modalContent);
+                                document.body.appendChild(modal);
+        
+                                const closeBtn = modalContent.querySelector('#closeModal');
+                                closeBtn.addEventListener('mouseover', () => {
+                                    closeBtn.style.background = '#45a049';
+                                });
+                                closeBtn.addEventListener('mouseout', () => {
+                                    closeBtn.style.background = '#4CAF50';
+                                });
+        
+                                // Close modal and resolve the promise
+                                closeBtn.onclick = () => {
+                                    document.body.removeChild(modal);
+                                    ioUnit.ioController.busy = false;
+                                    resolve(); // This will allow the instruction to continue
+                                };
+                            });
+                        } else {
+                            console.log("I/O Unit busy, WRITE delayed");
+                            return false;
+                        }
                     }
-                    // alert("Buffer Contents: " + ioUnit.readFromBuffer(0));// Store in I/O buffer register 0
-                    ioUnit.displayValue();
-                    ioUnit.ioController.busy = false;
-                } else {
-                    return false; // Delay execution if busy
-                }
-            }
-        ];
-
+                ];
+           
         // Animation sequence
         this.buildanim = function () {
             const ioUnit = memory.ioUnit;
             const animSteps = [];
         
             for (let i = 0; i < this.value2; i++) {
-                const char = ioUnit.buffer[i];               
+                const char = ioUnit.buffer[i];
+                console.log("animation is here",this.value2);
+               
+                
                 animSteps.push(
                     {
                         value: `WRITE: ${char}`,
@@ -4620,6 +4749,7 @@ class InstructionWRITE {
         Registers[register].setvalue(TwosComplement(value, 16));
 
         ioUnit.ioController.busy = false;
+        console.log(`✅ IO to CPU: Moved data ${value} from I/O buffer to CPU register R${register}.`);
     }
 }
 

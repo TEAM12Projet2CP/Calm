@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useSpeedStore } from "./speedStore.jsx"; 
+
 const Speed = (props) => {
   const speed = useSpeedStore(state => state.speed);
   const setSpeed = useSpeedStore(state => state.setSpeed);
@@ -7,7 +8,7 @@ const Speed = (props) => {
   const trackRef = useRef(null);
   const circleRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [circlePosition, setCirclePosition] = useState(66.67); // Start at 1x
+  const [circlePosition, setCirclePosition] = useState(22.22); // Adjusted for 1x
 
   const handleMouseMove = (e) => {
     if (!trackRef.current) return;
@@ -16,11 +17,15 @@ const Speed = (props) => {
     newPosition = Math.max(0, Math.min(newPosition, trackRect.width));
     setCirclePosition(newPosition);
 
-    const newSpeed = 0.5 + (newPosition / trackRect.width) * 1.5;
-    setSpeed(newSpeed);
-    
-    props.onSpeedChange?.(newSpeed); 
+   const speedRange = 2 - 0.5; // 1.5
+   const newSpeed = 0.5 + (newPosition / trackRect.width) * speedRange;
+   setSpeed(newSpeed);
+   
+   props.onSpeedChange?.(newSpeed)
   };
+
+
+
 
   const handleMouseDown = (e) => {
     setIsDragging(true);

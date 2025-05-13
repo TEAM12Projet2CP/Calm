@@ -4,12 +4,12 @@ import Archi2 from "../../assets/images/archi.png";
 import gsap from "gsap";
 import queuearrow from "../../assets/images/icons/fleche.png"
 
-import Speed from "../../Emulator/speed.jsx";
-import {  useSpeedStore } from "../../Emulator/speedStore";
+import Speed from "../Ide/speed.jsx";
+import {  useSpeedStore } from "../Ide/speedStore.jsx";
 //////////////////////////////////////
 
 const Arch = (props)=>{
-    const [speed, setSpeed] = useState(1)  
+    const [Speed, setSpeed] = useState(1)  
     
 let [dataBusText,setDataBusText]=useState("");
 let [AdrBusText,setAdrBusText]=useState("");
@@ -19,11 +19,15 @@ let [IPval,setipval]=useState(0);
 let [AluVal,setAluVal]=useState("");
 let [MCVal,setMCVal]=useState("");
 let [CachVal,setCachVal]=useState("");
+const [isPaused, setIsPaused] = useState(false);
+const [showControls, setShowControls] = useState(false);
 
 let MC=props.mem.getData();
 let cache=props.mem.getCache()
 let tablec=[];
+
 let tabcache=[]
+const speed = useSpeedStore((state) => state.speed);
 const speed1= useSpeedStore((state) => state.speed); 
 const flagData = [
     { short: "Z", full: "Zero Flag" },
@@ -55,41 +59,150 @@ cache.getData().forEach((element,index) => {
     </td>
 </tr>)
 });
+const mainTimeline = useRef(gsap.timeline());
+const handlePauseResume = () => {
+    setIsPaused(prev => {
+        if (!prev) {
+            // Pausing
+            mainTimeline.current.pause();
+            setShowControls(true); // Show controls when paused
+        } else {
+            // Continuing
+            mainTimeline.current.resume();
+            setShowControls(false); // Hide controls when continuing
+        }
+        return !prev;
+    });
+};
+const handleNext = () => {
+    if (mainTimeline.current && isPaused) {
+        // Get current time and total duration
+        const currentTime = mainTimeline.current.time();
+        const duration = mainTimeline.current.duration();
+        
+        // Get all animation timestamps
+        const timePoints = mainTimeline.current.getChildren().map(child => child.startTime());
+        
+        // Find next animation point
+        const nextTime = timePoints.find(time => time > currentTime);
+        
+        if (nextTime !== undefined && currentTime < duration) {
+            // Play only the next animation segment
+            mainTimeline.current.tweenTo(nextTime, {
+                duration: 0.5,
+                ease: "none"
+            });
+        }
+    }
+};
+const handlePrevious = () => {
+    if (mainTimeline.current && isPaused) {
+        // Get current time
+        const currentTime = mainTimeline.current.time();
+        
+        // Get all animation points from timeline children
+        const timePoints = mainTimeline.current.getChildren()
+            .map(child => child.startTime())
+            .sort((a, b) => b - a); // Sort in descending order
+        
+        // Find the last two animation points before current time
+        const prevPoints = timePoints.filter(time => time < currentTime);
+        const targetTime = prevPoints[1] || 0; // Get second-to-last point, or 0 if at start
+        
+        if (targetTime !== undefined) {
+            // Kill any existing tweens to prevent conflicts
+            gsap.killTweensOf(mainTimeline.current);
+            
+            // Reset any stuck animations
+            mainTimeline.current.getChildren().forEach(child => {
+                if (child.isActive()) {
+                    child.progress(1);
+                }
+            });
+            
+            // Pause current timeline
+            mainTimeline.current.pause();
+            
+            // Reverse to previous animation point
+            mainTimeline.current.tweenTo(targetTime, {
+                duration: 0.3,
+                ease: "none",
+                onComplete: () => {
+                    // Kill any remaining tweens before starting next animation
+                    gsap.killTweensOf(mainTimeline.current);
+                    
+                    // After reaching the previous point, continue with next job
+                    mainTimeline.current.tweenTo(prevPoints[0], {
+                        duration: 0.3,
+                        ease: "none",
+                        delay: 0.1,
+                        onComplete: () => {
+                            // Ensure timeline is paused after completing the sequence
+                            mainTimeline.current.pause();
+                        }
+                    });
+                }
+            });
+        }
+    }
+};
+const timelineRef = useRef();
 
     ///////////////to add delay/////
     let thecontext=[...props.theCTX];
     let tmpctx=0;
     let done=0;
     const animate=(i,animation,h,w,dl,chaine)=>{
+        const tl = gsap.timeline();
+        mainTimeline.current.add(tl);
         setTimeout(function() {
-            if(animation.target===".ball"){
-                if(animation.value.toString().length>7){
-                    setballText(parseInt(animation.value, 2).toString(16));
-                }else{
-                    setballText(animation.value.toString());
-                }
-            }else if(animation.target===".box-data"){
-                if(animation.value.toString().length>7){
-                    setDataBusText(parseInt(animation.value, 2).toString(16));
-                }else{
-                    setDataBusText(animation.value.toString());
-                }
-            }else if(animation.target===".box-ADR"){
-                if(animation.value.toString().length>7){
-                    setAdrBusText(parseInt(animation.value, 2).toString(16));
-                }else{
-                    setAdrBusText(animation.value.toString());
-                }
-            }else if(animation.target==="IP"){
-                IPval=IPval+2;
-                setipval(IPval);
-            }else if(animation.target===".ALU"){
-                setAluVal(animation.value);
-            }else if(animation.target===".MC"){
-                setMCVal(animation.value);
-
-            }else if(animation.target===".Cache"){
+           if (animation.target === ".ball") {
+            const value = animation.value.toString().length > 7 
+                ? parseInt(animation.value, 2).toString(16)
+                : animation.value.toString();
+            tl.add(() => setballText(value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        } 
+        else if (animation.target === ".box-data") {
+            const value = animation.value.toString().length > 7 
+                ? parseInt(animation.value, 2).toString(16)
+                : animation.value.toString();
+            tl.add(() => setDataBusText(value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        } 
+        else if (animation.target === ".box-ADR") {
+            const value = animation.value.toString().length > 7 
+                ? parseInt(animation.value, 2).toString(16)
+                : animation.value.toString();
+            tl.add(() => setAdrBusText(value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        }
+        else if (animation.target === "IP") {
+            const value = animation.value.toString();
+            tl.add(() => setipval(prev => prev + 2));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        }
+        else if (animation.target === ".ALU") {
+            const value = animation.value.toString();
+            tl.add(() => setAluVal(animation.value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        }
+        else if (animation.target === ".MC") {
+            const value = animation.value.toString();
+            tl.add(() => setMCVal(animation.value));
+            tl.add(() => setballText(value))
+            .addLabel(`step${i}`);
+        }else if(animation.target===".Cache"){
+               const value = animation.value.toString().length
                 setCachVal(animation.value);
+                tl.add(() => setballText(value));
+                tl.add(() => setballText(value))
+                .addLabel(`step${i}`);
 
             }
 
@@ -102,6 +215,7 @@ cache.getData().forEach((element,index) => {
                 gsap.to(".queuearrow",{opacity:"0",duration:(0.1/  speed1).toString(),delay:(0.3/  speed1).toString()});
                 if(animqueuelen()==6){
                     gsap.to(".queue6",{opacity:"0",duration:0.4/  speed1})
+
                     gsap.to(".queue5",{opacity:"1",duration:0.4/  speed1})
                     gsap.to(".queue4",{opacity:"1",duration:0.4/  speed1})
                     gsap.to(".queue3",{opacity:"1",duration:0.4/  speed1})
@@ -144,7 +258,8 @@ cache.getData().forEach((element,index) => {
                     gsap.to(".queue1",{opacity:"0",duration:0.4/  speed1})
                 }
             }
-            animation.anim(animation.value,h,w);
+            tl.add(() => animation.anim(animation.value, h, w))
+            .addLabel(`step${i}_main`);
             if(animqueuelen()==6){
                 done=1;
             }
@@ -154,39 +269,39 @@ cache.getData().forEach((element,index) => {
                 tl.add(() => {
                     setball2Text("");
                 })
-                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.782,y:h*0.14,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .fromTo(".ball2",{x:w*0.782,y:h*0.14},{y:h*0.18 ,duration:0.8})
-                .to(".ball2",{opacity:"0",duration:0.5})
+                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.782,y:h*0.14,opacity:"0"},{opacity:"1" ,duration:0.5/speed1})
+                .fromTo(".ball2",{x:w*0.782,y:h*0.14},{y:h*0.18 ,duration:0.8/speed1})
+                .to(".ball2",{opacity:"0",duration:0.5/speed1})
                 .add(() => {
                 setAdrBusText(thecontext[tmpctx])
                 IPval=IPval+2
                 setipval(IPval)
                 })
-                .fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:0.5})
-                .fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:0.8})
-                .to(".box-ADR",{opacity:"0" ,duration:0.5})
+                .fromTo(".box-ADR",{x:w*0.753,opacity:"0"},{opacity:"1",duration:0.5/speed1})
+                .fromTo(".box-ADR",{x:w*0.753},{x:w*0.648,duration:0.8/speed1})
+                .to(".box-ADR",{opacity:"0" ,duration:0.5/speed1})
                 .add(() => {
                 setball2Text(thecontext[tmpctx]);
                 tmpctx++;})
-                .fromTo(".ball2",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .to(".ball2",{opacity:"0" ,duration:0.5})
+                .fromTo(".ball2",{borderRadius:"10px",width:w*0.032,height:h*0.14,x:w*0.623,y:h*0.165,opacity:"0"},{opacity:"1" ,duration:0.5/speed1})
+                .to(".ball2",{opacity:"0" ,duration:0.5/speed1})
                 .add(() => {
                 setball2Text(thecontext[tmpctx])})
-                .fromTo(".ball2",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .to(".ball2",{opacity:"0" ,duration:0.5})
-                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:0.5})
+                .fromTo(".ball2",{borderRadius:"10px",width:w*0.11,height:h*0.06,x:w*0.49,y:h*0.38,opacity:"0"},{opacity:"1" ,duration:0.5/speed1})
+                .to(".ball2",{opacity:"0" ,duration:0.5/speed1})
+                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.539,y:h*0.445,opacity:"0"},{opacity:"1" ,duration:0.5/speed1})
                 .fromTo(".ball2",{x:w*0.539,y:h*0.445},{y:h*0.465 ,duration:0.8})
-                .to(".ball2",{opacity:"0" ,duration:0.5})
+                .to(".ball2",{opacity:"0" ,duration:0.5/speed1})
                 .add(() => {
                 setDataBusText(thecontext[tmpctx])
                 tmpctx++;})
-                .fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:0.5})
-                .fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:0.8})
-                .to(".box-data",{opacity:"0" ,duration:0.5})
-                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:0.5})
-                .fromTo(".ball2",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:0.5})
-                .to(".ball2",{x:w*0.921 ,duration:0.5})
-                .to(".ball2",{opacity:"0" ,duration:0.3})
+                .fromTo(".box-data",{x:w*0.497,opacity:"0"},{opacity:"1",duration:0.5/speed1})
+                .fromTo(".box-data",{x:w*0.497},{x:w*0.874,duration:0.8/speed1})
+                .to(".box-data",{opacity:"0" ,duration:0.5/speed1})
+                .fromTo(".ball2",{height:"2.812%",width:"1.4%",borderRadius:"50%",x:w*0.931,y:h*0.56,opacity:"0"},{opacity:"1" ,duration:0.5/speed1})
+                .fromTo(".ball2",{x:w*0.931,y:h*0.56},{y:h*0.6638 ,duration:0.5/speed1})
+                .to(".ball2",{x:w*0.921 ,duration:0.5/speed1})
+                .to(".ball2",{opacity:"0" ,duration:0.3/speed1})
                 if(animqueuelen()===5){
                     tl.to(".queue6",{opacity:"1",duration:0.4/  speed1})
                     tl.to(".queue5",{opacity:"1",duration:0.4/  speed1})
@@ -232,6 +347,8 @@ cache.getData().forEach((element,index) => {
                 }}
             };
         }, dl);
+        mainTimeline.current.add(tl, dl/1000)
+        .addLabel(`anim${i}`, dl/1000);
     }
     const animqueuelen=()=>{
         let len=0
@@ -296,6 +413,13 @@ cache.getData().forEach((element,index) => {
             // }
             j++;
         };
+        
+        mainTimeline.current.eventCallback("onComplete", () => {
+            setIsPaused(false);
+        });
+    
+  
+        mainTimeline.current.play();
     }
     
     ///////////////////////////////
@@ -592,9 +716,25 @@ cache.getData().forEach((element,index) => {
         <br />
         <br />
        
-         <button className="returnBtn" onClick={()=>{
+        <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+    {showControls && (
+        <button className="returnBtn"onClick={handlePrevious}>previous</button>
+    )}
+    <button onClick={handlePauseResume} className="returnBtn">
+        {isPaused ? "Continue" : "Pause"}
+    </button>
+    {showControls && (
+        <button className="returnBtn" onClick={handleNext}>
+          next  
+        </button>
+    )}
+       <button className="returnBtn" onClick={()=>{
                 window.location.reload(false);
         }}>return</button>
+</div>
+
+     
+  
        
     
     </div>
